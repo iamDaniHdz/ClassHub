@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "162505222895",
+    "project_id": "classroom-da96b",
+    "storage_bucket": "classroom-da96b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:162505222895:android:58e819acd6c157f292091a",
+        "android_client_info": {
+          "package_name": "com.classhub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9cykSeRIeMXDoPP6FMgJZ-3U0TcV8hfQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
