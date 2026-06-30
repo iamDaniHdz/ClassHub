@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Subject, of } from 'rxjs';
+import { switchMap, tap, catchError, map, startWith } from 'rxjs/operators';
 
 // Material
 import { MatCardModule } from '@angular/material/card';
@@ -27,51 +29,61 @@ import { AuthService } from '../../../core/services/auth';
 })
 export class LoginComponent {
 
-  email: string = '';
-  password: string = '';
-  loading = false;
-  error: string | null = null;
+  email = '';
+  password = '';
+
+  // Trigger del login
+  private loginTrigger$ = new Subject<void>();
+
+  // Estado reactivo completo
+  vm$ = this.loginTrigger$.pipe(
+    switchMap(() =>
+      this.auth.login(this.email, this.password).pipe(
+
+        tap(() => {
+          this.router.navigate(['/dashboard']);
+        }),
+
+        map(() => ({
+          loading: false,
+          error: null
+        })),
+
+        catchError((err) => {
+          let errorMessage = 'Error inesperado';
+
+          if (err.status === 401 || err.status === 422) {
+            errorMessage = 'Credenciales incorrectas';
+          } else if (err.status === 0) {
+            errorMessage = 'No se pudo conectar al servidor';
+          }
+
+          return of({
+            loading: false,
+            error: errorMessage
+          });
+        }),
+
+        startWith({
+          loading: true,
+          error: null
+        })
+      )
+    ),
+
+    // ESTADO INICIAL GLOBAL (CLAVE)
+    startWith({
+      loading: false,
+      error: null
+    })
+  );
 
   constructor(
     private auth: AuthService,
     private router: Router
   ) {}
 
-  
-login() {
-  this.loading = true;
-  this.error = null;
-
-  this.auth.login(this.email, this.password)
-    .subscribe({
-      next: (response) => {
-        // Validar respuesta
-        if (!response || !response.data?.token) {
-          this.error = 'Respuesta inválida del servidor';
-          this.loading = false;
-          return;
-        }
-
-        console.log('Login exitoso');
-
-        // Redirigir
-        this.router.navigate(['/dashboard']);
-
-      },
-      error: (err) => {
-        console.error('Error login:', err);
-
-        // Manejo de errores
-        if (err.status === 422) {
-          this.error = 'Credenciales incorrectas';
-        } else if (err.status === 0) {
-          this.error = 'No se pudo conectar al servidor';
-        } else {
-          this.error = 'Error inesperado';
-        }
-
-        this.loading = false;
-      }
-    });
+  login(): void {
+    this.loginTrigger$.next();
   }
 }
