@@ -1,0 +1,36 @@
+<div class="login-container">
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>ClassHub Login</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <form (ngSubmit)="login()">
+
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Email</mat-label>
+          <input matInput [(ngModel)]="email" name="email" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" [(ngModel)]="password" name="password" required>
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" type="submit" class="w-100" [disabled]="loading">
+          {{ loading ? 'Ingresando...' : 'Login' }}
+        </button>
+
+        <p *ngIf="error" class="error">
+          {{ error }}
+        </p>
+
+      </form>
+
+    </mat-card-content>
+  </mat-card>
+
+</div>
+``
