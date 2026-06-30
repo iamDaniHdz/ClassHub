@@ -1,27 +1,29 @@
-<div style="display:flex; justify-content:center; margin-top:50px;">
+<div class="dashboard-container">
 
-  <mat-card style="width:400px;">
+  <mat-card class="dashboard-card">
+
+    <mat-card-header class="dashboard-header">
+      <mat-card-title>Dashboard</mat-card-title>
+
+      <button mat-button color="warn" (click)="logout()">
+        Logout
+      </button>
+    </mat-card-header>
 
     <mat-card-content>
 
-      <h2>Dashboard</h2>
+      <!-- Async pipe -->
+      @if (user$ | async; as res) {
 
-      <!-- Loading -->
-      @if (loading) {
-        <p>Cargando usuario...</p>
-      }
-
-      <!-- Error -->
-      @if (error) {
-        <p style="color:red;">{{ error }}</p>
-      }
-
-      <!-- Usuario -->
-      @if (user) {
         <div>
-          <p><strong>Nombre:</strong> {{ user.name }}</p>
-          <p><strong>Email:</strong> {{ user.email }}</p>
+          <p><strong>Nombre:</strong> {{ res.data.name }}</p>
+          <p><strong>Email:</strong> {{ res.data.email }}</p>
         </div>
+
+      } @else {
+
+        <p>Cargando usuario...</p>
+
       }
 
     </mat-card-content>

@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
 
 // Material
 import { MatCardModule } from '@angular/material/card';
@@ -11,39 +12,13 @@ import { UserService } from '../../core/services/user';
   standalone: true,
   selector: 'app-dashboard',
   templateUrl: './dashboard.html',
-  imports: [
-    CommonModule,
-    MatCardModule
-  ]
+  imports: [CommonModule, MatCardModule]
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
 
-  user: any = null;
-  loading = true;
-  error: string | null = null;
+  user$: Observable<any>;
 
-  constructor(private userService: UserService) {}
-
-  ngOnInit(): void {
-    this.loadUser();
-  }
-
-  loadUser(): void {
-    this.loading = true;
-
-    this.userService.me().subscribe({
-      next: (res) => {
-        console.log('RESPONSE:', res);
-
-        this.user = res.data;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error al obtener usuario:', err);
-
-        this.error = 'No se pudo obtener el usuario';
-        this.loading = false;
-      }
-    });
+  constructor(private userService: UserService) {
+    this.user$ = this.userService.me();
   }
 }
