@@ -37,20 +37,41 @@ export class LoginComponent {
     private router: Router
   ) {}
 
-  login() {
-    this.loading = true;
-    this.error = null;
+  
+login() {
+  this.loading = true;
+  this.error = null;
 
-    this.auth.login(this.email, this.password)
-      .subscribe({
-        next: () => {
-          this.router.navigate(['/']); // dashboard
-        },
-        error: () => {
-          this.error = 'Credenciales incorrectas';
+  this.auth.login(this.email, this.password)
+    .subscribe({
+      next: (response) => {
+        // Validar respuesta
+        if (!response || !response.data?.token) {
+          this.error = 'Respuesta inválida del servidor';
           this.loading = false;
+          return;
         }
-      });
+
+        console.log('Login exitoso');
+
+        // Redirigir
+        this.router.navigate(['/']);
+
+      },
+      error: (err) => {
+        console.error('Error login:', err);
+
+        // Manejo de errores
+        if (err.status === 422) {
+          this.error = 'Credenciales incorrectas';
+        } else if (err.status === 0) {
+          this.error = 'No se pudo conectar al servidor';
+        } else {
+          this.error = 'Error inesperado';
+        }
+
+        this.loading = false;
+      }
+    });
   }
 }
-``
