@@ -1,0 +1,31 @@
+<div style="display:flex; justify-content:center; margin-top:50px;">
+
+  <mat-card style="width:400px;">
+
+    <mat-card-content>
+
+      <h2>Dashboard</h2>
+
+      <!-- Loading -->
+      @if (loading) {
+        <p>Cargando usuario...</p>
+      }
+
+      <!-- Error -->
+      @if (error) {
+        <p style="color:red;">{{ error }}</p>
+      }
+
+      <!-- Usuario -->
+      @if (user) {
+        <div>
+          <p><strong>Nombre:</strong> {{ user.name }}</p>
+          <p><strong>Email:</strong> {{ user.email }}</p>
+        </div>
+      }
+
+    </mat-card-content>
+
+  </mat-card>
+
+</div>

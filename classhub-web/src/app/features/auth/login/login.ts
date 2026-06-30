@@ -55,7 +55,7 @@ login() {
         console.log('Login exitoso');
 
         // Redirigir
-        this.router.navigate(['/']);
+        this.router.navigate(['/dashboard']);
 
       },
       error: (err) => {
