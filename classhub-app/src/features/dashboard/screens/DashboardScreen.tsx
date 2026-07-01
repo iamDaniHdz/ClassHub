@@ -19,6 +19,10 @@ export const DashboardScreen = ({ navigation }: any) => {
         <>
           <Text>Nombre: {user.name}</Text>
           <Text>Email: {user.email}</Text>
+
+          {user.role && (
+            <Text>Rol: {user.role.name}</Text>
+          )}
         </>
       )}
 
@@ -41,4 +45,3 @@ export const DashboardScreen = ({ navigation }: any) => {
     </View>
   );
 };
-``

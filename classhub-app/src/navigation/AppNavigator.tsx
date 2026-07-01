@@ -3,8 +3,10 @@ import { DashboardScreen } from '../features/dashboard/screens/DashboardScreen';
 
 const Stack = createNativeStackNavigator();
 
-export const AppNavigator = () => (
-  <Stack.Navigator>
-    <Stack.Screen name="Dashboard" component={DashboardScreen} />
-  </Stack.Navigator>
-);
+export const AppNavigator = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Dashboard" component={DashboardScreen} />
+    </Stack.Navigator>
+  );
+};
