@@ -1,44 +1,43 @@
 import React, { useEffect } from 'react';
-import { StatusBar, StyleSheet, useColorScheme, View, Text } from 'react-native';
+import { StatusBar, useColorScheme, ActivityIndicator, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { NavigationContainer } from '@react-navigation/native';
 
-// Firebase test function
-//import { testFirestoreWrite } from './services/firebase/firestore';
+import { useAuthStore } from '../features/auth/store/auth.store';
+import { AuthNavigator } from '../navigation/AuthNavigator';
+import { AppNavigator } from '../navigation/AppNavigator';
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
+  const { user, bootstrap, initializing } = useAuthStore();
+
   useEffect(() => {
-    // Prueba de conexión Firebase
-    // testFirestoreWrite();
+    bootstrap();
   }, []);
+
+  // Splash / loading inicial (muy importante)
+  if (initializing) {
+    return (
+      <SafeAreaProvider>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" />
+        </View>
+      </SafeAreaProvider>
+    );
+  }
 
   return (
     <SafeAreaProvider>
+
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <View style={styles.container}>
-        <Text style={styles.text}>ClassHub</Text>
-        <Text style={styles.subtext}>Firebase Firestore Test</Text>
-      </View>
+
+      <NavigationContainer>
+        {user ? <AppNavigator /> : <AuthNavigator />}
+      </NavigationContainer>
+
     </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  subtext: {
-    marginTop: 10,
-    fontSize: 14,
-    opacity: 0.6,
-  },
-});
 
 export default App;
