@@ -70,7 +70,7 @@ class AuthController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => auth()->user()
+            'data' => new UserResource(auth()->user())
         ]);
     }
 }
