@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { User } from '../../types/user';
+import { ApiResponse } from '../../types/api';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +13,6 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   me() {
-    return this.http.get<any>(`${this.baseUrl}/me`);
+    return this.http.get<ApiResponse<User>>(`${this.baseUrl}/me`);
   }
 }
