@@ -17,16 +17,18 @@ export const LoginScreen = ({ navigation }: any) => {
 
       navigation.replace('Dashboard');
     } catch(err:any){
-        if (!err.response) {
-            setError('No se pudo conectar al servidor');
-            return;
-        }
-
-        if (err.response.status === 401 || err.response.status === 422) {
-            setError('Credenciales incorrectas');
-        } else {
-            setError('Error del servidor');
-        }
+      if (!err.response) {
+        setError('No se pudo conectar al servidor');
+        return;
+      }
+      console.log(err.response)
+      if (err.response.status === 422) {
+        setError('Credenciales incorrectas');
+      } else if (err.response?.status === 401) {
+        setError('Sesión expirada, inicia sesión nuevamente');
+      } else {
+        setError('Error del servidor');
+      }
     }
   };
 

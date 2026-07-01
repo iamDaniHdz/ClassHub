@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { AuthApi } from '../services/auth.api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface AuthState {
   user: any | null;
@@ -44,8 +45,15 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   // LOGOUT
   logout: async () => {
-    await AuthApi.logout();
-    set({ user: null });
+    try {
+      await AuthApi.logout();
+    } catch {
+      // opcional: ignorar fallo backend
+    } finally {
+      await AsyncStorage.removeItem('token');
+      set({ user: null });
+    }
   }
+
 
 }));
