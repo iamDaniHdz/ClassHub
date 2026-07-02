@@ -1,19 +1,17 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { Router, CanActivateFn } from '@angular/router';
 
 export const authGuard: CanActivateFn = () => {
 
   const router = inject(Router);
   const token = localStorage.getItem('token');
 
-  console.log('AUTH GUARD TOKEN:', token);
-
+  // usuario NO autenticado
   if (!token) {
-    console.log('NO TOKEN → REDIRECT');
-    router.navigate(['/login']);
+    console.log('Acceso denegado: no autenticado');
+    router.navigateByUrl('/login');
     return false;
   }
 
-  console.log('TOKEN OK');
   return true;
 };
