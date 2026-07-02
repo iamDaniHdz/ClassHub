@@ -19,6 +19,11 @@
           <div>
             <p><strong>Nombre:</strong> {{ res.data.name }}</p>
             <p><strong>Email:</strong> {{ res.data.email }}</p>
+            @if (res.data.role) {
+              <p>
+                <strong>Rol:</strong> {{ res.data.role.name }}
+              </p>
+            }
           </div>
         } @else {
           <p style="color:red;">Error cargando usuario</p>
@@ -27,6 +32,12 @@
       } @else {
         <p>Cargando usuario...</p>
       }
+
+
+    <button mat-raised-button color="warn" (click)="force401()">
+      FORZAR 401
+    </button>
+
 
     </mat-card-content>
 

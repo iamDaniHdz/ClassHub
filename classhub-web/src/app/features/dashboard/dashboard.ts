@@ -1,15 +1,16 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable } from 'rxjs';
+import { Observable, catchError, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
-import { catchError, of } from 'rxjs';
+import { UserService } from '../../core/services/user';
+
+// Tipos
+import { User } from '../../types/user';
+import { ApiResponse } from '../../types/api';
 
 // Material
 import { MatCardModule } from '@angular/material/card';
-
-// Service
-import { UserService } from '../../core/services/user';
 
 @Component({
   standalone: true,
@@ -19,7 +20,7 @@ import { UserService } from '../../core/services/user';
 })
 export class DashboardComponent {
 
-  user$: Observable<any>;
+  user$: Observable<ApiResponse<User> | null>;
 
   constructor(
     private userService: UserService,
@@ -29,7 +30,7 @@ export class DashboardComponent {
     this.user$ = this.userService.me().pipe(
       catchError(error => {
         console.error('Error cargando usuario:', error);
-        return of(null);
+        throw error;
       })
     );
   }
@@ -37,5 +38,19 @@ export class DashboardComponent {
   logout(): void {
     this.auth.logout();
     this.router.navigate(['/login']);
+  }
+
+  force401(): void {
+    console.log('Forzando token inválido');
+
+    localStorage.setItem('token', 'token_fake');
+
+    // Volvemos a llamar /me para disparar interceptor
+    this.user$ = this.userService.me().pipe(
+      catchError(error => {
+        console.error('Error forzado:', error);
+        return of(null);
+      })
+    );
   }
 }
