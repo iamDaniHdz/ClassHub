@@ -9,13 +9,23 @@ Route::prefix('v1')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/me', [AuthController::class, 'me']);
-    });
 
-    Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
-        Route::get('/admin-test', function () {
-            return response()->json(['message' => 'Admin OK']);
+        Route::get('/me', [AuthController::class, 'me']);
+
+        //  SOLO ADMIN
+        Route::middleware('role:admin')->group(function () {
+            Route::get('/admin-test', fn () => response()->json([
+                'message' => 'Acceso admin autorizado'
+            ]));
         });
+
+        // SOLO MAESTRO
+        Route::middleware('role:maestro')->group(function () {
+            Route::get('/teacher-test', fn () => response()->json([
+                'message' => 'Acceso maestro autorizado'
+            ]));
+        });
+
     });
 
 });
