@@ -20,7 +20,7 @@ Route::prefix('v1')->group(function () {
         });
 
         // SOLO MAESTRO
-        Route::middleware('role:maestro')->group(function () {
+        Route::middleware('role:teacher')->group(function () {
             Route::get('/teacher-test', fn () => response()->json([
                 'message' => 'Acceso maestro autorizado'
             ]));
