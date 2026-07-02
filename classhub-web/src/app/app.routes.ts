@@ -1,6 +1,7 @@
 
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
+import { roleGuard } from './core/guards/role-guard';
 
 export const routes: Routes = [
 
@@ -24,7 +25,8 @@ export const routes: Routes = [
   // ADMIN
   {
     path: 'admin',
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['admin'] },
     loadComponent: () =>
       import('./features/admin/admin-dashboard/admin-dashboard')
         .then(m => m.AdminDashboardComponent),
@@ -32,7 +34,8 @@ export const routes: Routes = [
 
   {
     path: 'admin/users',
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['admin'] },
     loadComponent: () =>
       import('./features/admin/users/users')
         .then(m => m.UsersComponent),
@@ -41,7 +44,8 @@ export const routes: Routes = [
   // TEACHER
   {
     path: 'teacher',
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['teacher'] },
     loadComponent: () =>
       import('./features/teacher/teacher-dashboard/teacher-dashboard')
         .then(m => m.TeacherDashboardComponent),
@@ -49,7 +53,8 @@ export const routes: Routes = [
 
   {
     path: 'teacher/classes',
-    canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['teacher'] },
     loadComponent: () =>
       import('./features/teacher/classes/classes')
         .then(m => m.ClassesComponent),
