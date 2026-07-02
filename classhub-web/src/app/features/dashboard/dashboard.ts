@@ -4,6 +4,7 @@ import { Observable, catchError, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
 import { UserService } from '../../core/services/user';
+import { RouterModule } from '@angular/router';
 
 // Tipos
 import { User } from '../../types/user';
@@ -16,7 +17,7 @@ import { MatCardModule } from '@angular/material/card';
   standalone: true,
   selector: 'app-dashboard',
   templateUrl: './dashboard.html',
-  imports: [CommonModule, MatCardModule]
+  imports: [CommonModule, MatCardModule, RouterModule]
 })
 export class DashboardComponent {
 
