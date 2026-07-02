@@ -30,7 +30,7 @@ export class DashboardComponent {
     this.user$ = this.userService.me().pipe(
       catchError(error => {
         console.error('Error cargando usuario:', error);
-        return of(null);
+        throw error;
       })
     );
   }
@@ -38,5 +38,19 @@ export class DashboardComponent {
   logout(): void {
     this.auth.logout();
     this.router.navigate(['/login']);
+  }
+
+  force401(): void {
+    console.log('Forzando token inválido');
+
+    localStorage.setItem('token', 'token_fake');
+
+    // Volvemos a llamar /me para disparar interceptor
+    this.user$ = this.userService.me().pipe(
+      catchError(error => {
+        console.error('Error forzado:', error);
+        return of(null);
+      })
+    );
   }
 }
