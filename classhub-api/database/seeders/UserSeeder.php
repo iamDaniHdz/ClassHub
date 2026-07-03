@@ -15,15 +15,5 @@ class UserSeeder extends Seeder
             'email' => 'admin@classhub.com',
             'password' => '12345',
         ]);
-
-        // Usuario secundario opcional
-        User::factory()->create([
-            'name' => 'User',
-            'email' => 'user@classhub.com',
-            'password' => '12345',
-        ]);
-
-        // Usuarios fake
-        User::factory()->count(2)->create();
     }
 }
