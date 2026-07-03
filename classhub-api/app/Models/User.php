@@ -41,4 +41,30 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Relación con School
+     */
+    public function schools()
+    {
+        return $this->belongsToMany(School::class);
+    }
+
+    // Helper :: Role
+    public function isAdmin(): bool
+    {
+        return $this->role?->key === 'admin';
+    }
+
+    public function isTeacher(): bool
+    {
+        return $this->role?->key === 'teacher';
+    }
+
+
+    public function assignments()
+    {
+        return $this->hasMany(AcademyAssignment::class);
+    }
+
 }

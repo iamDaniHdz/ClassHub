@@ -8,34 +8,31 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use Illuminate\Validation\ValidationException;
 use App\Http\Resources\UserResource;
+use App\Models\Role;
 
 class AuthController extends Controller
 {
     /**
      * Registro de usuario
      */
+    
     public function register(RegisterRequest $request)
     {
-        try {
-            $user = User::create($request->validated());
+        $role = Role::where('key', $request->role)->first();
 
-            $token = $user->createToken('auth_token')->plainTextToken;
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'role_id' => $role->id,
+        ]);
 
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    'user' => $user,
-                    'token' => $token,
-                ]
-            ], 201);
-
-        } catch (\Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al registrar usuario',
-            ], 500);
-        }
+        return response()->json([
+            'success' => true,
+            'data' => $user->load('role'),
+        ]);
     }
+
 
     /**
      * Login
