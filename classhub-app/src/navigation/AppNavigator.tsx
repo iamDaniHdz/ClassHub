@@ -14,6 +14,7 @@ import { SchoolSelectionScreen } from '../features/schoool/screens/SchoolSelecti
 import { AcademiesScreen } from '../features/academies/screens/AcademiesScreen';
 import { ClassroomsScreen } from '../features/classrooms/screens/ClassroomsScreen';
 import { StudentsScreen } from '../features/students/screens/StudentsScreen';
+import { StudentDetailScreen } from '../features/students/screens/StudentDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -36,6 +37,7 @@ export const AppNavigator = () => {
           <Stack.Screen name="Academies" component={AcademiesScreen} />
           <Stack.Screen name="Classrooms" component={ClassroomsScreen} />
           <Stack.Screen name="Students" component={StudentsScreen} />
+          <Stack.Screen name="StudentDetail" component={StudentDetailScreen}/>
 
           {user?.role?.key === 'admin' && (
             <>

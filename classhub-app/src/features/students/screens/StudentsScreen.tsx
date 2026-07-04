@@ -19,6 +19,10 @@ export const StudentsScreen = ({ route, navigation }: any) => {
     try {
       setLoading(true);
       const result = await StudentsApi.getByClassroom(classroomId, query);
+      
+        console.log('RESULT:', result);
+
+      
       setData(result);
     } catch (e) {
       console.error(e);
@@ -49,17 +53,17 @@ export const StudentsScreen = ({ route, navigation }: any) => {
         <ScrollView contentContainerStyle={{ padding: 16 }}>
           {data.map((student) => (
             <Card
-              key={student.id}
-              style={{ marginBottom: 12 }}
-              onPress={() =>
+                key={`student-${student.id}`}
+                style={{ marginBottom: 12 }}
+                onPress={() =>
                 navigation.navigate('StudentDetail', {
-                  studentId: student.id,
+                    studentAssignmentId: student.id,
                 })
-              }
+            }
             >
               <Card.Content>
                 <Text variant="titleMedium">
-                  {student.name} {student.paternal_surname}
+                  {student.student.name} {student.student.paternal_surname}
                 </Text>
               </Card.Content>
             </Card>
