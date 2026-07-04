@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text } from 'react-native';
+import { View } from 'react-native';
 import { useAuthStore } from '../store/auth.store';
+import { Text, Button, TextInput } from 'react-native-paper';
 
 export const LoginScreen = ({ navigation }: any) => {
 
@@ -14,8 +15,6 @@ export const LoginScreen = ({ navigation }: any) => {
     try {
       setError('');
       await login(email, password);
-
-      navigation.replace('Dashboard');
     } catch(err:any){
       if (!err.response) {
         setError('No se pudo conectar al servidor');
@@ -37,11 +36,9 @@ export const LoginScreen = ({ navigation }: any) => {
 
       <TextInput placeholder="Email" onChangeText={setEmail}/>
       <TextInput placeholder="Password" secureTextEntry onChangeText={setPassword} />
-
-      <Button
-        title={loading ? 'Cargando...' : 'Login'}
-        onPress={handleLogin}
-      />
+      <Button mode="contained" onPress={handleLogin}>
+        {loading ? 'Cargando...' : 'Login'}
+      </Button>
 
       {error ? <Text>{error}</Text> : null}
 

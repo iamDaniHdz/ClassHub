@@ -10,31 +10,40 @@ import { TeacherScreen } from '../features/teacher/screens/TeacherScreen';
 import { ClassesScreen } from '../features/teacher/screens/ClassesScreen';
 
 import { useAuthStore } from '../features/auth/store/auth.store';
+import { SchoolSelectionScreen } from '../features/schoool/screens/SchoolSelectionScreen';
 
 const Stack = createNativeStackNavigator();
 
 export const AppNavigator = () => {
 
-  const { user } = useAuthStore();
+  const { user, currentSchoolId } = useAuthStore();
 
   return (
     <Stack.Navigator>
 
-      <Stack.Screen name="Dashboard" component={DashboardScreen} />
-
-      {/* ADMIN STACK */}
-      {user?.role?.key === 'admin' && (
+      {!currentSchoolId ? (
+        // Seleccionar escuela primero
+        <Stack.Screen
+          name="SchoolSelection"
+          component={SchoolSelectionScreen}
+        />
+      ) : (
         <>
-          <Stack.Screen name="Admin" component={AdminScreen} />
-          <Stack.Screen name="Users" component={UsersScreen} />
-        </>
-      )}
+          <Stack.Screen name="Dashboard" component={DashboardScreen} />
 
-      {/* TEACHER STACK */}
-      {user?.role?.key === 'teacher' && (
-        <>
-          <Stack.Screen name="Teacher" component={TeacherScreen} />
-          <Stack.Screen name="Classes" component={ClassesScreen} />
+          {user?.role?.key === 'admin' && (
+            <>
+              <Stack.Screen name="Admin" component={AdminScreen} />
+              <Stack.Screen name="Users" component={UsersScreen} />
+            </>
+          )}
+
+          {user?.role?.key === 'teacher' && (
+            <>
+              <Stack.Screen name="Teacher" component={TeacherScreen} />
+              <Stack.Screen name="Classes" component={ClassesScreen} />
+            </>
+          )}
         </>
       )}
 
