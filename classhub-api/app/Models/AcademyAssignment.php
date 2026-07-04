@@ -26,4 +26,9 @@ class AcademyAssignment extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function studentAssignments()
+    {
+        return $this->hasMany(StudentAssignment::class);
+    }
 }

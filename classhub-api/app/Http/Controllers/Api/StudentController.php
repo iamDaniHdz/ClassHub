@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\StudentCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BulkStudentRequest;
 use App\Http\Requests\StoreStudentRequest;
@@ -9,7 +10,9 @@ use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Resources\StudentResource;
 use App\Models\Classroom;
 use App\Models\Student;
+use App\Models\StudentAssignment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class StudentController extends Controller
 {
@@ -20,34 +23,55 @@ class StudentController extends Controller
     {
         $user = $request->user();
 
-        $query = Student::query();
+        $query = StudentAssignment::with('student', 'assignment');
 
-        // Filtro multi-tenant
+        // multi-tenant
         if (!$user->isAdmin()) {
             $schoolIds = $user->schools()->pluck('schools.id');
 
-            $query->whereIn('school_id', $schoolIds);
+            $query->whereHas('assignment.classroom', function ($q) use ($schoolIds) {
+                $q->whereIn('school_id', $schoolIds);
+            });
         }
 
-        // Filtrar por classroom
+        // filtrar por classroom + user
         if ($request->classroom_id) {
-            $query->where('classroom_id', $request->classroom_id);
+            $query->whereHas('assignment', function ($q) use ($request, $user) {
+
+                $q->where('classroom_id', $request->classroom_id);
+
+                if (!$user->isAdmin()) {
+                    $q->where('user_id', $user->id);
+                }
+
+            });
         }
 
-        // Búsqueda (CLAVE)
+        // búsqueda
         if ($request->search) {
             $search = $request->search;
 
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%$search%")
-                ->orWhere('paternal_surname', 'LIKE', "%$search%")
-                ->orWhere('maternal_surname', 'LIKE', "%$search%");
+            $query->whereHas('student', function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                ->orWhere('paternal_surname', 'like', "%$search%")
+                ->orWhere('maternal_surname', 'like', "%$search%");
             });
         }
 
         return response()->json([
             'success' => true,
-            'data' => StudentResource::collection($query->get()),
+            'data' => $query->get()->map(function ($sa) {
+
+                return [
+                    'id' => $sa->id,
+                    'student' => [
+                        'id' => $sa->student->id,
+                        'name' => $sa->student->name,
+                        'paternal_surname' => $sa->student->paternal_surname,
+                        'maternal_surname' => $sa->student->maternal_surname,
+                    ]
+                ];
+            })
         ]);
     }
 
@@ -82,35 +106,51 @@ class StudentController extends Controller
 
         $studentsData = $request->validated();
 
-        // Validar classroom base
         $firstClassroom = Classroom::findOrFail($studentsData[0]['classroom_id']);
 
         $this->authorizeClassroom($user, $firstClassroom);
 
-        $insertData = [];
+        $created = 0;
 
-        foreach ($studentsData as $data) {
+        DB::transaction(function () use ($studentsData, $firstClassroom, &$created) {
 
-            if ($data['classroom_id'] !== $firstClassroom->id) {
-                abort(422, 'All students must belong to the same classroom');
+            foreach ($studentsData as $data) {
+
+                if ($data['classroom_id'] !== $firstClassroom->id) {
+                    abort(422, 'All students must belong to the same classroom');
+                }
+
+                // evitar duplicados
+                $exists = Student::where([
+                    'name' => $data['name'],
+                    'paternal_surname' => $data['paternal_surname'],
+                    'maternal_surname' => $data['maternal_surname'],
+                    'classroom_id' => $firstClassroom->id,
+                ])->exists();
+
+                if ($exists) {
+                    continue;
+                }
+
+                $student = Student::create([
+                    'name' => $data['name'],
+                    'paternal_surname' => $data['paternal_surname'],
+                    'maternal_surname' => $data['maternal_surname'],
+                    'classroom_id' => $data['classroom_id'],
+                    'school_id' => $firstClassroom->school_id,
+                ]);
+
+                event(new StudentCreated($student));
+
+                $created++;
             }
 
-            $insertData[] = [
-                'name' => $data['name'],
-                'paternal_surname' => $data['paternal_surname'],
-                'maternal_surname' => $data['maternal_surname'],
-                'classroom_id' => $data['classroom_id'],
-                'school_id' => $firstClassroom->school_id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
-
-        Student::insert($insertData);
+        });
 
         return response()->json([
             'success' => true,
             'message' => 'Students created successfully',
+            'created' => $created,
         ]);
     }
 

@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\AcademyAssignment;
 use App\Http\Requests\StoreAcademyAssignmentRequest;
 use App\Http\Resources\AcademyAssignmentResource;
+use App\Models\StudentAssignment;
 use Illuminate\Http\Request;
 
 class AcademyAssignmentController extends Controller
@@ -82,12 +83,66 @@ class AcademyAssignmentController extends Controller
             'user_id' => $teacher->id,
         ]);
 
+        $classroom->students->each(function ($student) use ($assignment) {
+
+            StudentAssignment::firstOrCreate([
+                'student_id' => $student->id,
+                'academy_assignment_id' => $assignment->id
+            ]);
+
+        });
+
         return response()->json([
             'success' => true,
             'data' => new AcademyAssignmentResource(
                 $assignment->load(['academy', 'classroom', 'teacher'])
             ),
         ], 201);
+    }
+
+    // Sincronizar estudiantes
+    public function syncStudents(Request $request, $id)
+    {
+        $user = $request->user();
+
+        // Cargar assignment + alumnos del salón
+        $assignment = AcademyAssignment::with('classroom.students')->findOrFail($id);
+
+        // VALIDACIÓN MULTI-TENANT
+        if (!$user->isAdmin()) {
+
+            // debe ser el maestro dueño
+            if ($assignment->user_id !== $user->id) {
+                abort(403, 'Unauthorized');
+            }
+
+            // verificar escuela
+            $schoolIds = $user->schools()->pluck('schools.id')->toArray();
+
+            if (!in_array($assignment->classroom->school_id, $schoolIds)) {
+                abort(403, 'Unauthorized');
+            }
+        }
+
+        $created = 0;
+
+        foreach ($assignment->classroom->students as $student) {
+
+            $sa = StudentAssignment::firstOrCreate([
+                'student_id' => $student->id,
+                'academy_assignment_id' => $assignment->id,
+            ]);
+
+            if ($sa->wasRecentlyCreated) {
+                $created++;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Students synced successfully',
+            'created' => $created,
+        ]);
     }
 
     /**
@@ -110,7 +165,11 @@ class AcademyAssignmentController extends Controller
         ]);
 
         // traer conteo de estudiantes
-        $academyAssignment->classroom->loadCount('students');
+        $studentsCount = StudentAssignment::where(
+            'academy_assignment_id',
+            $academyAssignment->id
+        )->count();
+
 
         // opcional: traer estudiantes
         if ($request->boolean('with_students')) {
@@ -134,7 +193,7 @@ class AcademyAssignmentController extends Controller
                     'group' => $academyAssignment->classroom->group,
                 ],
 
-                'students_count' => $academyAssignment->classroom->students_count ?? 0,
+                'students_count' => $studentsCount,
 
                 'students' => $academyAssignment->classroom->relationLoaded('students')
                     ? $academyAssignment->classroom->students->map(function ($student) {
@@ -214,9 +273,6 @@ class AcademyAssignmentController extends Controller
 
             $classroom = $items->first()->classroom;
 
-            // cargar conteo
-            $classroom->loadCount('students');
-
             // opcional: students
             if ($request->boolean('with_students')) {
                 $classroom->load('students');
@@ -230,7 +286,13 @@ class AcademyAssignmentController extends Controller
                     'group' => $classroom->group,
                 ],
 
-                'students_count' => $classroom->students_count ?? 0,
+                'students_count' => $items->sum(function ($assignment) {
+                    return StudentAssignment::where(
+                        'academy_assignment_id',
+                        $assignment->id
+                    )->count();
+                }),
+
 
                 'students' => $classroom->relationLoaded('students')
                     ? $classroom->students->map(fn ($student) => [
@@ -329,14 +391,17 @@ class AcademyAssignmentController extends Controller
 
             $classroom = $a->classroom;
 
-            $classroom->loadCount('students');
+            $studentsCount = StudentAssignment::where(
+                'academy_assignment_id',
+                $a->id
+            )->count();
 
             return [
                 'id' => $classroom->id,
                 'name' => $classroom->name,
                 'degree' => $classroom->degree,
                 'group' => $classroom->group,
-                'students_count' => $classroom->students_count,
+                'students_count' => $studentsCount,
             ];
         });
 
