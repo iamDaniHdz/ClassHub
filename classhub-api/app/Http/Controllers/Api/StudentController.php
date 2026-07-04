@@ -22,10 +22,27 @@ class StudentController extends Controller
 
         $query = Student::query();
 
+        // Filtro multi-tenant
         if (!$user->isAdmin()) {
             $schoolIds = $user->schools()->pluck('schools.id');
 
             $query->whereIn('school_id', $schoolIds);
+        }
+
+        // Filtrar por classroom
+        if ($request->classroom_id) {
+            $query->where('classroom_id', $request->classroom_id);
+        }
+
+        // Búsqueda (CLAVE)
+        if ($request->search) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%$search%")
+                ->orWhere('paternal_surname', 'LIKE', "%$search%")
+                ->orWhere('maternal_surname', 'LIKE', "%$search%");
+            });
         }
 
         return response()->json([
