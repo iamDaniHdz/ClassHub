@@ -255,4 +255,48 @@ class AcademyAssignmentController extends Controller
             'data' => $grouped,
         ]);
     }
+
+    public function myAcademiesList(Request $request)
+    {
+        $user = $request->user();
+
+        $query = AcademyAssignment::query()
+            ->with('academy', 'classroom');
+
+        // SOLO mis academias
+        $query->where('user_id', $user->id);
+
+        // Filtro por escuela seleccionada
+        if ($request->school_id) {
+            $query->whereHas('classroom', function ($q) use ($request) {
+                $q->where('school_id', $request->school_id);
+            });
+        }
+
+        $assignments = $query->get();
+
+        // Agrupamos por academia (NO por salón)
+        $grouped = $assignments->groupBy('academy_id')->map(function ($items) {
+
+            $academy = $items->first()->academy;
+
+            return [
+                'id' => $academy->id,
+                'name' => $academy->name,
+                'classrooms_count' => $items->count(),
+
+                // opcional
+                'classrooms' => $items->map(fn ($a) => [
+                    'id' => $a->classroom->id,
+                    'name' => $a->classroom->name,
+                ])->values(),
+
+            ];
+        })->values();
+
+        return response()->json([
+            'success' => true,
+            'data' => $grouped,
+        ]);
+    }
 }

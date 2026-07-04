@@ -55,6 +55,7 @@ Route::prefix('v1')->group(function () {
             Route::post('students/bulk', [StudentController::class, 'bulk']);
             Route::apiResource('academy*assignments', AcademyAssignmentController::class);
             Route::get('/my-academies', [AcademyAssignmentController::class, 'myAcademies']);
+            Route::get('/my-academies-list', [AcademyAssignmentController::class, 'myAcademiesList']);
             Route::apiResource('academy-assignments', AcademyAssignmentController::class);
         });
 
