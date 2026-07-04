@@ -11,6 +11,7 @@ import { ClassesScreen } from '../features/teacher/screens/ClassesScreen';
 
 import { useAuthStore } from '../features/auth/store/auth.store';
 import { SchoolSelectionScreen } from '../features/schoool/screens/SchoolSelectionScreen';
+import { AcademiesScreen } from '../features/academies/screens/AcademiesScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,7 @@ export const AppNavigator = () => {
       ) : (
         <>
           <Stack.Screen name="Dashboard" component={DashboardScreen} />
+          <Stack.Screen name="Academies" component={AcademiesScreen} />
 
           {user?.role?.key === 'admin' && (
             <>
