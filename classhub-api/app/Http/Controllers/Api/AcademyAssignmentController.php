@@ -299,4 +299,50 @@ class AcademyAssignmentController extends Controller
             'data' => $grouped,
         ]);
     }
+
+    public function classroomListByAcademy(Request $request)
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'academy_id' => 'required|exists:academies,id',
+            'school_id' => 'required|exists:schools,id',
+        ]);
+
+        $query = AcademyAssignment::query()
+            ->with('classroom');
+
+        // Solo del usuario
+        $query->where('user_id', $user->id);
+
+        // Filtrar academy
+        $query->where('academy_id', $request->academy_id);
+
+        // Multi-tenant
+        $query->whereHas('classroom', function ($q) use ($request) {
+            $q->where('school_id', $request->school_id);
+        });
+
+        $assignments = $query->get();
+
+        $classrooms = $assignments->map(function ($a) {
+
+            $classroom = $a->classroom;
+
+            $classroom->loadCount('students');
+
+            return [
+                'id' => $classroom->id,
+                'name' => $classroom->name,
+                'degree' => $classroom->degree,
+                'group' => $classroom->group,
+                'students_count' => $classroom->students_count,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $classrooms
+        ]);
+    }
 }
