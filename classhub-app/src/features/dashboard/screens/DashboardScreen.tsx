@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { View, Text, Button } from 'react-native';
+import { View } from 'react-native';
 import { useAuthStore } from '../../auth/store/auth.store';
+import { Button, Text } from 'react-native-paper';
 
 export const DashboardScreen = ({ navigation }: any) => {
   const { user, bootstrap, logout } = useAuthStore();
@@ -40,23 +41,43 @@ export const DashboardScreen = ({ navigation }: any) => {
       {user?.role?.key === 'teacher' && (
         <>
           <Button
-            title="Dashboard Maestro"
+            mode="contained"
+            style={{ marginTop: 16 }}
             onPress={() => navigation.navigate('Teacher')}
-          />
+          >
+            Dashboard Maestro
+          </Button>
+
           <Button
-            title="Clases"
+            mode="contained"
+            style={{ marginTop: 16 }}
             onPress={() => navigation.navigate('Classes')}
-          />
+          >
+            Clases
+          </Button>
         </>
       )}
 
       <Button
-        title="Logout"
+        mode="contained"
+        style={{ marginTop: 16 }}
         onPress={async () => {
           await logout();
           navigation.replace('Login');
         }}
-      />
+      >
+      Logout
+      </Button>
+
+
+      <Button
+        mode="contained"
+        style={{ marginTop: 16 }}
+        onPress={() => navigation.navigate('Academies')}
+      >
+        Ver Academias
+      </Button>
+
     </View>
   );
 };
