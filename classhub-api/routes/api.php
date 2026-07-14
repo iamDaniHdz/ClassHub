@@ -62,6 +62,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/student-assignments/{id}', [StudentAssignmentController::class, 'show']);
             Route::post('/student-assignments', [StudentAssignmentController::class, 'store']);
             Route::post('/academy-assignments/{id}/sync-students', [AcademyAssignmentController::class, 'syncStudents']);
+            Route::get('/my-academies-cards',[AcademyAssignmentController::class, 'myAcademiesCards']);
         });
 
 

@@ -7,11 +7,14 @@ export const AcademiesApi = {
     try {
       const schoolId = useAuthStore.getState().currentSchoolId;
 
-      const response = await api.get('/my-academies-list', {
-        params: {
-          school_id: schoolId,
-        },
-      });
+      const response = await api.get(
+        '/my-academies-cards',
+        {
+          params: {
+            school_id: schoolId,
+          },
+        }
+      );
 
       return response.data.data;
 

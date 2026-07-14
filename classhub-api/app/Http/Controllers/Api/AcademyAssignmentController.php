@@ -410,4 +410,62 @@ class AcademyAssignmentController extends Controller
             'data' => $classrooms
         ]);
     }
+
+    public function myAcademiesCards(Request $request)
+    {
+        $user = $request->user();
+
+        $query = AcademyAssignment::with([
+            'academy',
+            'classroom',
+            'teacher'
+        ]);
+
+        $query->where('user_id', $user->id);
+
+        if ($request->school_id) {
+            $query->whereHas('classroom', function ($q) use ($request) {
+
+                $q->where(
+                    'school_id',
+                    $request->school_id
+                );
+            });
+        }
+
+        $data = $query->get()->map(function ($assignment) {
+
+            return [
+                'assignment_id' => $assignment->id,
+
+                'academy' => [
+                    'id' => $assignment->academy->id,
+                    'name' => $assignment->academy->name,
+                ],
+
+                'classroom' => [
+                    'id' => $assignment->classroom->id,
+                    'name' =>
+                        $assignment->classroom->degree .
+                        '° ' .
+                        $assignment->classroom->group,
+                ],
+
+                'teacher' => [
+                    'id' => $assignment->teacher->id,
+                    'name' => $assignment->teacher->name,
+                ],
+
+                'students_count' => StudentAssignment::where(
+                    'academy_assignment_id',
+                    $assignment->id
+                )->count(),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
+    }
 }

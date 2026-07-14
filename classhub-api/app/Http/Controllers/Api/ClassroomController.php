@@ -8,6 +8,7 @@ use App\Http\Requests\StoreClassroomRequest;
 use App\Http\Requests\UpdateClassroomRequest;
 use App\Http\Resources\ClassroomResource;
 use Illuminate\Http\Request;
+use App\Models\StudentAssignment;
 
 class ClassroomController extends Controller
 {
@@ -63,17 +64,57 @@ class ClassroomController extends Controller
 
     public function show(Request $request, Classroom $classroom)
     {
-        $this->authorizeAccess($request->user(), $classroom);
+        $this->authorizeAccess(
+            $request->user(),
+            $classroom
+        );
 
-        $classroom->loadCount('students');
+        $students = collect();
 
         if ($request->boolean('with_students')) {
-            $classroom->load('students');
+
+            $students = StudentAssignment::with([
+                'student',
+                'assignment.academy',
+            ])
+            ->whereHas('assignment', function ($q) use ($classroom) {
+
+                $q->where(
+                    'classroom_id',
+                    $classroom->id
+                );
+
+            })
+            ->get()
+            ->map(function ($sa) {
+
+                return [
+                    'student_assignment_id' => $sa->id,
+
+                    'student' => [
+                        'id' => $sa->student->id,
+                        'name' => $sa->student->name,
+                        'paternal_surname' => $sa->student->paternal_surname,
+                        'maternal_surname' => $sa->student->maternal_surname,
+                    ]
+                ];
+            });
         }
 
         return response()->json([
             'success' => true,
-            'data' => new ClassroomResource($classroom),
+
+            'data' => [
+                'id' => $classroom->id,
+                'name' => $classroom->name,
+                'degree' => $classroom->degree,
+                'group' => $classroom->group,
+                'school_id' => $classroom->school_id,
+
+                'students_count' => $students->count(),
+
+                'students' => $students,
+            ],
         ]);
     }
 
