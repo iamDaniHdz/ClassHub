@@ -30,9 +30,14 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
 
-    const { response } = error;
+    const { response, config } = error;
 
-    if (response && response.status === 401) {
+    if (
+      response &&
+      response.status === 401 &&
+      !config.url.includes('/login') &&
+      !config.url.includes('/register')
+    ) {
 
       console.log('Token expirado - cerrando sesión');
 

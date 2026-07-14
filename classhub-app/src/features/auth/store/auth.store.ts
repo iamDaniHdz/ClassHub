@@ -18,6 +18,12 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>;
   bootstrap: () => Promise<void>;
   logout: () => Promise<void>;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+    role: string
+  ) => Promise<void>;
 
   setCurrentSchool: (schoolId: number) => Promise<void>;
 }
@@ -43,6 +49,27 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({
         user,
         schools: user.schools || [],
+        loading: false
+      });
+
+    } catch (error) {
+      set({ loading: false });
+      throw error;
+    }
+  },
+
+  register: async (name, email, password, role) => {
+    set({ loading: true });
+
+    try {
+      await AuthApi.register(
+        name,
+        email,
+        password,
+        role
+      );
+
+      set({
         loading: false
       });
 
