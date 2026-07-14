@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ClassroomController;
 use App\Http\Controllers\Api\SchoolController;
 use App\Http\Controllers\Api\StudentAssignmentController;
 use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\TeacherProfileController;
 use App\Http\Controllers\Api\UserSchoolController;
 
 Route::prefix('v1')->group(function () {
@@ -63,6 +64,12 @@ Route::prefix('v1')->group(function () {
             Route::post('/student-assignments', [StudentAssignmentController::class, 'store']);
             Route::post('/academy-assignments/{id}/sync-students', [AcademyAssignmentController::class, 'syncStudents']);
             Route::get('/my-academies-cards',[AcademyAssignmentController::class, 'myAcademiesCards']);
+            
+            Route::apiResource(
+                'teacher-profiles',
+                TeacherProfileController::class
+            );
+
         });
 
 

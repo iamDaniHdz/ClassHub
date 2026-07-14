@@ -67,4 +67,16 @@ class User extends Authenticatable
         return $this->hasMany(AcademyAssignment::class);
     }
 
+    public function teacherProfile()
+    {
+        return $this->hasOne(
+            TeacherProfile::class
+        );
+    }
+
+    public function getDisplayNameAttribute(): string
+    {
+        return $this->teacherProfile?->full_name
+            ?? $this->name;
+    }
 }

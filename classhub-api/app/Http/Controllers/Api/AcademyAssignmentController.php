@@ -24,7 +24,7 @@ class AcademyAssignmentController extends Controller
         $query = AcademyAssignment::with([
             'academy',
             'classroom',
-            'teacher',
+            'teacher.teacherProfile',
         ]);
 
         if (!$user->isAdmin()) {
@@ -95,7 +95,7 @@ class AcademyAssignmentController extends Controller
         return response()->json([
             'success' => true,
             'data' => new AcademyAssignmentResource(
-                $assignment->load(['academy', 'classroom', 'teacher'])
+                $assignment->load(['academy', 'classroom', 'teacher.teacherProfile'])
             ),
         ], 201);
     }
@@ -418,7 +418,7 @@ class AcademyAssignmentController extends Controller
         $query = AcademyAssignment::with([
             'academy',
             'classroom',
-            'teacher'
+            'teacher.teacherProfile',
         ]);
 
         $query->where('user_id', $user->id);
@@ -451,10 +451,12 @@ class AcademyAssignmentController extends Controller
                         $assignment->classroom->group,
                 ],
 
+                
                 'teacher' => [
                     'id' => $assignment->teacher->id,
-                    'name' => $assignment->teacher->name,
+                    'name' => $assignment->teacher->display_name,
                 ],
+
 
                 'students_count' => StudentAssignment::where(
                     'academy_assignment_id',
