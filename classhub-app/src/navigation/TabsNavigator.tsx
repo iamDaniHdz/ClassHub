@@ -70,31 +70,46 @@ export const TabsNavigator = () => {
       <Tab.Screen
         name="DashboardTab"
         component={DashboardScreen}
-        options={{ title: 'Inicio' }}
+        options={{
+            headerShown: false,
+            title: 'Inicio'
+        }}
       />
 
       <Tab.Screen
         name="Calendar"
         component={CalendarScreen}
-        options={{ title: 'Calendario' }}
+        options={{
+            headerShown: false,
+            title: 'Calendario'
+        }}
       />
 
       <Tab.Screen
         name="Academies"
         component={AcademiesScreen}
-        options={{ title: 'Academias' }}
+        options={{
+            headerShown: false,
+            title: 'Academias'
+        }}
       />
 
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{ title: 'Perfil' }}
+        options={{
+            headerShown: false,
+            title: 'Perfil'
+        }}
       />
 
       <Tab.Screen
         name="Settings"
         component={SettingsScreen}
-        options={{ title: 'Ajustes' }}
+        options={{
+            headerShown: false,
+            title: 'Ajustes'
+        }}
       />
     </Tab.Navigator>
   );

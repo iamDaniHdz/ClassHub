@@ -1,5 +1,7 @@
 export const mode = {
     light: {
+
+        background: '#f5f5f5',
         gray: '#747a81',
         graySecondary: '#BFBFBF',
         warningSecondary: '#fef6da',
@@ -12,7 +14,6 @@ export const mode = {
         primary: '#E91E63',
         secondary: '#F48FB1',
 
-        background: '#F8F9FB',
         cardBackground: '#FFFFFF',
 
         textColor: '#4A4A4A',
