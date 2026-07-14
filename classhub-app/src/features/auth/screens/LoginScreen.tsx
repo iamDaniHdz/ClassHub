@@ -181,7 +181,9 @@ export const LoginScreen = ({ navigation }: any) => {
             <Text style={{ color: colors.labelTextColor }}>
               ¿No tienes una cuenta?
             </Text>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.replace('Register')}
+            >
               <Text style={{ color: colors.primary }}>Registrate</Text>
             </TouchableOpacity>
           </View>

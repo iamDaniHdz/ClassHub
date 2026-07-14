@@ -50,6 +50,9 @@ export const mode = {
         loginBackground: '#FFFFFF',
 
         textErrorColor: '#FFF',
-        backgroundErrorColor: '#CC0000'
+        backgroundErrorColor: '#CC0000',
+
+        textSuccessColor: '#FFF',
+        backgroundSuccessColor: '#008F07'
     },
 };

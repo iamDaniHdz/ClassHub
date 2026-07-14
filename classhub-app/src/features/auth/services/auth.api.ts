@@ -20,5 +20,21 @@ export const AuthApi = {
 
   async logout() {
     await AsyncStorage.removeItem('token');
-  }
+  },
+
+  async register (
+    name: string,
+    email: string,
+    password: string,
+    role: string,
+  ) {
+    const { data } = await api.post('/register', {
+      name,
+      email,
+      password,
+      role,
+    });
+
+    return data;
+  },
 };
