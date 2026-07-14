@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AcademyController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ClassroomController;
+use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SchoolController;
 use App\Http\Controllers\Api\StudentAssignmentController;
 use App\Http\Controllers\Api\StudentController;
@@ -68,6 +69,11 @@ Route::prefix('v1')->group(function () {
             Route::apiResource(
                 'teacher-profiles',
                 TeacherProfileController::class
+            );
+
+            Route::get(
+                '/me/profile',
+                [ProfileController::class, 'me']
             );
 
         });
