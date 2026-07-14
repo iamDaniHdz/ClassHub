@@ -2,7 +2,7 @@ import {
   MD3LightTheme,
   MD3DarkTheme,
 } from 'react-native-paper';
-import { mode } from '../services/themes';
+import { mode } from './themes';
 
 export const lightTheme = {
   ...MD3LightTheme,
