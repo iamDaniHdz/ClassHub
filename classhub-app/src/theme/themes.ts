@@ -1,8 +1,6 @@
 export const mode = {
     light: {
 
-        background: '#f5f5f5',
-        gray: '#747a81',
         graySecondary: '#BFBFBF',
         warningSecondary: '#fef6da',
         errorSecondary: '#fed4de',
@@ -11,13 +9,9 @@ export const mode = {
         dark: '#026ca1',
 
     
-        primary: '#E91E63',
-        secondary: '#F48FB1',
 
         cardBackground: '#FFFFFF',
 
-        textColor: '#4A4A4A',
-        titleColor: '#212121',
 
         success: '#4CAF50',
         error: '#E53935',
@@ -27,10 +21,29 @@ export const mode = {
 
         statusBar: '#F8F9FB',
 
-        backgroundShadow: 'rgba(0,0,0,0.08)'
+        
+        background: '#f5f5f5',
+        primary: '#F5338A',
+        secondary: '#FF5DAF',
+        terciary: '#FF8FC7',
+        accent: '#A855F7',
+        white: '#FFFFFF',
+        black: '#000000',
+        gray: '#7E8494',
+        textError:'#e74036',
+        textErrorBackground: '#FFD6D6',
+        textSuccess:'#37957C',
+        textSuccessBackground: '#E1F4EF',
+        gradientPrimary: '#FF8FC7',
+        gradientSecondary: '#FF5DAF',
+        gradientTerciary: '#F5338A',
+        backgroundShadow: 'rgba(255,255,255,0.85)',
+        textColor: '#4A4A4A',
+        titleColor: '#212121',
+
+        
         },
     dark: {
-        gray: '#747a81',
         graySecondary: '#BFBFBF',
         warningSecondary: '#fef6da',
         errorSecondary: '#fed4de',
@@ -39,14 +52,9 @@ export const mode = {
 
         dark: '#026ca1',
 
-        primary: '#FF4F8B',
-        secondary: '#D81B60',
 
-        background: '#121212',
         cardBackground: '#1E1E1E',
 
-        textColor: '#FFFFFF',
-        titleColor: '#FFFFFF',
 
         success: '#4CAF50',
         error: '#EF5350',
@@ -56,7 +64,6 @@ export const mode = {
 
         statusBar: '#121212',
 
-        backgroundShadow: 'rgba(0,0,0,0.5)',
 
         inputTextColor: '#FFFFFF',
         inputBorderColor: '#444444',
@@ -69,6 +76,27 @@ export const mode = {
         backgroundErrorColor: '#D32F2F',
 
         textSuccessColor: '#FFFFFF',
-        backgroundSuccessColor: '#2E7D32'
-        }
+        backgroundSuccessColor: '#2E7D32',
+
+
+        background: '#3D3D3D',
+        primary: '#CC2B73',
+        secondary: '#CC498B',
+        terciary: '#CC729F',
+        accent: '#A855F7',
+        white: '#FFFFFF',
+        black: '#000000',
+        gray: '#D6D6D6',
+        textError:'#FFB1AD',
+        textErrorBackground: '#BF2C2C',
+        textSuccess:'#2CBF51',
+        textSuccessBackground: '#ADFFC3',
+        gradientPrimary: '#804763',
+        gradientSecondary: '#804763',
+        gradientTerciary: '#804763',
+        backgroundShadow: 'rgba(0,0,0,0.4)',
+        textColor: '#EBEBEB',
+        titleColor: '#F5F5F5',
+
+    }
 };

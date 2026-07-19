@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import {
-  ImageBackground,
   ScrollView,
   StatusBar,
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
   View,
-  Platform,
+  Image,
 } from 'react-native';
 import { useAuthStore } from '../store/auth.store';
-import { Text, Button, TextInput, useTheme } from 'react-native-paper';
+import { Text, Button, TextInput, useTheme, Checkbox, Icon } from 'react-native-paper'; // Importamos Checkbox
 import { SafeAreaView } from 'react-native-safe-area-context';
+import LinearGradient from 'react-native-linear-gradient';
 
 export const LoginScreen = ({ navigation }: any) => {
   const { login, loading } = useAuthStore();
@@ -21,11 +21,9 @@ export const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [rememberMe, setRememberMe] = useState(false); // Estado para el Checkbox
 
   const [showPassword, setShowPassword] = useState(false);
-
-  const statusBarHeight =
-    Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0;
 
   const handleLogin = async () => {
     try {
@@ -61,135 +59,152 @@ export const LoginScreen = ({ navigation }: any) => {
   };
 
   return (
-    <SafeAreaView
-      style={[styles.safeAreaView]}
-      edges={['left', 'right', 'bottom']}
-    >
+    <SafeAreaView style={styles.safeAreaView} edges={['left', 'right', 'bottom']}>
       <StatusBar
         translucent
         backgroundColor="transparent"
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
       />
-      <ScrollView
-        style={{ backgroundColor: colors.loginBackground }}
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
-        <ImageBackground
-          source={require('../../../assets/classhub_background.png')}
-          style={[styles.header, { paddingTop: statusBarHeight }]}
-          resizeMode="cover"
-        />
-        <View style={styles.content}>
-          <Text
-            variant="headlineMedium"
-            style={{
-              color: colors.primary,
-              marginBottom: 25,
-              fontWeight: 'bold',
-              textAlign: 'center',
-            }}
-          >
-            ¡Bievenido de nuevo!
-          </Text>
-
-          <Text
-            style={{ color: (colors as any).labelTextColor }}
-            variant="labelLarge"
-          >
-            Correo electrónico
-          </Text>
-          <TextInput
-            activeOutlineColor={colors.inputActiveBorderColor}
-            outlineColor={colors.inputBorderColor}
-            style={[
-              styles.input,
-              { backgroundColor: (colors as any).textInputBackground },
-            ]}
-            left={
-              <TextInput.Icon icon="email" size={24} color={colors.primary} />
-            }
-            textColor={(colors as any).inputTextColor}
-            placeholderTextColor={(colors as any).inputTextColor}
-            mode="outlined"
-            keyboardType="email-address"
-            value={email}
-            onChangeText={text => setEmail(text)}
-            cursorColor={(colors as any).textColor}
-          />
-
-          <Text
-            style={{ color: (colors as any).labelTextColor }}
-            variant="labelLarge"
-          >
-            Contraseña
-          </Text>
-          <TextInput
-            secureTextEntry={!showPassword}
-            activeOutlineColor={colors.inputActiveBorderColor}
-            outlineColor={colors.inputBorderColor}
-            style={[
-              styles.input,
-              { backgroundColor: (colors as any).textInputBackground },
-            ]}
-            textColor={(colors as any).inputTextColor}
-            placeholderTextColor={(colors as any).inputTextColor}
-            mode="outlined"
-            keyboardType="default"
-            value={password}
-            onChangeText={pass => setPassword(pass)}
-            cursorColor={(colors as any).textColor}
-            left={
-              <TextInput.Icon icon="lock" size={24} color={colors.primary} />
-            }
-            right={
-              <TextInput.Icon
-                color={(colors as any).primary}
-                icon={showPassword ? 'eye-off' : 'eye'}
-                onPress={() => setShowPassword(!showPassword)}
-              />
-            }
-          />
-
-          <View style={{height:40}}>
-            {error ? 
-              <View style={{backgroundColor:colors.backgroundErrorColor, padding: 10, alignSelf:'center', borderRadius: 20}}>  
-                <Text style={{color:colors.textErrorColor, paddingHorizontal: 10,}}>
-                  {error}
-                </Text> 
-              </View>
-              :
-            null}
-          </View>
-
-          <Button
-            mode="contained"
-            onPress={handleLogin}
-            style={{ marginTop: 30, backgroundColor:colors.primary }}
-          >
-            <Text>Iniciar sesión</Text>
-          </Button>
-
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              gap: 5,
-              marginTop: 15,
-            }}
-          >
-            <Text style={{ color: colors.labelTextColor }}>
-              ¿No tienes una cuenta?
-            </Text>
-            <TouchableOpacity
-              onPress={() => navigation.replace('Register')}
+      <LinearGradient
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              colors={[
+                colors.gradientPrimary,
+                colors.gradientSecondary,
+                colors.gradientTerciary,
+              ]}
+              style={styles.gradientBackground}
             >
-              <Text style={{ color: colors.primary }}>Registrate</Text>
-            </TouchableOpacity>
-          </View>
 
-        </View>
-      </ScrollView>
+        <ScrollView 
+          style={{ flex: 1 }}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <View style={[styles.content, {backgroundColor:colors.backgroundShadow}]}>
+            <View style={styles.logoContainer}>
+              <Image
+                source={require('../../../assets/classhub-logo.png')}
+                style={[{ width: 100, height: 100 }]}
+              />
+            </View>
+
+            <Text variant="headlineMedium" style={[styles.title, {color:colors.titleColor}]}>
+              ¡Bienvenido de nuevo!
+            </Text>
+
+            <Text style={[styles.subtitle, {color:colors.gray}]}>
+              Ingresa tu correo y contraseña para iniciar sesión
+            </Text>
+
+            {/* INPUT CORREO */}
+
+            <Text style={{color:colors.gray}}>
+              Correo
+            </Text>
+
+            <TextInput
+              placeholder="example@gmail.com"
+              mode="outlined"
+              style={[styles.input, {backgroundColor:colors.backgroundShadow}]}
+              activeOutlineColor= {colors.primary}
+              outlineStyle = {{borderRadius:14, borderWidth: 1}}
+              outlineColor={colors.backgroundShadow}
+              textColor={colors.textColor}
+              placeholderTextColor={colors.gray}
+              keyboardType="email-address"
+              value={email}
+              onChangeText={text => setEmail(text)}
+            />
+
+            {/* INPUT CONTRASEÑA */}
+
+            <Text style={{color:colors.gray}}>
+              Contraseña
+            </Text>
+
+            <TextInput
+              activeOutlineColor= {colors.primary}
+              outlineStyle = {{borderRadius:14, borderWidth: 1,}}
+              placeholder="*********"
+              secureTextEntry={!showPassword}
+              mode="outlined"
+              outlineColor={colors.backgroundShadow}
+              style={[styles.input, {backgroundColor:colors.backgroundShadow}]}
+              textColor={colors.textColor}
+              placeholderTextColor={colors.gray}
+              value={password}
+              onChangeText={pass => setPassword(pass)}
+              right={
+                <TextInput.Icon
+                  icon={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                  color={colors.gray}
+                  onPress={() => setShowPassword(!showPassword)}
+                />
+              }
+            />
+
+            {/* REMEMBER ME & FORGOT PASSWORD */}
+            <View style={styles.rowBetween}>
+              <View style={styles.rememberMeContainer}>
+                <Checkbox
+                  status={rememberMe ? 'checked' : 'unchecked'}
+                  onPress={() => setRememberMe(!rememberMe)}
+                  color={colors.primary}
+                />
+                <Text style={{color:colors.gray}}>Recordarme</Text>
+              </View>
+              <TouchableOpacity onPress={() => console.log('Forgot Password')}>
+                <Text style={[styles.forgotPasswordText, {color:colors.primary}]}>
+                  ¿Olvidaste tu contraseña?
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* MENSAJE DE ERROR */}
+            <View style={{ height: 40, justifyContent: 'center' }}>
+              {error ? (
+                <View
+                  style={{
+                    backgroundColor: colors.textErrorBackground,
+                    paddingVertical: 8,
+                    paddingHorizontal: 16,
+                    borderRadius: 8,
+                    display:'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Icon source={"alert-circle"} size={24} color={colors.textError} />
+                  <Text variant='labelLarge' style={{ color: colors.textError, paddingHorizontal: 10 }}>
+                    {error || 'Ocurrio un error'}
+                  </Text>
+                </View>
+              ) : null}
+            </View>
+
+            {/* BOTÓN LOGIN */}
+            <Button
+              mode="contained"
+              onPress={handleLogin}
+              loading={loading}
+              disabled={loading}
+              style={[styles.loginButton]}
+              labelStyle={styles.loginButtonLabel}
+            >
+              Iniciar sesión
+            </Button>
+
+            {/* REGISTRARSE */}
+            <View style={styles.footerRow}>
+              <Text style={{color:colors.gray}}>¿No tienes una cuenta? </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                <Text style={[styles.signUpText, {color:colors.primary}]}>Registrate</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </LinearGradient>
     </SafeAreaView>
   );
 };
@@ -197,21 +212,82 @@ export const LoginScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   safeAreaView: {
     flex: 1,
+    backgroundColor: '#FF8FC7',
   },
-  input: {
-    marginTop: 5,
-    marginBottom: 15,
+  gradientBackground: {
+    flex: 1,
   },
-  header: {
-    width: '100%',
-    height: 240,
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingVertical: 20,
   },
   content: {
-    flex: 1,
-    padding: 25,
-    marginTop: -30,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    backgroundColor: 'white',
+    padding: 24,
+    borderRadius: 28,
+    marginHorizontal: 20,
+  },
+
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  title: {
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  subtitle: {
+    textAlign: 'center',
+    marginBottom: 30,
+    fontSize: 14,
+  },
+  input: {
+    marginBottom: 16,
+    marginTop: 5,
+    borderRadius: 14,
+    borderTopLeftRadius: 14,
+    borderTopRightRadius: 14,
+    height: 56,
+  },
+  rowBetween: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 4,
+    marginBottom: 10,
+  },
+  rememberMeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: -8,
+  },
+  forgotPasswordText: {
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  loginButton: {
+    borderRadius: 14,
+    paddingVertical: 6,
+    marginTop: 10,
+  },
+  loginButtonLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 30,
+  },
+  footerRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  signUpText: {
+    fontWeight: 'bold',
   },
 });

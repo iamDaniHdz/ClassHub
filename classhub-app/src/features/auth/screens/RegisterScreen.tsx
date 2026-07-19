@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 import {
-  ImageBackground,
   ScrollView,
   StatusBar,
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
   View,
-  Platform,
 } from 'react-native';
 import { useAuthStore } from '../store/auth.store';
-import { Text, Button, TextInput, useTheme, ProgressBar } from 'react-native-paper';
+import {
+  Text,
+  Button,
+  TextInput,
+  useTheme,
+  Icon,
+} from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import LinearGradient from 'react-native-linear-gradient';
 
 export const RegisterScreen = ({ navigation }: any) => {
   const { register, loading } = useAuthStore();
@@ -27,9 +32,6 @@ export const RegisterScreen = ({ navigation }: any) => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const statusBarHeight =
-    Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0;
 
   const handleRegister = async () => {
     try {
@@ -69,6 +71,7 @@ export const RegisterScreen = ({ navigation }: any) => {
 
       await register(name, email, password, 'teacher');
 
+      setError('')
       setSuccess('Cuenta creada correctamente');
 
       setTimeout(() => {
@@ -104,220 +107,187 @@ export const RegisterScreen = ({ navigation }: any) => {
         backgroundColor="transparent"
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
       />
-      <ScrollView
-        style={{ backgroundColor: colors.loginBackground }}
-        contentContainerStyle={{ flexGrow: 1 }}
+      <LinearGradient
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        colors={[
+          colors.gradientPrimary,
+          colors.gradientSecondary,
+          colors.gradientTerciary,
+        ]}
+        style={styles.gradientBackground}
       >
-        <ImageBackground
-          source={require('../../../assets/classhub_background.png')}
-          style={[styles.header, { paddingTop: statusBarHeight }]}
-          resizeMode="cover"
-        />
-        <View style={styles.content}>
-          <Text
-            variant="headlineMedium"
-            style={{
-              color: colors.primary,
-              marginBottom: 25,
-              fontWeight: 'bold',
-              textAlign: 'center',
-            }}
-          >
-            Registrate
-          </Text>
-
-          <Text
-            style={{ color: (colors as any).labelTextColor }}
-            variant="labelLarge"
-          >
-            Nombre completo
-          </Text>
-          <TextInput
-            activeOutlineColor={colors.inputActiveBorderColor}
-            outlineColor={colors.inputBorderColor}
-            style={[
-              styles.input,
-              { backgroundColor: (colors as any).textInputBackground },
-            ]}
-            left={
-              <TextInput.Icon icon="account" size={24} color={colors.primary} />
-            }
-            textColor={(colors as any).inputTextColor}
-            placeholderTextColor={(colors as any).inputTextColor}
-            mode="outlined"
-            keyboardType="default"
-            value={name}
-            onChangeText={text => setName(text)}
-            cursorColor={(colors as any).textColor}
-          />
-
-          <Text
-            style={{ color: (colors as any).labelTextColor }}
-            variant="labelLarge"
-          >
-            Correo electrónico
-          </Text>
-          <TextInput
-            activeOutlineColor={colors.inputActiveBorderColor}
-            outlineColor={colors.inputBorderColor}
-            style={[
-              styles.input,
-              { backgroundColor: (colors as any).textInputBackground },
-            ]}
-            left={
-              <TextInput.Icon icon="email" size={24} color={colors.primary} />
-            }
-            textColor={(colors as any).inputTextColor}
-            placeholderTextColor={(colors as any).inputTextColor}
-            mode="outlined"
-            keyboardType="email-address"
-            value={email}
-            onChangeText={text => setEmail(text)}
-            cursorColor={(colors as any).textColor}
-          />
-
-          <Text
-            style={{ color: (colors as any).labelTextColor }}
-            variant="labelLarge"
-          >
-            Contraseña
-          </Text>
-          <TextInput
-            secureTextEntry={!showPassword}
-            activeOutlineColor={colors.inputActiveBorderColor}
-            outlineColor={colors.inputBorderColor}
-            style={[
-              styles.input,
-              { backgroundColor: (colors as any).textInputBackground },
-            ]}
-            textColor={(colors as any).inputTextColor}
-            placeholderTextColor={(colors as any).inputTextColor}
-            mode="outlined"
-            keyboardType="default"
-            value={password}
-            onChangeText={pass => setPassword(pass)}
-            cursorColor={(colors as any).textColor}
-            left={
-              <TextInput.Icon icon="lock" size={24} color={colors.primary} />
-            }
-            right={
-              <TextInput.Icon
-                color={(colors as any).primary}
-                icon={showPassword ? 'eye-off' : 'eye'}
-                onPress={() => setShowPassword(!showPassword)}
-              />
-            }
-          />
-
-          <Text
-            style={{ color: (colors as any).labelTextColor }}
-            variant="labelLarge"
-          >
-            Confirmar contraseña
-          </Text>
-          <TextInput
-            secureTextEntry={!showConfirmPassword}
-            activeOutlineColor={colors.inputActiveBorderColor}
-            outlineColor={colors.inputBorderColor}
-            style={[
-              styles.input,
-              { backgroundColor: (colors as any).textInputBackground },
-            ]}
-            textColor={(colors as any).inputTextColor}
-            placeholderTextColor={(colors as any).inputTextColor}
-            mode="outlined"
-            keyboardType="default"
-            value={confirmPassword}
-            onChangeText={pass => setConfirmPassword(pass)}
-            cursorColor={(colors as any).textColor}
-            left={
-              <TextInput.Icon icon="lock" size={24} color={colors.primary} />
-            }
-            right={
-              <TextInput.Icon
-                color={(colors as any).primary}
-                icon={showConfirmPassword ? 'eye-off' : 'eye'}
-                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-              />
-            }
-          />
-
-          <View style={{ height: 40 }}>
-            {error ? (
-              <View
-                style={{
-                  backgroundColor: colors.backgroundErrorColor,
-                  padding: 10,
-                  alignSelf: 'center',
-                  borderRadius: 20,
-                }}
-              >
-                <Text
-                  style={{
-                    color: colors.textErrorColor,
-                    paddingHorizontal: 10,
-                  }}
-                >
-                  {error}
-                </Text>
-              </View>
-            ) : null}
-
-            {success ? (
-              <View
-                style={{
-                  backgroundColor: colors.backgroundSuccessColor,
-                  padding: 10,
-                  alignSelf: 'center',
-                  borderRadius: 20,
-                }}
-              >
-                <Text
-                  style={{
-                    color: colors.textSuccessColor,
-                    paddingHorizontal: 10,
-                  }}
-                >
-                  {success}
-                </Text>
-              </View>
-            ) : null}
-          </View>
-          
-
-          {loading && <ProgressBar indeterminate={true} color={colors.primary} />}
-
-          <Button
-            mode="contained"
-            onPress={handleRegister}
-            loading={loading}
-            disabled={loading}
-            style={{
-              marginTop: 30,
-              backgroundColor: colors.primary,
-            }}
-          >
-            <Text>Crear cuenta</Text>
-          </Button>
-
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              gap: 5,
-              marginTop: 15,
-            }}
-          >
-            <Text style={{ color: colors.labelTextColor }}>
-              ¿Ya tienes una cuenta?
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <View style={[styles.content, {backgroundColor:colors.backgroundShadow}]}>
+            <Text variant="headlineMedium" style={[styles.title, {color:colors.titleColor}]}>
+              ¡Registrate!
             </Text>
-            <TouchableOpacity onPress={() => navigation.replace('Login')}>
-              <Text style={{ color: colors.primary }}>Inicia sesión</Text>
-            </TouchableOpacity>
+
+            <Text style={[styles.subtitle, { color: colors.gray }]}>
+              Crea tu cuenta para continuar
+            </Text>
+
+            {/* INPUT NOMBRE */}
+            <Text style={{ color: colors.gray }}>Nombre completo</Text>
+            <TextInput
+              placeholder="Daniel Hernández"
+              mode="outlined"
+              style={[styles.input, {backgroundColor:colors.backgroundShadow}]}
+              activeOutlineColor={colors.primary}
+              outlineColor={colors.backgroundShadow}
+              outlineStyle={{ borderRadius: 14, borderWidth: 1 }}
+              textColor={colors.textColor}
+              placeholderTextColor={colors.gray}
+              value={name}
+              onChangeText={text => setName(text)}
+            />
+
+            {/* INPUT CORREO */}
+            <Text style={{ color: colors.gray }}>Correo electronico</Text>
+            <TextInput
+              placeholder="example@gmail.com"
+              mode="outlined"
+              style={[styles.input, {backgroundColor:colors.backgroundShadow}]}
+              activeOutlineColor={colors.primary}
+              outlineStyle={{ borderRadius: 14, borderWidth: 1 }}
+              textColor={colors.textColor}
+              outlineColor={colors.backgroundShadow}
+              placeholderTextColor={colors.gray}
+              keyboardType="email-address"
+              value={email}
+              onChangeText={text => setEmail(text)}
+            />
+
+            {/* INPUT CONTRASEÑA */}
+            <Text style={{ color: colors.gray }}>Contraseña</Text>
+            <TextInput
+              activeOutlineColor={colors.primary}
+              outlineStyle={{ borderRadius: 14, borderWidth: 1 }}
+              placeholder="*********"
+              secureTextEntry={!showPassword}
+              mode="outlined"
+              outlineColor={colors.backgroundShadow}
+              style={[styles.input, {backgroundColor:colors.backgroundShadow}]}
+              textColor={colors.textColor}
+              placeholderTextColor={colors.gray}
+              value={password}
+              onChangeText={pass => setPassword(pass)}
+              right={
+                <TextInput.Icon
+                  icon={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                  color={colors.gray}
+                  onPress={() => setShowPassword(!showPassword)}
+                />
+              }
+            />
+
+            <Text style={{ color: colors.gray }}>Confirmar contraseña</Text>
+            <TextInput
+              activeOutlineColor={colors.primary}
+              outlineStyle={{ borderRadius: 14, borderWidth: 1 }}
+              placeholder="*********"
+              secureTextEntry={!showPassword}
+              mode="outlined"
+              outlineColor={colors.backgroundShadow}
+              style={[styles.input, {backgroundColor:colors.backgroundShadow}]}
+              textColor={colors.textColor}
+              placeholderTextColor={colors.gray}
+              value={confirmPassword}
+              onChangeText={pass => setConfirmPassword(pass)}
+              right={
+                <TextInput.Icon
+                  icon={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
+                  color={colors.gray}
+                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                />
+              }
+            />
+
+            <View style={{ height: 40 }}>
+              {error ? (
+                <View
+                  style={{
+                    backgroundColor: colors.textErrorBackground,
+                    paddingVertical: 8,
+                    paddingHorizontal: 16,
+                    borderRadius: 8,
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Icon
+                    source={'alert-circle'}
+                    size={24}
+                    color={colors.textError}
+                  />
+                  <Text
+                    variant="labelLarge"
+                    style={{ color: colors.textError, paddingHorizontal: 10 }}
+                  >
+                    {error || 'Ocurrio un error'}
+                  </Text>
+                </View>
+              ) : null}
+
+              {success ? (
+                <View
+                  style={{
+                    backgroundColor: colors.textSuccessBackground,
+                    paddingVertical: 8,
+                    paddingHorizontal: 16,
+                    borderRadius: 8,
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Icon
+                    source={'check-circle'}
+                    size={24}
+                    color={colors.textSuccess}
+                  />
+                  <Text
+                    variant="labelLarge"
+                    style={{ color: colors.textSuccess, paddingHorizontal: 10 }}
+                  >
+                    {success || 'Exito'}
+                  </Text>
+                </View>
+              ) : null}
+            </View>
+
+            {/* BOTÓN REGISTER */}
+            <Button
+              mode="contained"
+              onPress={handleRegister}
+              loading={loading}
+              disabled={loading}
+              style={[styles.registerButton]}
+              labelStyle={styles.registerButtonLabel}
+            >
+              Crear cuenta
+            </Button>
+
+            {/* REGISTRARSE */}
+            <View style={styles.footerRow}>
+              <Text style={{ color: colors.gray }}>
+                ¿Ya tienes una cuenta?{' '}
+              </Text>
+              <TouchableOpacity onPress={() => navigation.replace('Login')}>
+                <Text style={[styles.signUpText, { color: colors.primary }]}>
+                  Inicia sesión
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </LinearGradient>
     </SafeAreaView>
   );
 };
@@ -325,21 +295,76 @@ export const RegisterScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   safeAreaView: {
     flex: 1,
+    backgroundColor: '#FF8FC7',
   },
-  input: {
-    marginTop: 5,
-    marginBottom: 15,
+  gradientBackground: {
+    flex: 1,
   },
-  header: {
-    width: '100%',
-    height: 240,
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingVertical: 20,
   },
   content: {
-    flex: 1,
-    padding: 25,
-    marginTop: -30,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    backgroundColor: 'white',
+    padding: 24,
+    borderRadius: 28,
+    marginHorizontal: 20,
+  },
+
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  title: {
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  subtitle: {
+    textAlign: 'center',
+    marginBottom: 30,
+    fontSize: 14,
+  },
+  input: {
+    marginBottom: 16,
+    marginTop: 5,
+    borderRadius: 14,
+    borderTopLeftRadius: 14,
+    borderTopRightRadius: 14,
+    height: 56,
+  },
+  rowBetween: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    marginBottom: 10,
+  },
+  policityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: -8,
+  },
+  policityText: {
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  registerButton: {
+    borderRadius: 14,
+    paddingVertical: 6,
+    marginTop: 10,
+  },
+  registerButtonLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  footerRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  signUpText: {
+    fontWeight: 'bold',
   },
 });
