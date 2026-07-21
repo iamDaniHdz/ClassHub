@@ -41,6 +41,15 @@ export const routes: Routes = [
   },
 
   {
+    path: 'classrooms/:classroomId/students/:studentAssignmentId',
+
+    canActivate: [authGuard],
+
+    loadComponent: () =>
+      import(
+        './features/students/student-detail/student-detail'
+      ).then(
+        m => m.StudentDetailComponent
     path: 'classrooms',
     canActivate: [authGuard],
     loadComponent: () =>

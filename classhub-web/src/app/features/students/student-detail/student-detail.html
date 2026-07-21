@@ -1,0 +1,40 @@
+<app-header />
+
+@if (loading) {
+
+  <p>
+    Cargando alumno...
+  </p>
+
+} @else {
+
+  <div class="container">
+
+    <h1>
+
+      {{ data.student.name }}
+
+      {{ data.student.paternal_surname }}
+
+      {{ data.student.maternal_surname }}
+
+    </h1>
+
+    <p>
+      Academia:
+      {{ data.academy }}
+    </p>
+
+    <p>
+      Grupo:
+      {{ data.classroom }}
+    </p>
+
+    <p>
+      Faltas:
+      {{ data.attendances_count }}
+    </p>
+
+  </div>
+
+}
