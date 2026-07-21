@@ -20,4 +20,12 @@ class Academy extends Model
     {
         return $this->hasMany(AcademyAssignment::class);
     }
+
+    public function teachers()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'academy_teacher'
+        );
+    }
 }
