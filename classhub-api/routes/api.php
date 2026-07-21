@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AcademyAssignmentController;
 use App\Http\Controllers\Api\AcademyController;
+use App\Http\Controllers\Api\AcademyTeacherController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ClassroomController;
@@ -66,6 +67,21 @@ Route::prefix('v1')->group(function () {
             Route::post('/student-assignments', [StudentAssignmentController::class, 'store']);
             Route::post('/academy-assignments/{id}/sync-students', [AcademyAssignmentController::class, 'syncStudents']);
             Route::get('/my-academies-cards',[AcademyAssignmentController::class, 'myAcademiesCards']);
+
+            Route::get(
+                'academies/{academy}/teachers',
+                [AcademyTeacherController::class, 'index']
+            );
+
+            Route::post(
+                'academy-teachers',
+                [AcademyTeacherController::class, 'store']
+            );
+
+            Route::delete(
+                'academies/{academy}/teachers/{user}',
+                [AcademyTeacherController::class, 'destroy']
+            );
             
             Route::apiResource(
                 'teacher-profiles',

@@ -79,4 +79,12 @@ class User extends Authenticatable
         return $this->teacherProfile?->full_name
             ?? $this->name;
     }
+
+    public function academies()
+    {
+        return $this->belongsToMany(
+            Academy::class,
+            'academy_teacher'
+        );
+    }
 }
