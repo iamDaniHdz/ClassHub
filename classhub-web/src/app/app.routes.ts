@@ -2,7 +2,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
 import { roleGuard } from './core/guards/role-guard';
-import { AcademiesListComponent } from './features/academies/academies-list/academies-list';
 
 export const routes: Routes = [
 
@@ -34,10 +33,11 @@ export const routes: Routes = [
   },
 
   {
-  path: 'test',
+    path: 'classrooms/:id',
+    canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/dashboard/dashboard')
-        .then(m => m.DashboardComponent),
+      import('./features/classrooms/classroom-detail/classroom-detail')
+        .then(m => m.ClassroomDetailComponent),
   },
 
   // ADMIN

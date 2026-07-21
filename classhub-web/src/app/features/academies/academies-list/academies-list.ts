@@ -5,6 +5,7 @@ import { AcademiesService } from '../services/academies.service';
 import { MATERIAL_IMPORTS } from '../../../shared/material/material';
 import { CommonModule } from '@angular/common';
 import { MatTableDataSource } from '@angular/material/table';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-academies-list',
@@ -12,6 +13,7 @@ import { MatTableDataSource } from '@angular/material/table';
   imports: [
     AppHeaderComponent,
     CommonModule,
+    RouterLink,
     ...MATERIAL_IMPORTS
   ],
   templateUrl: './academies-list.html',
