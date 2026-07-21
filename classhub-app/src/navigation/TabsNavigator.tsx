@@ -7,10 +7,12 @@ import { CalendarScreen } from '../features/calendar/screens/CalendarScreen';
 import { AcademiesScreen } from '../features/academies/screens/AcademiesScreen';
 import { ProfileScreen } from '../features/profile/screens/ProfileScreen';
 import { SettingsScreen } from '../features/settings/screens/SettingsScreen';
+import { useTheme } from 'react-native-paper';
 
 const Tab = createBottomTabNavigator();
 
 export const TabsNavigator = () => {
+  const { colors } = useTheme() as any;
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -34,8 +36,8 @@ export const TabsNavigator = () => {
 
             case 'Academies':
               iconName = focused
-                ? 'book'
-                : 'book-outline';
+                ? 'school'
+                : 'school-outline';
               break;
 
             case 'Profile':
@@ -62,9 +64,14 @@ export const TabsNavigator = () => {
             />
           );
         },
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.gray,
 
-        tabBarActiveTintColor: '#1976D2',
-        tabBarInactiveTintColor: '#757575',
+        tabBarStyle: {
+          backgroundColor: colors.tabBar, // o el color que quieras
+          borderTopWidth: 0,               // opcional
+          elevation: 0,                    // Android (quita sombra)
+        },
       })}
     >
       <Tab.Screen

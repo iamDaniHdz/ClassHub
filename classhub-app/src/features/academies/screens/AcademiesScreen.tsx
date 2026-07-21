@@ -14,11 +14,13 @@ import {
   Card,
   Searchbar,
   Text,
+  useTheme,
 } from 'react-native-paper';
 
 import { AcademiesApi } from '../services/academies.api';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 type AcademyCard = {
   assignment_id: number;
@@ -46,7 +48,8 @@ export const AcademiesScreen = ({
 }: any) => {
 
   const theme = useAppTheme();
-
+  const { colors } = useTheme() as any;
+  const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] =
     useState(true);
 
@@ -73,6 +76,12 @@ export const AcademiesScreen = ({
     }
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await load();
+    setRefreshing(false);
+  };
+
   const filteredData = useMemo(() => {
 
     if (!search.trim()) {
@@ -94,12 +103,13 @@ export const AcademiesScreen = ({
     item: AcademyCard;
   }) => (
     <Card
-      mode="elevated"
+      mode="contained"
       style={{
         flex: 1,
         margin: 6,
         borderRadius: 16,
         overflow: 'hidden',
+        maxWidth: '47%'
       }}
       onPress={() =>
         navigation.navigate(
@@ -117,17 +127,17 @@ export const AcademiesScreen = ({
 
       <View
         style={{
-          backgroundColor:
-            theme.primary,
+          backgroundColor:theme.secondary,
           padding: 12,
           minHeight: 120,
         }}
       >
         <Text
           style={{
-            color: '#FFF',
+            color: colors.white,
             fontWeight: '700',
             fontSize: 16,
+            height: 50,
           }}
         >
           {item.academy.name}
@@ -142,32 +152,47 @@ export const AcademiesScreen = ({
         >
           <View
             style={{
-              backgroundColor:
-                '#FFF',
+              backgroundColor:colors.backgroundShadow,
               paddingVertical: 4,
               paddingHorizontal: 10,
               borderRadius: 20,
+              width: '48%',
+              alignItems: 'center',
             }}
           >
-            <Text>
+            <Text
+            variant='bodyLarge'
+            style={{
+              color:colors.primary
+            }}>
               {item.classroom.name}
             </Text>
           </View>
 
           <View
             style={{
-              backgroundColor:
-                '#FFF',
+              backgroundColor:colors.backgroundShadow,
               paddingVertical: 4,
               paddingHorizontal: 10,
               borderRadius: 20,
+              flexDirection: 'row',
+              gap: 5,
+              width: '48%',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-            <Text>
-              👥{' '}
-              {
-                item.students_count
-              }
+            <Ionicons
+              name={'school-outline'}
+              size={20}
+              color={colors.primary}
+            />
+            <Text
+            variant='bodyLarge'
+            style={{
+              color:colors.primary
+            }}>
+              {item.students_count < 10 ? `0${item.students_count}` : item.students_count}
             </Text>
           </View>
         </View>
@@ -178,13 +203,13 @@ export const AcademiesScreen = ({
       <View
         style={{
           backgroundColor:
-            theme.secondary,
+            theme.primary,
           padding: 12,
         }}
       >
         <Text
           style={{
-            color: '#FFE7F0',
+            color: colors.white,
             fontSize: 12,
           }}
         >
@@ -193,12 +218,12 @@ export const AcademiesScreen = ({
 
         <Text
           style={{
-            color: '#FFF',
+            color: colors.white,
             fontWeight: '700',
           }}
           numberOfLines={2}
         >
-          {item.teacher.name}
+          {item.teacher.name.replace(/\s+/g, ' ').trim()}
         </Text>
       </View>
     </Card>
@@ -230,6 +255,8 @@ export const AcademiesScreen = ({
           )
         }
         numColumns={2}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
         renderItem={renderCard}
         contentContainerStyle={{
           padding: 16,
@@ -244,8 +271,7 @@ export const AcademiesScreen = ({
                 marginBottom: 8,
               }}
             >
-              Tus asignaturas y
-              grupos asignados
+              Tus asignaturas y grupos asignados
             </Text>
 
             <Text
@@ -266,10 +292,54 @@ export const AcademiesScreen = ({
               }
               style={{
                 marginBottom: 16,
-                borderRadius: 16,
+                borderRadius: 26,
+                backgroundColor:colors.backgroundShadow,
               }}
             />
           </>
+        }
+        ListEmptyComponent={
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: 60,
+            }}
+          >
+            <Ionicons
+              name={search ? 'search-outline' : 'school-outline'}
+              size={64}
+              color={colors.outline}
+            />
+
+            <Text
+              variant="titleMedium"
+              style={{
+                marginTop: 16,
+                fontWeight: 'bold',
+                textAlign: 'center',
+              }}
+            >
+              {search
+                ?  `No se encontraron resultados`
+                : 'No tienes academias asignadas'}
+            </Text>
+
+            <Text
+              variant="bodyMedium"
+              style={{
+                marginTop: 8,
+                textAlign: 'center',
+                color: colors.onSurfaceVariant,
+                paddingHorizontal: 24,
+              }}
+            >
+              {search
+                ? 'Intenta con otro término de búsqueda.'
+                : 'Cuando tengas academias asignadas aparecerán aquí.'}
+            </Text>
+          </View>
         }
       />
     </SafeAreaView>

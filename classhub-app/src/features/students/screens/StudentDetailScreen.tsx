@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import {
   Image,
   ScrollView,
+  StyleSheet,
   View,
 } from 'react-native';
 
@@ -12,18 +13,24 @@ import {
   Card,
   IconButton,
   Text,
+  TextInput,
+  useTheme,
 } from 'react-native-paper';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { StudentDetailApi } from '../services/studentDetail.api';
 import { useAppTheme } from '../../../theme/useAppTheme';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export const StudentDetailScreen = ({
   route,
 }: any) => {
 
   const theme = useAppTheme();
+  const { colors } = useTheme() as any;
+
+  const [observations, setObservations] = useState('');
 
   const { studentAssignmentId } =
     route.params;
@@ -91,23 +98,22 @@ export const StudentDetailScreen = ({
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor:
-          theme.background,
+        backgroundColor: theme.background,
       }}
     >
-
       <ScrollView>
-
         {/* COVER */}
 
         <Image
           source={{
-            uri:
-              'https://images.unsplash.com/photo-1520763185298-1b434c919102',
+            uri: 'https://images.unsplash.com/photo-1520763185298-1b434c919102',
           }}
           style={{
-            width: '100%',
+            //width: '100%',
             height: 180,
+            marginHorizontal: 15,
+            marginTop: 10,
+            borderRadius: 20,
           }}
         />
 
@@ -121,12 +127,7 @@ export const StudentDetailScreen = ({
         >
           <Avatar.Text
             size={110}
-            label={
-              data.student.name
-                ?.charAt(0)
-                ?.toUpperCase() ??
-              '?'
-            }
+            label={data.student.name?.charAt(0)?.toUpperCase() ?? '?'}
           />
         </View>
 
@@ -146,17 +147,8 @@ export const StudentDetailScreen = ({
               marginTop: 16,
             }}
           >
-            {data.student.name}
-            {' '}
-            {
-              data.student
-                .paternal_surname
-            }
-            {' '}
-            {
-              data.student
-                .maternal_surname
-            }
+            {data.student.name} {data.student.paternal_surname}{' '}
+            {data.student.maternal_surname}
           </Text>
 
           {/* STATUS */}
@@ -170,15 +162,22 @@ export const StudentDetailScreen = ({
           >
             <View
               style={{
-                backgroundColor:
-                  '#D9F5DC',
-                borderRadius: 12,
+                backgroundColor: colors.textSuccessBackground,
+                borderRadius: 20,
+                flexDirection: 'row',
+                alignSelf: 'baseline',
+                gap: 5,
+                paddingVertical: 5,
                 paddingHorizontal: 10,
-                paddingVertical: 4,
               }}
             >
-              <Text>
-                🟢 Activo
+              <Ionicons
+                name={'checkmark-circle'}
+                size={20}
+                color={colors.textSuccess}
+              />
+              <Text variant="bodyMedium" style={{ color: colors.textSuccess }}>
+                Activo
               </Text>
             </View>
           </View>
@@ -188,98 +187,78 @@ export const StudentDetailScreen = ({
           <View
             style={{
               marginTop: 10,
-              backgroundColor:
-                '#FFE4ED',
+              backgroundColor: colors.terciary,
               paddingHorizontal: 14,
               paddingVertical: 8,
               borderRadius: 20,
+              flexDirection: 'row',
+              gap: 5
             }}
           >
+            <Ionicons
+                name={'school'}
+                size={20}
+                color={colors.primary}
+              />
             <Text
               style={{
                 color: theme.primary,
               }}
             >
-              📚 {data.academy}
+              {data.academy}
             </Text>
           </View>
         </View>
 
         {/* METRICS */}
 
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent:
-              'space-around',
-            marginTop: 30,
-            marginHorizontal: 16,
-          }}
-        >
+        <View style={{
+          backgroundColor:'red',
+          paddingHorizontal: 20,
+          marginTop: 30,
+        }}>
+          <Text variant='headlineSmall'>
+            Asignatura
+          </Text>
+          
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+            }}
+          >
+            <Card style={{ flex: 1, margin: 4 }}>
+              <Card.Content>
+                <Text variant="titleLarge">50%</Text>
+                <Text>Progreso</Text>
+              </Card.Content>
+            </Card>
 
-          <Card style={{ flex: 1, margin: 4 }}>
-            <Card.Content>
-              <Text
-                variant="titleLarge"
-              >
-                50%
-              </Text>
-              <Text>
-                Progreso
-              </Text>
-            </Card.Content>
-          </Card>
+            <Card style={{ flex: 1, margin: 4 }}>
+              <Card.Content>
+                <Text variant="titleLarge">{average}</Text>
+                <Text>Promedio</Text>
+              </Card.Content>
+            </Card>
 
-          <Card style={{ flex: 1, margin: 4 }}>
-            <Card.Content>
-              <Text
-                variant="titleLarge"
-              >
-                {average}
-              </Text>
-              <Text>
-                Promedio
-              </Text>
-            </Card.Content>
-          </Card>
+            <Card style={{ flex: 1, margin: 4 }}>
+              <Card.Content>
+                <Text variant="titleLarge">
+                  {tasksCompleted}/{data.submissions.length}
+                </Text>
 
-          <Card style={{ flex: 1, margin: 4 }}>
-            <Card.Content>
-              <Text
-                variant="titleLarge"
-              >
-                {
-                  tasksCompleted
-                }
-                /
-                {
-                  data.submissions
-                    .length
-                }
-              </Text>
+                <Text>Tareas</Text>
+              </Card.Content>
+            </Card>
 
-              <Text>
-                Tareas
-              </Text>
-            </Card.Content>
-          </Card>
+            <Card style={{ flex: 1, margin: 4 }}>
+              <Card.Content>
+                <Text variant="titleLarge">{data.attendances_count}</Text>
 
-          <Card style={{ flex: 1, margin: 4 }}>
-            <Card.Content>
-              <Text
-                variant="titleLarge"
-              >
-                {
-                  data.attendances_count
-                }
-              </Text>
-
-              <Text>
-                Faltas
-              </Text>
-            </Card.Content>
-          </Card>
-
+                <Text>Faltas</Text>
+              </Card.Content>
+            </Card>
+          </View>
         </View>
 
         {/* OBSERVACIONES */}
@@ -289,7 +268,6 @@ export const StudentDetailScreen = ({
             padding: 16,
           }}
         >
-
           <Text
             variant="headlineSmall"
             style={{
@@ -311,40 +289,44 @@ export const StudentDetailScreen = ({
               }}
             >
               <Card.Content>
-
-                <Text>
-                  Sin observaciones
-                  registradas por el
-                  momento.
-                </Text>
-
+                <Text>Sin observaciones registradas por el momento.</Text>
               </Card.Content>
             </Card>
+
+            {/* <TextInput              
+              placeholder="Ingrese las observaciones del alumno"
+              mode="outlined"
+              style={[styles.input, {backgroundColor:colors.backgroundShadow}]}
+              activeOutlineColor= {colors.primary}
+              outlineStyle = {{borderRadius:14, borderWidth: 1}}
+              outlineColor={colors.backgroundShadow}
+              textColor={colors.textColor}
+              placeholderTextColor={colors.gray}
+              keyboardType="email-address"
+              value={observations}
+              onChangeText={text => setObservations(text)}
+            /> */}
 
             <Card
               style={{
                 width: 70,
-                justifyContent:
-                  'center',
-                alignItems:
-                  'center',
-                backgroundColor:
-                  theme.primary,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: theme.primary,
               }}
             >
-              <IconButton
-                icon="plus"
-                iconColor="#FFF"
-                size={30}
-              />
+              <IconButton icon="plus" iconColor="#FFF" size={30} />
             </Card>
-
           </View>
-
         </View>
-
       </ScrollView>
-
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  input: {
+    borderRadius: 20,
+    height: 150,
+  },
+});

@@ -25,21 +25,27 @@ export const mode = {
         background: '#f5f5f5',
         primary: '#F5338A',
         secondary: '#FF5DAF',
-        terciary: '#FF8FC7',
+        //primary: '#952343',
+        //secondary: '#CE315E',
+        terciary: '#F7DEE5',
         accent: '#A855F7',
+
+        
+
         white: '#FFFFFF',
         black: '#000000',
         gray: '#7E8494',
         textError:'#e74036',
         textErrorBackground: '#FFD6D6',
-        textSuccess:'#37957C',
-        textSuccessBackground: '#E1F4EF',
+        textSuccess:'#2FB13C',
+        textSuccessBackground: '#D9F5DC',
         gradientPrimary: '#FF8FC7',
         gradientSecondary: '#FF5DAF',
         gradientTerciary: '#F5338A',
         backgroundShadow: 'rgba(255,255,255,0.85)',
         textColor: '#4A4A4A',
         titleColor: '#212121',
+        tabBar: '#fcfcfc'
 
         
         },
@@ -82,6 +88,8 @@ export const mode = {
         background: '#3D3D3D',
         primary: '#CC2B73',
         secondary: '#CC498B',
+        //primary: '#952343',
+        //secondary: '#CE315E',
         terciary: '#CC729F',
         accent: '#A855F7',
         white: '#FFFFFF',
@@ -97,6 +105,6 @@ export const mode = {
         backgroundShadow: 'rgba(0,0,0,0.4)',
         textColor: '#EBEBEB',
         titleColor: '#F5F5F5',
-
+        tabBar: '#343633'
     }
 };
