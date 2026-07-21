@@ -54,6 +54,7 @@ Route::prefix('v1')->group(function () {
          */
         Route::middleware(['auth:sanctum', 'role:admin,teacher'])->group(function () {
             Route::apiResource('classrooms', ClassroomController::class);
+            Route::get('students/catalog',[StudentController::class, 'catalog']);
             Route::apiResource('students', StudentController::class);
             Route::post('students/bulk', [StudentController::class, 'bulk']);
             Route::apiResource('academy*assignments', AcademyAssignmentController::class);

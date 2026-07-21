@@ -290,4 +290,104 @@ class StudentController extends Controller
             abort(403, 'Unauthorized');
         }
     }
+
+    /**
+ * Catálogo de estudiantes
+ */
+public function catalog(Request $request)
+{
+    $user = $request->user();
+
+    $query = Student::query()
+        ->with('classroom');
+
+    // multi tenant
+    if (!$user->isAdmin()) {
+
+        $schoolIds = $user
+            ->schools()
+            ->pluck('schools.id');
+
+        $query->whereIn(
+            'school_id',
+            $schoolIds
+        );
+    }
+
+    // búsqueda
+    if ($request->search) {
+
+        $search = $request->search;
+
+        $query->where(function ($q) use ($search) {
+
+            $q->where(
+                'name',
+                'like',
+                "%{$search}%"
+            )
+            ->orWhere(
+                'paternal_surname',
+                'like',
+                "%{$search}%"
+            )
+            ->orWhere(
+                'maternal_surname',
+                'like',
+                "%{$search}%"
+            );
+        });
+    }
+
+    // classroom opcional
+    if ($request->classroom_id) {
+
+        $query->where(
+            'classroom_id',
+            $request->classroom_id
+        );
+    }
+
+    return response()->json([
+        'success' => true,
+
+        'data' => $query
+            ->latest()
+            ->get()
+            ->map(function ($student) {
+
+                return [
+
+                    'id' => $student->id,
+
+                    'name' => $student->name,
+
+                    'paternal_surname' =>
+                        $student->paternal_surname,
+
+                    'maternal_surname' =>
+                        $student->maternal_surname,
+
+                    'full_name' =>
+                        trim(
+                            $student->name .
+                            ' ' .
+                            $student->paternal_surname .
+                            ' ' .
+                            $student->maternal_surname
+                        ),
+
+                    'classroom' => $student->classroom
+                        ? [
+                            'id' => $student->classroom->id,
+                            'name' => $student->classroom->name,
+                        ]
+                        : null,
+
+                    'school_id' =>
+                        $student->school_id,
+                ];
+            }),
+    ]);
+}
 }
