@@ -13,7 +13,6 @@ import {
   Card,
   IconButton,
   Text,
-  TextInput,
   useTheme,
 } from 'react-native-paper';
 
@@ -22,6 +21,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StudentDetailApi } from '../services/studentDetail.api';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import React from 'react';
+import CircularProgress from '../../../components/CircularProgress';
 
 export const StudentDetailScreen = ({
   route,
@@ -213,52 +214,25 @@ export const StudentDetailScreen = ({
         {/* METRICS */}
 
         <View style={{
-          backgroundColor:'red',
           paddingHorizontal: 20,
           marginTop: 30,
         }}>
           <Text variant='headlineSmall'>
-            Asignatura
+            Metricas
           </Text>
-          
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-            }}
-          >
-            <Card style={{ flex: 1, margin: 4 }}>
-              <Card.Content>
-                <Text variant="titleLarge">50%</Text>
-                <Text>Progreso</Text>
-              </Card.Content>
-            </Card>
 
-            <Card style={{ flex: 1, margin: 4 }}>
-              <Card.Content>
-                <Text variant="titleLarge">{average}</Text>
-                <Text>Promedio</Text>
-              </Card.Content>
-            </Card>
-
-            <Card style={{ flex: 1, margin: 4 }}>
-              <Card.Content>
-                <Text variant="titleLarge">
-                  {tasksCompleted}/{data.submissions.length}
-                </Text>
-
-                <Text>Tareas</Text>
-              </Card.Content>
-            </Card>
-
-            <Card style={{ flex: 1, margin: 4 }}>
-              <Card.Content>
-                <Text variant="titleLarge">{data.attendances_count}</Text>
-
-                <Text>Faltas</Text>
-              </Card.Content>
-            </Card>
+          <View style={{
+            flexDirection: 'row',
+            gap: 10,
+            justifyContent: 'center',
+            marginTop: 10,
+          }}>
+            <CircularProgress progress={50} labelProgress='50%' label='Asignatura' />
+            <CircularProgress progress={70} labelProgress='70pts' label='Promedio' />
+            <CircularProgress progress={25} labelProgress='1/5' label='Tareas' />
+            <CircularProgress progress={80} labelProgress='4/5' label='Asistencia' />
           </View>
+          
         </View>
 
         {/* OBSERVACIONES */}
@@ -283,9 +257,11 @@ export const StudentDetailScreen = ({
             }}
           >
             <Card
+              mode='contained'
               style={{
                 flex: 1,
                 marginRight: 10,
+                backgroundColor: colors.cardBackground
               }}
             >
               <Card.Content>
