@@ -1,0 +1,29 @@
+.container {
+  padding: 24px;
+}
+
+.form-section {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+mat-form-field {
+  min-width: 250px;
+}
+
+.assignments-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.assignments-table th,
+.assignments-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.assignments-table th {
+  text-align: left;
+}

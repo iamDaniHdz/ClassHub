@@ -120,6 +120,7 @@
 
           <div class="actions">
 
+            
             <button
               mat-button
               color="primary"
@@ -129,6 +130,19 @@
               ]">
 
               Editar
+
+            </button>
+
+            <button
+              mat-button
+              color="accent"
+              [routerLink]="[
+                '/classrooms',
+                classroom.id,
+                'academies'
+              ]">
+
+              Academias
 
             </button>
 
