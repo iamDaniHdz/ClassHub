@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SchoolController;
 use App\Http\Controllers\Api\StudentAssignmentController;
 use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\TeacherProfileController;
 use App\Http\Controllers\Api\UserSchoolController;
 
@@ -81,6 +82,11 @@ Route::prefix('v1')->group(function () {
             Route::delete(
                 'academies/{academy}/teachers/{user}',
                 [AcademyTeacherController::class, 'destroy']
+            );
+
+            Route::get(
+                'teachers',
+                [TeacherController::class, 'index']
             );
             
             Route::apiResource(
