@@ -1,0 +1,29 @@
+<header class="header">
+
+  <div class="logo">
+    ClassHub
+  </div>
+
+  <nav>
+
+    <a [routerLink]="['/dashboard']">
+      Dashboard
+    </a>
+
+    <a [routerLink]="['/academies']">
+      Academias
+    </a>
+
+
+  </nav>
+
+  <button
+    mat-button
+    color="warn"
+    (click)="logout()">
+
+    Logout
+
+  </button>
+
+</header>
