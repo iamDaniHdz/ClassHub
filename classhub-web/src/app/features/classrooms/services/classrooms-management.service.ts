@@ -53,4 +53,41 @@ export class ClassroomsManagementService {
       `${environment.apiUrl}/classrooms/${id}`
     );
   }
+
+  getAcademyAssignments(
+    classroomId: number
+  ) {
+    return this.http.get(
+      `${environment.apiUrl}/classrooms/${classroomId}/academy-assignments`
+    );
+  }
+
+  getAcademies() {
+    return this.http.get(
+      `${environment.apiUrl}/academies`
+    );
+  }
+
+  getAcademyTeachers(
+    academyId: number
+  ) {
+    return this.http.get(
+      `${environment.apiUrl}/academies/${academyId}/teachers`
+    );
+  }
+
+  assignAcademy(data: any) {
+    return this.http.post(
+      `${environment.apiUrl}/academy-assignments`,
+      data
+    );
+  }
+
+  deleteAcademyAssignment(
+    assignmentId: number
+  ) {
+    return this.http.delete(
+      `${environment.apiUrl}/academy-assignments/${assignmentId}`
+    );
+  }
 }

@@ -1,0 +1,159 @@
+<app-header />
+
+<div class="container">
+
+  <h1>
+    Academias del Grupo
+  </h1>
+
+  <div class="form-section">
+
+    <mat-form-field
+      appearance="outline">
+
+      <mat-label>
+        Academia
+      </mat-label>
+
+      <mat-select
+        [(ngModel)]="
+          selectedAcademyId
+        "
+        (selectionChange)="
+          academyChanged()
+        ">
+
+        @for (
+          academy of academies;
+          track academy.id
+        ) {
+
+          <mat-option
+            [value]="academy.id">
+
+            {{ academy.name }}
+
+          </mat-option>
+
+        }
+
+      </mat-select>
+
+    </mat-form-field>
+
+    <mat-form-field
+      appearance="outline">
+
+      <mat-label>
+        Docente
+      </mat-label>
+
+      <mat-select
+        [(ngModel)]="
+          selectedTeacherId
+        ">
+
+        @for (
+          teacher of teachers;
+          track teacher.id
+        ) {
+
+          <mat-option
+            [value]="teacher.id">
+
+            {{ teacher.name }}
+
+          </mat-option>
+
+        }
+
+      </mat-select>
+
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="assignAcademy()">
+
+      Asignar
+
+    </button>
+
+  </div>
+
+  @if (loading) {
+
+    <p>
+      Cargando asignaciones...
+    </p>
+
+  } @else {
+
+    <table class="assignments-table">
+
+      <thead>
+
+        <tr>
+
+          <th>
+            Academia
+          </th>
+
+          <th>
+            Docente
+          </th>
+
+          <th>
+            Acción
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        @for (
+          assignment of assignments;
+          track assignment.id
+        ) {
+
+          <tr>
+
+            <td>
+              {{ assignment.academy.name }}
+            </td>
+
+            <td>
+              {{ assignment.teacher.name }}
+            </td>
+
+            <td>
+
+              <button
+                mat-button
+                color="warn"
+                (click)="
+                  deleteAssignment(
+                    assignment.id
+                  )
+                ">
+
+                Eliminar
+
+              </button>
+
+            </td>
+
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  }
+
+</div>
