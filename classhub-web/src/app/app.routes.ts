@@ -40,6 +40,17 @@ export const routes: Routes = [
         .then(m => m.ClassroomDetailComponent),
   },
 
+  {
+    path: 'classrooms',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import(
+        './features/classrooms/classrooms-list/classrooms-list'
+      ).then(
+        m => m.ClassroomsListComponent
+      ),
+  },
+
   // ADMIN
   {
     path: 'admin',
