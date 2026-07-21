@@ -157,7 +157,8 @@ export class ClassroomAcademiesComponent
 
     this.classroomsService
       .getAcademyTeachers(
-        this.selectedAcademyId
+        this.selectedAcademyId,
+        this.classroomId
       )
       .subscribe({
 
