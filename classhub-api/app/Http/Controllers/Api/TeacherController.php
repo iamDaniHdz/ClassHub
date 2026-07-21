@@ -10,7 +10,7 @@ class TeacherController extends Controller
 {
     public function index(Request $request)
     {
-        $teachers = User::query()
+        $query = User::query()
 
             ->whereHas('role', function ($query) {
 
@@ -21,21 +21,33 @@ class TeacherController extends Controller
 
             })
 
-            ->with('teacherProfile')
+            ->with('teacherProfile');
 
+        if ($request->school_id) {
+
+            $query->whereHas(
+                'schools',
+                function ($q) use ($request) {
+
+                    $q->where(
+                        'schools.id',
+                        $request->school_id
+                    );
+                }
+            );
+        }
+
+        $teachers = $query
             ->get()
-
             ->map(function ($user) {
 
                 return [
 
                     'id' => $user->id,
 
-                    'name' =>
-                        $user->display_name,
+                    'name' => $user->display_name,
 
-                    'email' =>
-                        $user->email,
+                    'email' => $user->email,
                 ];
             });
 
