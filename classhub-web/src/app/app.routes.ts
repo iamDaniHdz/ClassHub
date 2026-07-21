@@ -76,6 +76,41 @@ export const routes: Routes = [
       ),
   },
 
+  // STUDENTS
+
+  {
+    path: 'students',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import(
+        './features/students/students-list/students-list'
+      ).then(
+        m => m.StudentsListComponent
+      ),
+  },
+
+  {
+    path: 'students/new',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import(
+        './features/students/student-form/student-form'
+      ).then(
+        m => m.StudentFormComponent
+      ),
+  },
+
+  {
+    path: 'students/edit/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import(
+        './features/students/student-form/student-form'
+      ).then(
+        m => m.StudentFormComponent
+      ),
+  },
+
   // ADMIN
   {
     path: 'admin',
