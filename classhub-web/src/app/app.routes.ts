@@ -33,6 +33,14 @@ export const routes: Routes = [
   },
 
   {
+    path: 'classrooms/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/classrooms/classroom-detail/classroom-detail')
+        .then(m => m.ClassroomDetailComponent),
+  },
+
+  {
     path: 'classrooms',
     canActivate: [authGuard],
     loadComponent: () =>
