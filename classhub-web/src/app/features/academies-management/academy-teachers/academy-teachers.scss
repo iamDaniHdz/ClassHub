@@ -1,0 +1,25 @@
+.container {
+  padding: 24px;
+}
+
+.assign-section {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.teachers-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.teachers-table th,
+.teachers-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.teachers-table th {
+  text-align: left;
+}

@@ -1,0 +1,126 @@
+<app-header />
+
+<div class="container">
+
+  <h1>
+    Docentes de la Academia
+  </h1>
+
+  <div class="assign-section">
+
+    <mat-form-field
+      appearance="outline">
+
+      <mat-label>
+        Docente
+      </mat-label>
+
+      <mat-select
+        [(ngModel)]="
+          selectedTeacherId
+        ">
+
+        @for (
+          teacher of availableTeachers;
+          track teacher.id
+        ) {
+
+          <mat-option
+            [value]="teacher.id">
+
+            {{ teacher.name }}
+
+          </mat-option>
+
+        }
+
+      </mat-select>
+
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="assignTeacher()">
+
+      Agregar Docente
+
+    </button>
+
+  </div>
+
+  @if (loading) {
+
+    <p>
+      Cargando docentes...
+    </p>
+
+  } @else {
+
+    <table class="teachers-table">
+
+      <thead>
+
+        <tr>
+
+          <th>
+            Nombre
+          </th>
+
+          <th>
+            Correo
+          </th>
+
+          <th>
+            Acción
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        @for (
+          teacher of teachers;
+          track teacher.id
+        ) {
+
+          <tr>
+
+            <td>
+              {{ teacher.name }}
+            </td>
+
+            <td>
+              {{ teacher.email }}
+            </td>
+
+            <td>
+
+              <button
+                mat-button
+                color="warn"
+                (click)="
+                  removeTeacher(
+                    teacher.id
+                  )
+                ">
+
+                Quitar
+
+              </button>
+
+            </td>
+
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  }
+
+</div>
