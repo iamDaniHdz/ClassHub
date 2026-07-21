@@ -68,10 +68,12 @@ export class AcademiesManagementService {
     );
   }
 
-  getAvailableTeachers() {
+  getAvailableTeachers(
+    academyId: number
+  ) {
 
     return this.http.get(
-      `${environment.apiUrl}/teachers`
+      `${environment.apiUrl}/academies/${academyId}/available-teachers`
     );
   }
 

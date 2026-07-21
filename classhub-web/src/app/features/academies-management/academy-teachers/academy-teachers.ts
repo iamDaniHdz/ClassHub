@@ -124,7 +124,9 @@ export class AcademyTeachersComponent
   loadAvailableTeachers(): void {
 
     this.academiesService
-      .getAvailableTeachers()
+      .getAvailableTeachers(
+        this.academyId
+      )
       .subscribe({
 
         next: (response: any) => {

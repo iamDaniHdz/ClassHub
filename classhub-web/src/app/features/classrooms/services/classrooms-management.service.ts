@@ -69,10 +69,17 @@ export class ClassroomsManagementService {
   }
 
   getAcademyTeachers(
-    academyId: number
+    academyId: number,
+    classroomId: number
   ) {
     return this.http.get(
-      `${environment.apiUrl}/academies/${academyId}/teachers`
+      `${environment.apiUrl}/academies/${academyId}/teachers`,
+      {
+        params: {
+          classroom_id:
+            classroomId,
+        },
+      }
     );
   }
 

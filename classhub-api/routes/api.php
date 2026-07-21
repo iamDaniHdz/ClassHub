@@ -100,6 +100,15 @@ Route::prefix('v1')->group(function () {
             );
 
             Route::get(
+                'academies/{academy}/available-teachers',
+                [
+                    AcademyTeacherController::class,
+                    'availableTeachers'
+                ]
+            );
+
+
+            Route::get(
                 '/me/profile',
                 [ProfileController::class, 'me']
             );
