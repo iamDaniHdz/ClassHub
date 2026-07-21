@@ -193,14 +193,10 @@ export const StudentDetailScreen = ({
               paddingVertical: 8,
               borderRadius: 20,
               flexDirection: 'row',
-              gap: 5
+              gap: 5,
             }}
           >
-            <Ionicons
-                name={'school'}
-                size={20}
-                color={colors.primary}
-              />
+            <Ionicons name={'school'} size={20} color={colors.primary} />
             <Text
               style={{
                 color: theme.primary,
@@ -213,26 +209,51 @@ export const StudentDetailScreen = ({
 
         {/* METRICS */}
 
-        <View style={{
-          paddingHorizontal: 20,
-          marginTop: 30,
-        }}>
-          <Text variant='headlineSmall'>
+        <View
+          style={{
+            paddingHorizontal: 20,
+            marginTop: 30,
+          }}
+        >
+          <Text
+            variant="titleLarge"
+            style={{
+              marginBottom: 10,
+              fontWeight: 'bold',
+            }}
+          >
             Metricas
           </Text>
 
-          <View style={{
-            flexDirection: 'row',
-            gap: 10,
-            justifyContent: 'center',
-            marginTop: 10,
-          }}>
-            <CircularProgress progress={50} labelProgress='50%' label='Asignatura' />
-            <CircularProgress progress={70} labelProgress='70pts' label='Promedio' />
-            <CircularProgress progress={25} labelProgress='1/5' label='Tareas' />
-            <CircularProgress progress={80} labelProgress='4/5' label='Asistencia' />
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: 10,
+              justifyContent: 'center',
+              marginTop: 10,
+            }}
+          >
+            <CircularProgress
+              progress={50}
+              labelProgress="50%"
+              label="Asignatura"
+            />
+            <CircularProgress
+              progress={70}
+              labelProgress="70pts"
+              label="Promedio"
+            />
+            <CircularProgress
+              progress={25}
+              labelProgress="1/5"
+              label="Tareas"
+            />
+            <CircularProgress
+              progress={80}
+              labelProgress="4/5"
+              label="Asistencia"
+            />
           </View>
-          
         </View>
 
         {/* OBSERVACIONES */}
@@ -243,9 +264,10 @@ export const StudentDetailScreen = ({
           }}
         >
           <Text
-            variant="headlineSmall"
+            variant="titleLarge"
             style={{
               marginBottom: 10,
+              fontWeight: 'bold',
             }}
           >
             Observaciones
@@ -257,11 +279,11 @@ export const StudentDetailScreen = ({
             }}
           >
             <Card
-              mode='contained'
+              mode="contained"
               style={{
                 flex: 1,
                 marginRight: 10,
-                backgroundColor: colors.cardBackground
+                backgroundColor: colors.cardBackground,
               }}
             >
               <Card.Content>

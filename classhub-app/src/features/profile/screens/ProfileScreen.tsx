@@ -6,9 +6,11 @@ import {
 
 import {
   ActivityIndicator,
+  Avatar,
   Card,
   Chip,
   Text,
+  useTheme,
 } from 'react-native-paper';
 
 import {
@@ -21,10 +23,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppTheme } from '../../../theme/useAppTheme';
 
 import { ProfileApi } from '../services/profile.api';
+import React from 'react';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export const ProfileScreen = () => {
 
   const theme = useAppTheme();
+  const { colors } = useTheme() as any;
 
   const [loading, setLoading] =
     useState(true);
@@ -70,41 +75,31 @@ export const ProfileScreen = () => {
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor:
-          theme.background,
+        backgroundColor: theme.background,
       }}
     >
-
       <ScrollView>
-
         {/* COVER */}
 
         <Image
           source={{
-            uri:
-              'https://images.unsplash.com/photo-1526045478516-99145907023c',
+            uri: 'https://images.unsplash.com/photo-1526045478516-99145907023c',
           }}
           style={{
-            width: '100%',
-            height: 220,
+            height: 180,
+            marginHorizontal: 15,
+            marginTop: 10,
+            borderRadius: 20,
           }}
         />
 
         {/* AVATAR */}
 
-        <View
-          style={{
-            alignItems: 'center',
-            marginTop: -60,
-          }}
-        >
-
+        <View>
           {data.teacher_profile?.photo ? (
-
             <Image
               source={{
-                uri:
-                  data.teacher_profile.photo,
+                uri: data.teacher_profile.photo,
               }}
               style={{
                 width: 120,
@@ -114,47 +109,22 @@ export const ProfileScreen = () => {
                 borderColor: 'white',
               }}
             />
-
           ) : (
-
             <View
               style={{
-                width: 120,
-                height: 120,
-                borderRadius: 60,
-
-                backgroundColor:
-                  theme.primary,
-
-                justifyContent:
-                  'center',
-
-                alignItems:
-                  'center',
-
-                borderWidth: 4,
-
-                borderColor:
-                  'white',
+                alignItems: 'center',
+                marginTop: -55,
               }}
             >
-              <Text
-                variant="headlineLarge"
-                style={{
-                  color: 'white',
-                }}
-              >
-                {
-                  data
-                    .teacher_profile
-                    ?.full_name
-                    ?.charAt(0)
+              <Avatar.Text
+                size={110}
+                label={
+                  data.teacher_profile?.full_name?.charAt(0)?.toUpperCase() ??
+                  '?'
                 }
-              </Text>
+              />
             </View>
-
           )}
-
         </View>
 
         {/* INFO */}
@@ -166,7 +136,6 @@ export const ProfileScreen = () => {
             marginTop: 16,
           }}
         >
-
           <Text
             variant="headlineSmall"
             style={{
@@ -174,29 +143,19 @@ export const ProfileScreen = () => {
               fontWeight: 'bold',
             }}
           >
-            {data.teacher_profile?.degree}
-            {' '}
-            {
-              data.teacher_profile
-                ?.full_name
-            }
+            {data.teacher_profile?.degree}.{' '}
+            {data.teacher_profile?.full_name.replace(/\s+/g, ' ').trim()}
           </Text>
 
           <Text
             style={{
               marginTop: 8,
-              color:
-                theme.textColor,
+              color: theme.textColor,
               textAlign: 'center',
             }}
           >
-            {
-              data.teacher_profile
-                ?.specialty
-              ?? 'Sin especialidad registrada'
-            }
+            {data.teacher_profile?.specialty ?? 'Sin especialidad registrada'}
           </Text>
-
         </View>
 
         {/* TAGS */}
@@ -204,46 +163,79 @@ export const ProfileScreen = () => {
         <View
           style={{
             flexDirection: 'row',
-            justifyContent:
-              'center',
+            justifyContent: 'center',
             marginTop: 16,
             gap: 8,
           }}
         >
-
-          <Chip
-            icon="check-circle"
+          <View
             style={{
-              backgroundColor:
-                '#D9F5DC',
+              backgroundColor: colors.textSuccessBackground,
+              borderRadius: 20,
+              flexDirection: 'row',
+              alignSelf: 'baseline',
+              gap: 5,
+              paddingVertical: 5,
+              paddingHorizontal: 10,
             }}
           >
-            Activo
-          </Chip>
+            <Ionicons
+              name={'checkmark-circle'}
+              size={20}
+              color={colors.textSuccess}
+            />
+            <Text variant="bodyMedium" style={{ color: colors.textSuccess }}>
+              Activo
+            </Text>
+          </View>
 
-          <Chip
-            icon="account"
+          <View
             style={{
-              backgroundColor:
-                '#FFE4ED',
+              backgroundColor: colors.terciary,
+              borderRadius: 20,
+              flexDirection: 'row',
+              alignSelf: 'baseline',
+              gap: 5,
+              paddingVertical: 5,
+              paddingHorizontal: 10,
             }}
           >
-            {data.role?.name}
-          </Chip>
-
-          <Chip
-            icon="school"
+            <Ionicons
+              name={'person'}
+              size={20}
+              color={colors.primary}
+            />
+            <Text variant="bodyMedium" style={{ color: colors.primary }}>
+              {data.role?.name}
+            </Text>
+          </View>
+        </View>
+        <View
+          style={{
+            alignSelf: 'center',
+            marginTop: 10,
+          }}
+        >
+          <View
             style={{
-              backgroundColor:
-                '#FFE4ED',
+              backgroundColor: colors.terciary,
+              borderRadius: 20,
+              flexDirection: 'row',
+              alignSelf: 'baseline',
+              gap: 5,
+              paddingVertical: 5,
+              paddingHorizontal: 10,
             }}
           >
-            {
-              data.teacher_profile
-                ?.career
-            }
-          </Chip>
-
+            <Ionicons
+              name={'school'}
+              size={20}
+              color={colors.primary}
+            />
+            <Text variant="bodyMedium" style={{ color: colors.primary }}>
+              {data.teacher_profile?.career}
+            </Text>
+          </View>
         </View>
 
         {/* ACADEMIAS */}
@@ -253,100 +245,67 @@ export const ProfileScreen = () => {
             padding: 20,
           }}
         >
-
           <Text
             variant="titleLarge"
             style={{
-              marginBottom: 16,
-              fontWeight: 'bold',
+              marginBottom: 10,
+              fontWeight: 'bold'
             }}
           >
             Academias asignadas
           </Text>
 
-          {
-            data.academies.map(
-              (academy: any) => (
-
-                <Card
-                  key={
-                    academy.academy_id
-                  }
+          {data.academies.map((academy: any) => (
+            <Card
+              mode='contained'
+              key={academy.academy_id}
+              style={{
+                marginBottom: 12,
+                backgroundColor: colors.terciary,
+              }}
+            >
+              <Card.Content>
+                <View
                   style={{
-                    marginBottom: 12,
+                    flexDirection: 'row',
 
-                    backgroundColor:
-                      '#FBE3EA',
+                    alignItems: 'center',
                   }}
                 >
+                  <View
+                    style={{
+                      backgroundColor: '#F7C7D3',
+                      flexDirection: 'row',
+                      borderRadius: 14,
+                      gap: 5,
+                      paddingHorizontal: 12,
+                      paddingVertical: 6,
+                      marginRight: 12,
+                    }}
+                  >
+                    <Ionicons
+                      name={'people'}
+                      size={20}
+                      color={colors.primary}
+                    />
+                    <Text style={{color:colors.primary}}>{academy.groups_count} Grupos</Text>
+                  </View>
 
-                  <Card.Content>
-
-                    <View
-                      style={{
-                        flexDirection:
-                          'row',
-
-                        alignItems:
-                          'center',
-                      }}
-                    >
-
-                      <View
-                        style={{
-                          backgroundColor:
-                            '#F7C7D3',
-
-                          borderRadius:
-                            14,
-
-                          paddingHorizontal:
-                            12,
-
-                          paddingVertical:
-                            6,
-
-                          marginRight:
-                            12,
-                        }}
-                      >
-
-                        <Text>
-                          👥{' '}
-                          {
-                            academy.groups_count
-                          }{' '}
-                          Grupos
-                        </Text>
-
-                      </View>
-
-                      <Text
-                        variant="titleMedium"
-                        style={{
-                          flex: 1,
-                          fontWeight:
-                            '600',
-                        }}
-                      >
-                        {
-                          academy.academy_name
-                        }
-                      </Text>
-
-                    </View>
-
-                  </Card.Content>
-
-                </Card>
-              )
-            )
-          }
-
+                  <Text
+                    variant="titleMedium"
+                    style={{
+                      flex: 1,
+                      fontWeight: '600',
+                    }}
+                  >
+                    {academy.academy_name}
+                  </Text>
+                </View>
+              </Card.Content>
+            </Card>
+          ))}
         </View>
-
       </ScrollView>
-
     </SafeAreaView>
   );
 };
