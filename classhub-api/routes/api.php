@@ -95,6 +95,11 @@ Route::prefix('v1')->group(function () {
             );
 
             Route::get(
+                'classrooms/{classroom}/academy-assignments',
+                [AcademyAssignmentController::class, 'byClassroom']
+            );
+
+            Route::get(
                 '/me/profile',
                 [ProfileController::class, 'me']
             );

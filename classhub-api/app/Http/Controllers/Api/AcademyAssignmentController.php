@@ -470,4 +470,43 @@ class AcademyAssignmentController extends Controller
             'data' => $data,
         ]);
     }
+
+    public function byClassroom(
+        Request $request,
+        Classroom $classroom
+    )
+    {
+        return response()->json([
+            'success' => true,
+
+            'data' => AcademyAssignment::with([
+                'academy',
+                'teacher.teacherProfile',
+            ])
+            ->where(
+                'classroom_id',
+                $classroom->id
+            )
+            ->get()
+            ->map(function ($assignment) {
+
+                return [
+
+                    'id' => $assignment->id,
+
+                    'academy' => [
+                        'id' => $assignment->academy->id,
+                        'name' => $assignment->academy->name,
+                    ],
+
+                    'teacher' => [
+                        'id' => $assignment->teacher->id,
+                        'name' =>
+                            $assignment->teacher
+                                ->display_name,
+                    ],
+                ];
+            }),
+        ]);
+    }
 }
