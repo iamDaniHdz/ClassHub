@@ -1,0 +1,110 @@
+<app-header />
+
+<div class="form-container">
+
+  <h1>
+
+    @if (isEditMode) {
+
+      Editar Estudiante
+
+    } @else {
+
+      Nuevo Estudiante
+
+    }
+
+  </h1>
+
+  <form
+    [formGroup]="form"
+    (ngSubmit)="save()">
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+        Nombre
+      </mat-label>
+
+      <input
+        matInput
+        formControlName="name">
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+        Apellido paterno
+      </mat-label>
+
+      <input
+        matInput
+        formControlName="paternal_surname">
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+        Apellido materno
+      </mat-label>
+
+      <input
+        matInput
+        formControlName="maternal_surname">
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+        Grupo
+      </mat-label>
+
+      <mat-select
+        formControlName="classroom_id">
+
+        @for (
+          classroom of classrooms;
+          track classroom.id
+        ) {
+
+          <mat-option
+            [value]="classroom.id">
+
+            {{ classroom.name }}
+
+          </mat-option>
+
+        }
+
+      </mat-select>
+
+    </mat-form-field>
+
+    <div class="actions">
+
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit">
+
+        Guardar
+
+      </button>
+
+      <button
+        mat-button
+        type="button"
+        (click)="cancel()">
+
+        Cancelar
+
+      </button>
+
+    </div>
+
+  </form>
+
+</div>
