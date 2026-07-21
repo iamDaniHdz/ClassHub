@@ -12,12 +12,13 @@ import { ApiResponse } from '../../types/api';
 
 // Material
 import { MatCardModule } from '@angular/material/card';
+import { AppHeaderComponent } from "../../components/app-header/app-header";
 
 @Component({
   standalone: true,
   selector: 'app-dashboard',
   templateUrl: './dashboard.html',
-  imports: [CommonModule, MatCardModule, RouterModule]
+  imports: [CommonModule, MatCardModule, RouterModule, AppHeaderComponent]
 })
 export class DashboardComponent {
 

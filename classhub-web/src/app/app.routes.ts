@@ -2,6 +2,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
 import { roleGuard } from './core/guards/role-guard';
+import { AcademiesListComponent } from './features/academies/academies-list/academies-list';
 
 export const routes: Routes = [
 
@@ -17,6 +18,23 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/dashboard/dashboard')
+        .then(m => m.DashboardComponent),
+  },
+
+
+  // ACADEMIES
+  {
+    path: 'academies',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/academies/academies-list/academies-list')
+        .then(m => m.AcademiesListComponent),
+  },
+
+  {
+  path: 'test',
     loadComponent: () =>
       import('./features/dashboard/dashboard')
         .then(m => m.DashboardComponent),
@@ -66,5 +84,4 @@ export const routes: Routes = [
     redirectTo: 'dashboard',
     pathMatch: 'full'
   }
-
 ];
