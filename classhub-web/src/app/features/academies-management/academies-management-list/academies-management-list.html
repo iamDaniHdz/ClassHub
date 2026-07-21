@@ -1,0 +1,104 @@
+<app-header />
+
+<div class="container">
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Academias</h1>
+
+      <p>
+        Catálogo de academias
+      </p>
+
+    </div>
+
+    <button
+      mat-raised-button
+      color="primary"
+      routerLink="/academies-management/new">
+
+      Nueva Academia
+
+    </button>
+
+  </div>
+
+  @if (loading) {
+
+    <p>
+      Cargando academias...
+    </p>
+
+  } @else {
+
+    <table class="custom-table">
+
+      <thead>
+
+        <tr>
+
+          <th>
+            Nombre
+          </th>
+
+          <th>
+            Acciones
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        @for (
+          academy of academies;
+          track academy.id
+        ) {
+
+          <tr>
+
+            <td>
+              {{ academy.name }}
+            </td>
+
+            <td class="actions">
+
+              <button
+                mat-button
+                color="primary"
+                [routerLink]="[
+                  '/academies-management/edit',
+                  academy.id
+                ]">
+
+                Editar
+
+              </button>
+
+              <button
+                mat-button
+                color="warn"
+                (click)="deleteAcademy(
+                  academy.id
+                )">
+
+                Eliminar
+
+              </button>
+
+            </td>
+
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  }
+
+</div>

@@ -33,6 +33,44 @@ export const routes: Routes = [
   },
 
   {
+    path: 'academies-management',
+    canActivate: [authGuard],
+
+    loadComponent: () =>
+      import(
+        './features/academies-management/academies-management-list/academies-management-list'
+      ).then(
+        m => m.AcademiesManagementListComponent
+      ),
+  },
+
+  {
+    path: 'academies-management/new',
+    canActivate: [authGuard],
+
+    loadComponent: () =>
+      import(
+        './features/academies-management/academy-form/academy-form'
+      ).then(
+        m => m.AcademyFormComponent
+      ),
+  },
+
+  {
+    path: 'academies-management/edit/:id',
+    canActivate: [authGuard],
+
+    loadComponent: () =>
+      import(
+        './features/academies-management/academy-form/academy-form'
+      ).then(
+        m => m.AcademyFormComponent
+      ),
+  },
+
+  // GROUPS
+
+  {
     path: 'classrooms',
     canActivate: [authGuard],
     loadComponent: () =>
