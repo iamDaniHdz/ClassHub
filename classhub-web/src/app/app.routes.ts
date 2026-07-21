@@ -50,6 +50,13 @@ export const routes: Routes = [
         './features/students/student-detail/student-detail'
       ).then(
         m => m.StudentDetailComponent
+    path: 'classrooms',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import(
+        './features/classrooms/classrooms-list/classrooms-list'
+      ).then(
+        m => m.ClassroomsListComponent
       ),
   },
 

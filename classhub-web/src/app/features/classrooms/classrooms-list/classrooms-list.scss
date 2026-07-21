@@ -1,0 +1,28 @@
+.container {
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  margin: 0;
+}
+
+.page-header p {
+  margin-top: 8px;
+  color: #666;
+}
+
+.classrooms-table {
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
