@@ -1,0 +1,29 @@
+.form-container {
+
+  max-width: 600px;
+
+  margin: 32px auto;
+
+  padding: 24px;
+}
+
+form {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 16px;
+}
+
+mat-form-field {
+
+  width: 100%;
+}
+
+.actions {
+
+  display: flex;
+
+  gap: 12px;
+}

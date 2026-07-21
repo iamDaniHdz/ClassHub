@@ -108,9 +108,28 @@ export class ClassroomsListComponent
     classroomId: number
   ): void {
 
-    console.log(
-      'Eliminar grupo',
-      classroomId
-    );
+    const confirmed =
+      confirm(
+        '¿Deseas eliminar este grupo?'
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.classroomsService
+      .delete(classroomId)
+      .subscribe({
+
+        next: () => {
+
+          this.load();
+        },
+
+        error: error => {
+
+          console.error(error);
+        },
+      });
   }
 }

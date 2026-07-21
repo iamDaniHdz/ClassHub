@@ -33,14 +33,6 @@ export const routes: Routes = [
   },
 
   {
-    path: 'classrooms/:id',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/classrooms/classroom-detail/classroom-detail')
-        .then(m => m.ClassroomDetailComponent),
-  },
-
-  {
     path: 'classrooms',
     canActivate: [authGuard],
     loadComponent: () =>
@@ -48,6 +40,39 @@ export const routes: Routes = [
         './features/classrooms/classrooms-list/classrooms-list'
       ).then(
         m => m.ClassroomsListComponent
+      ),
+  },
+
+  {
+    path: 'classrooms/new',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import(
+        './features/classrooms/classrooms-form/classrooms-form'
+      ).then(
+        m => m.ClassroomsFormComponent
+      ),
+  },
+
+  {
+    path: 'classrooms/edit/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import(
+        './features/classrooms/classrooms-form/classrooms-form'
+      ).then(
+        m => m.ClassroomsFormComponent
+      ),
+  },
+
+  {
+    path: 'classrooms/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import(
+        './features/classrooms/classroom-detail/classroom-detail'
+      ).then(
+        m => m.ClassroomDetailComponent
       ),
   },
 
