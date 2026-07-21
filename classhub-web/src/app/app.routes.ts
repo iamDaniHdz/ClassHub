@@ -114,6 +114,22 @@ export const routes: Routes = [
       ),
   },
 
+  // TEACHERS
+
+  {
+    path: 'academies-management/:id/teachers',
+
+    canActivate: [authGuard],
+
+    loadComponent: () =>
+      import(
+        './features/academies-management/academy-teachers/academy-teachers'
+      ).then(
+        m => m.AcademyTeachersComponent
+      ),
+  },
+
+
   // STUDENTS
 
   {

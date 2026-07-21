@@ -58,4 +58,44 @@ export class AcademiesManagementService {
       `${environment.apiUrl}/academies/${id}`
     );
   }
+
+  getTeachers(
+    academyId: number
+  ) {
+
+    return this.http.get(
+      `${environment.apiUrl}/academies/${academyId}/teachers`
+    );
+  }
+
+  getAvailableTeachers() {
+
+    return this.http.get(
+      `${environment.apiUrl}/teachers`
+    );
+  }
+
+  assignTeacher(
+    academyId: number,
+    userId: number
+  ) {
+
+    return this.http.post(
+      `${environment.apiUrl}/academy-teachers`,
+      {
+        academy_id: academyId,
+        user_id: userId,
+      }
+    );
+  }
+
+  removeTeacher(
+    academyId: number,
+    userId: number
+  ) {
+
+    return this.http.delete(
+      `${environment.apiUrl}/academies/${academyId}/teachers/${userId}`
+    );
+  }
 }
