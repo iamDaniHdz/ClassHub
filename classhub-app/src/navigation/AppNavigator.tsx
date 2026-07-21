@@ -46,8 +46,20 @@ export const AppNavigator = () => {
           <Stack.Screen name="Academies" component={AcademiesScreen} />
           <Stack.Screen name="Classrooms" component={ClassroomsScreen} />
           <Stack.Screen name="Students" component={StudentsScreen} />
-          <Stack.Screen name="StudentDetail" component={StudentDetailScreen}/>
-          <Stack.Screen name="ClassroomDetail" component={ClassroomDetailScreen}/>
+          <Stack.Screen 
+            name="StudentDetail" 
+            component={StudentDetailScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen 
+            name="ClassroomDetail"
+            component={ClassroomDetailScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
 
           {user?.role?.key === 'admin' && (
             <>
