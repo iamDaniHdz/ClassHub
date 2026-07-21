@@ -82,14 +82,23 @@ class StudentController extends Controller
     {
         $user = $request->user();
 
-        $classroom = Classroom::findOrFail($request->classroom_id);
+        $classroom = Classroom::findOrFail(
+            $request->classroom_id
+        );
 
-        $this->authorizeClassroom($user, $classroom);
+        $this->authorizeClassroom(
+            $user,
+            $classroom
+        );
 
         $student = Student::create([
             ...$request->validated(),
             'school_id' => $classroom->school_id,
         ]);
+
+        event(
+            new StudentCreated($student)
+        );
 
         return response()->json([
             'success' => true,
@@ -170,38 +179,78 @@ class StudentController extends Controller
     /**
      * Actualizar estudiante
      */
-    public function update(UpdateStudentRequest $request, Student $student)
-    {
+    public function update(
+        UpdateStudentRequest $request,
+        Student $student
+    ) {
         $user = $request->user();
 
-        $this->authorizeStudent($user, $student);
+        $this->authorizeStudent(
+            $user,
+            $student
+        );
 
         $data = $request->validated();
 
+        $oldClassroomId = $student->classroom_id;
+
         if (isset($data['classroom_id'])) {
 
-            $classroom = Classroom::findOrFail($data['classroom_id']);
+            $classroom = Classroom::findOrFail(
+                $data['classroom_id']
+            );
 
-            $this->authorizeClassroom($user, $classroom);
+            $this->authorizeClassroom(
+                $user,
+                $classroom
+            );
 
-            // mantener consistencia school ↔ classroom
-            $data['school_id'] = $classroom->school_id;
+            $data['school_id'] =
+                $classroom->school_id;
         }
 
         $student->update($data);
 
+        /**
+         * Si cambió de salón
+         * resincronizar asignaciones
+         */
+        if (
+            isset($data['classroom_id']) &&
+            $oldClassroomId !== $student->classroom_id
+        ) {
+
+            StudentAssignment::where(
+                'student_id',
+                $student->id
+            )->delete();
+
+            event(
+                new StudentCreated(
+                    $student->fresh()
+                )
+            );
+        }
+
         return response()->json([
             'success' => true,
-            'data' => new StudentResource($student),
+            'data' => new StudentResource(
+                $student->fresh()
+            ),
         ]);
     }
 
     /**
      * Eliminar estudiante
      */
-    public function destroy(Request $request, Student $student)
-    {
-        $this->authorizeStudent($request->user(), $student);
+    public function destroy(
+        Request $request,
+        Student $student
+    ) {
+        $this->authorizeStudent(
+            $request->user(),
+            $student
+        );
 
         $student->delete();
 
