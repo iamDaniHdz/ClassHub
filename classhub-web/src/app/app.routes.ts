@@ -178,6 +178,41 @@ export const routes: Routes = [
       ),
   },
 
+  // SCHOOLS
+
+  {
+    path: 'schools',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import(
+        './features/schools/schools-list/schools-list'
+      ).then(
+        m => m.SchoolsListComponent
+      ),
+  },
+
+  {
+    path: 'schools/new',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import(
+        './features/schools/school-form/school-form'
+      ).then(
+        m => m.SchoolFormComponent
+      ),
+  },
+
+  {
+    path: 'schools/edit/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import(
+        './features/schools/school-form/school-form'
+      ).then(
+        m => m.SchoolFormComponent
+      ),
+  },
+
   // ADMIN
   {
     path: 'admin',
