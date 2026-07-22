@@ -41,6 +41,8 @@
 
           <th>Grupo</th>
 
+          <th>Fecha límite</th>
+
           <th>Acciones</th>
 
         </tr>
@@ -94,6 +96,22 @@
                   ?.classroom
                   ?.group
               }}
+            </td>
+
+            <td>
+                <span
+                    [class.overdue]="
+                    isOverdue(
+                        pending
+                    )
+                    ">
+
+                    {{
+                    pending.due_date
+                    ?? 'Sin fecha'
+                    }}
+
+                </span>
             </td>
 
             <td>

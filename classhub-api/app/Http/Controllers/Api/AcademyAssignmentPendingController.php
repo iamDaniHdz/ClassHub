@@ -30,6 +30,12 @@ class AcademyAssignmentPendingController extends Controller
                 'nullable',
                 'string',
             ],
+
+            'due_date' => [
+                'nullable',
+                'date',
+            ],
+
         ]);
 
         $assignment = AcademyAssignment::findOrFail(
@@ -56,6 +62,10 @@ class AcademyAssignmentPendingController extends Controller
 
                 'description' =>
                     $data['description'] ?? null,
+
+                'due_date' =>
+                    $data['due_date']
+                    ?? null,
 
                 'is_completed' => false,
             ]);
@@ -90,6 +100,11 @@ class AcademyAssignmentPendingController extends Controller
             'description' => [
                 'nullable',
                 'string',
+            ],
+
+            'due_date' => [
+                'nullable',
+                'date',
             ],
 
             'is_completed' => [

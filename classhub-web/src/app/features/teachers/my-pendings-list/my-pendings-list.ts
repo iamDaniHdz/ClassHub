@@ -134,4 +134,27 @@ export class MyPendingsListComponent
         },
       });
   }
+
+  isOverdue(
+    pending: any
+  ): boolean {
+
+    if (
+      !pending.due_date ||
+      pending.is_completed
+    ) {
+
+      return false;
+    }
+
+    const dueDate =
+      new Date(
+        pending.due_date
+      );
+
+    const today =
+      new Date();
+
+    return dueDate < today;
+  }
 }

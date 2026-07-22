@@ -84,6 +84,8 @@ export class MyPendingFormComponent
     ],
 
     description: [''],
+
+    due_date: [''],
   });
 
   ngOnInit(): void {
@@ -154,6 +156,9 @@ export class MyPendingFormComponent
 
             description:
               pending.description,
+
+            due_date:
+              pending.due_date,
           });
         },
 
