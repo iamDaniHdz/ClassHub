@@ -65,13 +65,14 @@ class AuthController extends Controller
      */
     public function me()
     {
-        $user = auth()->user()->load('schools', 'role');
+        $user = auth()->user()->load(
+            'schools',
+            'role'
+        );
 
         return response()->json([
             'success' => true,
-            'data' => [
-                'user' => $user
-            ]
+            'data' => $user,
         ]);
     }
 }

@@ -29,6 +29,10 @@ import {
   SchoolContextService,
 } from '../services/school-context.service';
 
+import {
+  AuthService,
+} from '../../../core/services/auth';
+
 @Component({
   selector: 'app-school-selector',
 
@@ -65,6 +69,9 @@ export class SchoolSelectorComponent
   private readonly router =
     inject(Router);
 
+  private readonly authService =
+    inject(AuthService);
+
   schools: any[] = [];
 
   loading = true;
@@ -76,31 +83,34 @@ export class SchoolSelectorComponent
 
   loadSchools(): void {
 
-    this.schoolsService
-      .getAll()
-      .subscribe({
+    const request =
+      this.authService.isAdmin()
+        ? this.schoolsService.getAll()
+        : this.schoolsService.getMySchools();
 
-        next: (
-          response: any
-        ) => {
+    request.subscribe({
 
-          this.schools =
-            response.data;
+      next: (
+        response: any
+      ) => {
 
-          this.loading =
-            false;
+        this.schools =
+          response.data;
 
-          this.cdr.detectChanges();
-        },
+        this.loading =
+          false;
 
-        error: error => {
+        this.cdr.detectChanges();
+      },
 
-          console.error(error);
+      error: error => {
 
-          this.loading =
-            false;
-        },
-      });
+        console.error(error);
+
+        this.loading =
+          false;
+      },
+    });
   }
 
   selectSchool(

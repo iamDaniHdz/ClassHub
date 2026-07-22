@@ -12,13 +12,33 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(email: string, password: string) {
-    return this.http.post<any>(`${this.baseUrl}/login`, {
-      email,
-      password
-    }).pipe(
+  login(
+    email: string,
+    password: string
+  ) {
+
+    return this.http.post<any>(
+      `${this.baseUrl}/login`,
+      {
+        email,
+        password,
+      }
+    )
+    .pipe(
+
       tap(res => {
-        localStorage.setItem('token', res.data.token);
+
+        localStorage.setItem(
+          'token',
+          res.data.token
+        );
+
+        localStorage.setItem(
+          'user',
+          JSON.stringify(
+            res.data.user
+          )
+        );
       })
     );
   }
@@ -28,6 +48,49 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('token');
+
+    localStorage.removeItem(
+      'token'
+    );
+
+    localStorage.removeItem(
+      'user'
+    );
+  }
+
+  getUser() {
+
+    const user =
+      localStorage.getItem(
+        'user'
+      );
+
+    if (!user) {
+      return null;
+    }
+
+    return JSON.parse(user);
+  }
+
+  isAdmin(): boolean {
+
+    return (
+      this.getUser()
+        ?.role
+        ?.key
+      ===
+      'admin'
+    );
+  }
+
+  isTeacher(): boolean {
+
+    return (
+      this.getUser()
+        ?.role
+        ?.key
+      ===
+      'teacher'
+    );
   }
 }

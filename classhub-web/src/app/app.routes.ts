@@ -23,10 +23,20 @@ export const routes: Routes = [
   },
 
 
-  // ACADEMIES
+  // TEACHER
+  // Academies
   {
     path: 'academies',
-    canActivate: [authGuard],
+    
+    canActivate: [
+      authGuard,
+      roleGuard,
+    ],
+
+    data: {
+      roles: ['teacher'],
+    },
+
     loadComponent: () =>
       import('./features/academies/academies-list/academies-list')
         .then(m => m.AcademiesListComponent),
@@ -34,7 +44,15 @@ export const routes: Routes = [
 
   {
     path: 'academies-management',
-    canActivate: [authGuard],
+    
+    canActivate: [
+      authGuard,
+      roleGuard,
+    ],
+
+    data: {
+      roles: ['admin'],
+    },
 
     loadComponent: () =>
       import(
@@ -46,7 +64,15 @@ export const routes: Routes = [
 
   {
     path: 'academies-management/new',
-    canActivate: [authGuard],
+    
+    canActivate: [
+      authGuard,
+      roleGuard,
+    ],
+
+    data: {
+      roles: ['admin'],
+    },
 
     loadComponent: () =>
       import(
@@ -58,7 +84,15 @@ export const routes: Routes = [
 
   {
     path: 'academies-management/edit/:id',
-    canActivate: [authGuard],
+
+    canActivate: [
+      authGuard,
+      roleGuard,
+    ],
+
+    data: {
+      roles: ['admin'],
+    },
 
     loadComponent: () =>
       import(
@@ -72,7 +106,16 @@ export const routes: Routes = [
 
   {
     path: 'classrooms',
-    canActivate: [authGuard],
+    
+    canActivate: [
+      authGuard,
+      roleGuard,
+    ],
+
+    data: {
+      roles: ['admin'],
+    },
+
     loadComponent: () =>
       import(
         './features/classrooms/classrooms-list/classrooms-list'
@@ -83,7 +126,16 @@ export const routes: Routes = [
 
   {
     path: 'classrooms/new',
-    canActivate: [authGuard],
+    
+    canActivate: [
+      authGuard,
+      roleGuard,
+    ],
+
+    data: {
+      roles: ['admin'],
+    },
+
     loadComponent: () =>
       import(
         './features/classrooms/classrooms-form/classrooms-form'
@@ -94,7 +146,16 @@ export const routes: Routes = [
 
   {
     path: 'classrooms/edit/:id',
-    canActivate: [authGuard],
+    
+    canActivate: [
+      authGuard,
+      roleGuard,
+    ],
+
+    data: {
+      roles: ['admin'],
+    },
+
     loadComponent: () =>
       import(
         './features/classrooms/classrooms-form/classrooms-form'
@@ -105,7 +166,16 @@ export const routes: Routes = [
 
   {
     path: 'classrooms/:id',
-    canActivate: [authGuard],
+    
+    canActivate: [
+      authGuard,
+      roleGuard,
+    ],
+
+    data: {
+      roles: ['admin'],
+    },
+
     loadComponent: () =>
       import(
         './features/classrooms/classroom-detail/classroom-detail'
@@ -117,7 +187,14 @@ export const routes: Routes = [
   {
     path: 'classrooms/:id/academies',
 
-    canActivate: [authGuard],
+    canActivate: [
+      authGuard,
+      roleGuard,
+    ],
+
+    data: {
+      roles: ['admin'],
+    },
 
     loadComponent: () =>
       import(
@@ -145,7 +222,14 @@ export const routes: Routes = [
   {
     path: 'users/:id/teacher-profile',
 
-    canActivate: [authGuard],
+    canActivate: [
+      authGuard,
+      roleGuard,
+    ],
+
+    data: {
+      roles: ['admin'],
+    },
 
     loadComponent: () =>
       import(
@@ -159,7 +243,16 @@ export const routes: Routes = [
 
   {
     path: 'students',
-    canActivate: [authGuard],
+  
+    canActivate: [
+      authGuard,
+      roleGuard,
+    ],
+
+    data: {
+      roles: ['admin'],
+    },
+
     loadComponent: () =>
       import(
         './features/students/students-list/students-list'
@@ -170,7 +263,16 @@ export const routes: Routes = [
 
   {
     path: 'students/new',
-    canActivate: [authGuard],
+    
+    canActivate: [
+      authGuard,
+      roleGuard,
+    ],
+
+    data: {
+      roles: ['admin'],
+    },
+
     loadComponent: () =>
       import(
         './features/students/student-form/student-form'
@@ -181,7 +283,16 @@ export const routes: Routes = [
 
   {
     path: 'students/edit/:id',
-    canActivate: [authGuard],
+    
+    canActivate: [
+      authGuard,
+      roleGuard,
+    ],
+
+    data: {
+      roles: ['admin'],
+    },
+
     loadComponent: () =>
       import(
         './features/students/student-form/student-form'
@@ -281,7 +392,16 @@ export const routes: Routes = [
 
   {
     path: 'users',
-    canActivate: [authGuard],
+    
+    canActivate: [
+      authGuard,
+      roleGuard,
+    ],
+
+    data: {
+      roles: ['admin'],
+    },
+
     loadComponent: () =>
       import(
         './features/users/users-list/users-list'
@@ -292,7 +412,16 @@ export const routes: Routes = [
 
   {
     path: 'users/new',
-    canActivate: [authGuard],
+    
+    canActivate: [
+      authGuard,
+      roleGuard,
+    ],
+
+    data: {
+      roles: ['admin'],
+    },
+
     loadComponent: () =>
       import(
         './features/users/user-form/user-form'
@@ -303,7 +432,16 @@ export const routes: Routes = [
 
   {
     path: 'users/edit/:id',
-    canActivate: [authGuard],
+    
+    canActivate: [
+      authGuard,
+      roleGuard,
+    ],
+
+    data: {
+      roles: ['admin'],
+    },
+
     loadComponent: () =>
       import(
         './features/users/user-form/user-form'
@@ -320,7 +458,12 @@ export const routes: Routes = [
 
     canActivate: [
       authGuard,
+      roleGuard,
     ],
+
+    data: {
+      roles: ['admin'],
+    },
 
     loadComponent: () =>
       import(
@@ -336,7 +479,12 @@ export const routes: Routes = [
 
     canActivate: [
       authGuard,
+      roleGuard,
     ],
+
+    data: {
+      roles: ['teacher'],
+    },
 
     loadComponent: () =>
       import(

@@ -25,6 +25,13 @@ export class SchoolsManagementService {
     );
   }
 
+  getMySchools() {
+
+    return this.http.get(
+      `${environment.apiUrl}/my-schools`
+    );
+  }
+
   getById(id: number) {
     return this.http.get(
       `${environment.apiUrl}/schools/${id}`
