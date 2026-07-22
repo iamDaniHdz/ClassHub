@@ -188,6 +188,47 @@
 
         </mat-card>
 
+        <mat-card>
+
+          <mat-card-content>
+
+            <h2>
+              Pendientes
+            </h2>
+
+            <div class="metric">
+
+              {{
+                dashboard.metrics.pendings
+              }}
+
+            </div>
+
+          </mat-card-content>
+
+        </mat-card>
+
+        <mat-card>
+
+          <mat-card-content>
+
+            <h2>
+              Vencidos
+            </h2>
+
+            <div
+              class="metric overdue-metric">
+
+              {{
+                dashboard.metrics.overdue_pendings
+              }}
+
+            </div>
+
+          </mat-card-content>
+
+        </mat-card>
+
       </div>
 
       @if (dashboard.next_class) {
@@ -254,6 +295,82 @@
               }}
 
             </p>
+
+          </mat-card-content>
+
+        </mat-card>
+
+      }
+
+      @if (
+        dashboard.upcoming_pendings?.length
+      ) {
+
+        <mat-card
+          class="upcoming-pendings">
+
+          <mat-card-content>
+
+            <h2>
+
+              Próximos Pendientes
+
+            </h2>
+
+            @for (
+              pending of dashboard.upcoming_pendings;
+              track pending.id
+            ) {
+
+              <div
+                class="pending-item">
+
+                <div
+                  class="pending-title">
+
+                  {{ pending.title }}
+
+                </div>
+
+                <div
+                  class="pending-academy">
+
+                  {{
+                    pending.assignment
+                      ?.academy
+                      ?.name
+                  }}
+
+                  -
+
+                  {{
+                    pending.assignment
+                      ?.classroom
+                      ?.degree
+                  }}°
+
+                  {{
+                    pending.assignment
+                      ?.classroom
+                      ?.group
+                  }}
+
+                </div>
+
+                <div
+                  class="pending-date">
+
+                  Vence:
+
+                  {{
+                    pending.due_date
+                  }}
+
+                </div>
+
+              </div>
+
+            }
 
           </mat-card-content>
 
