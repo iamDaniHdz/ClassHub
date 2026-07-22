@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\TeacherProfileController;
 use App\Http\Controllers\Api\UserSchoolController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\RoleController;
+use App\Http\Controllers\Api\AcademyAssignmentScheduleController;
 
 Route::prefix('v1')->group(function () {
 
@@ -131,6 +132,32 @@ Route::prefix('v1')->group(function () {
             Route::get(
                 '/me/profile',
                 [ProfileController::class, 'me']
+            );
+
+            //Horarios
+
+            Route::get(
+                'academy-assignments/{academyAssignment}/schedules',
+                [
+                    AcademyAssignmentScheduleController::class,
+                    'index'
+                ]
+            );
+
+            Route::post(
+                'academy-assignment-schedules',
+                [
+                    AcademyAssignmentScheduleController::class,
+                    'store'
+                ]
+            );
+
+            Route::delete(
+                'academy-assignment-schedules/{academyAssignmentSchedule}',
+                [
+                    AcademyAssignmentScheduleController::class,
+                    'destroy'
+                ]
             );
 
         });
