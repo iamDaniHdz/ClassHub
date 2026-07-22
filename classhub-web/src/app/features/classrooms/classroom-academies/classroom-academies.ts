@@ -29,6 +29,10 @@ import {
   ClassroomsManagementService,
 } from '../services/classrooms-management.service';
 
+import {
+  RouterLink,
+} from '@angular/router';
+
 @Component({
   selector: 'app-classroom-academies',
 
@@ -37,6 +41,7 @@ import {
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
     AppHeaderComponent,
     ...MATERIAL_IMPORTS,
   ],
