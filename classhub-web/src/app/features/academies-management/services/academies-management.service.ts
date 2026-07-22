@@ -5,11 +5,16 @@ import {
 
 import {
   HttpClient,
+  HttpParams,
 } from '@angular/common/http';
 
 import {
   environment,
 } from '../../../../environments/environment';
+
+import {
+  SchoolContextService,
+} from '../../school-context/services/school-context.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,10 +24,36 @@ export class AcademiesManagementService {
   private readonly http =
     inject(HttpClient);
 
+  private readonly schoolContext =
+    inject(SchoolContextService);
+
+  private getSchoolParams(): HttpParams {
+
+    const schoolId =
+      this.schoolContext.getSchoolId();
+
+    let params =
+      new HttpParams();
+
+    if (schoolId) {
+
+      params = params.set(
+        'school_id',
+        schoolId
+      );
+    }
+
+    return params;
+  }
+
   getAll() {
 
     return this.http.get(
-      `${environment.apiUrl}/academies`
+      `${environment.apiUrl}/academies`,
+      {
+        params:
+          this.getSchoolParams(),
+      }
     );
   }
 
@@ -35,9 +66,15 @@ export class AcademiesManagementService {
 
   create(data: any) {
 
+    const payload = {
+      ...data,
+      school_id:
+        this.schoolContext.getSchoolId(),
+    };
+
     return this.http.post(
       `${environment.apiUrl}/academies`,
-      data
+      payload
     );
   }
 
