@@ -1,23 +1,24 @@
 <?php
 
 use App\Http\Controllers\Api\AcademyAssignmentController;
+use App\Http\Controllers\Api\AcademyAssignmentScheduleController;
 use App\Http\Controllers\Api\AcademyController;
 use App\Http\Controllers\Api\AcademyTeacherController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ClassroomController;
+use App\Http\Controllers\Api\DashboardOverviewController;
+use App\Http\Controllers\Api\MyScheduleController;
+use App\Http\Controllers\Api\MySchoolController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\SchoolController;
 use App\Http\Controllers\Api\StudentAssignmentController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\TeacherProfileController;
-use App\Http\Controllers\Api\UserSchoolController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\RoleController;
-use App\Http\Controllers\Api\AcademyAssignmentScheduleController;
-use App\Http\Controllers\Api\MyScheduleController;
-use App\Http\Controllers\Api\MySchoolController;
+use App\Http\Controllers\Api\UserSchoolController;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
 
@@ -170,6 +171,13 @@ Route::prefix('v1')->group(function () {
             Route::get(
                 'my-schedule',
                 [MyScheduleController::class, 'index']
+            );
+
+            // DASHBOARD
+
+            Route::get(
+                'dashboard-overview',
+                [DashboardOverviewController::class, 'index']
             );
 
         });

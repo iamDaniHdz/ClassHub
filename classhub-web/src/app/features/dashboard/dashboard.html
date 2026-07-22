@@ -1,70 +1,268 @@
 <app-header />
 
-<div class="dashboard-container">
+<div class="container">
 
-  <mat-card class="dashboard-card">
+  <h1>
+    Dashboard
+  </h1>
 
-    <mat-card-header class="dashboard-header">
-      <mat-card-title>Dashboard</mat-card-title>
+  @if (loading) {
 
-      <button mat-button color="warn" (click)="logout()">
-        Logout
-      </button>
-    </mat-card-header>
+    <p>
+      Cargando información...
+    </p>
 
-    <mat-card-content>
+  } @else {
 
+    @if (isAdmin) {
 
- <strong>
-      Escuela activa:
-    </strong>
+      <div class="cards-grid">
 
-    {{ currentSchoolName }}
+        <mat-card>
 
+          <mat-card-content>
 
-      <!-- Async pipe -->
-      @if (user$ | async; as res) {
+            <h2>
+              Academias
+            </h2>
 
-        @if (res) {
-          <div>
-            <p><strong>Nombre:</strong> {{ res.data.name }}</p>
-            <p><strong>Email:</strong> {{ res.data.email }}</p>
-            @if (res.data.role) {
-              <p>
-                <strong>Rol:</strong> {{ res.data.role.name }}
-              </p>
-            }
-          </div>
-        } @else {
-          <p style="color:red;">Error cargando usuario</p>
-        }
+            <div class="metric">
+              {{
+                dashboard.metrics.academies
+              }}
+            </div>
 
-      } @else {
-        <p>Cargando usuario...</p>
+          </mat-card-content>
+
+        </mat-card>
+
+        <mat-card>
+
+          <mat-card-content>
+
+            <h2>
+              Grupos
+            </h2>
+
+            <div class="metric">
+              {{
+                dashboard.metrics.classrooms
+              }}
+            </div>
+
+          </mat-card-content>
+
+        </mat-card>
+
+        <mat-card>
+
+          <mat-card-content>
+
+            <h2>
+              Estudiantes
+            </h2>
+
+            <div class="metric">
+              {{
+                dashboard.metrics.students
+              }}
+            </div>
+
+          </mat-card-content>
+
+        </mat-card>
+
+        <mat-card>
+
+          <mat-card-content>
+
+            <h2>
+              Docentes
+            </h2>
+
+            <div class="metric">
+              {{
+                dashboard.metrics.teachers
+              }}
+            </div>
+
+          </mat-card-content>
+
+        </mat-card>
+
+        <mat-card>
+
+          <mat-card-content>
+
+            <h2>
+              Asignaciones
+            </h2>
+
+            <div class="metric">
+              {{
+                dashboard.metrics.academy_assignments
+              }}
+            </div>
+
+          </mat-card-content>
+
+        </mat-card>
+
+        <mat-card>
+
+          <mat-card-content>
+
+            <h2>
+              Horarios
+            </h2>
+
+            <div class="metric">
+              {{
+                dashboard.metrics.schedules
+              }}
+            </div>
+
+          </mat-card-content>
+
+        </mat-card>
+
+      </div>
+
+    }
+
+    @if (isTeacher) {
+
+      <div class="cards-grid">
+
+        <mat-card>
+
+          <mat-card-content>
+
+            <h2>
+              Mis Academias
+            </h2>
+
+            <div class="metric">
+              {{
+                dashboard.metrics.academies
+              }}
+            </div>
+
+          </mat-card-content>
+
+        </mat-card>
+
+        <mat-card>
+
+          <mat-card-content>
+
+            <h2>
+              Clases Hoy
+            </h2>
+
+            <div class="metric">
+              {{
+                dashboard.metrics.today_classes
+              }}
+            </div>
+
+          </mat-card-content>
+
+        </mat-card>
+
+        <mat-card>
+
+          <mat-card-content>
+
+            <h2>
+              Clases Semana
+            </h2>
+
+            <div class="metric">
+              {{
+                dashboard.metrics.weekly_classes
+              }}
+            </div>
+
+          </mat-card-content>
+
+        </mat-card>
+
+      </div>
+
+      @if (dashboard.next_class) {
+
+        <mat-card
+          class="next-class">
+
+          <mat-card-content>
+
+            <h2>
+              Próxima Clase
+            </h2>
+
+            <p>
+
+              <strong>
+                Academia:
+              </strong>
+
+              {{
+                dashboard.next_class.academy
+              }}
+
+            </p>
+
+            <p>
+
+              <strong>
+                Grupo:
+              </strong>
+
+              {{
+                dashboard.next_class.classroom
+              }}
+
+            </p>
+
+            <p>
+
+              <strong>
+                Día:
+              </strong>
+
+              {{
+                getDayName(
+                  dashboard.next_class.day_of_week
+                )
+              }}
+
+            </p>
+
+            <p>
+
+              <strong>
+                Horario:
+              </strong>
+
+              {{
+                dashboard.next_class.start_time
+              }}
+              -
+              {{
+                dashboard.next_class.end_time
+              }}
+
+            </p>
+
+          </mat-card-content>
+
+        </mat-card>
+
       }
 
+    }
 
-    <button mat-raised-button color="warn" (click)="force401()">
-      FORZAR 401s
-    </button>
-
-
-    </mat-card-content>
-
-  </mat-card>
-
-
-<hr>
-
-<h3>Navegaciónss</h3>
-
-<!-- ADMIN -->
-<button [routerLink]="['/admin']">Panel Admin</button>
-<button routerLink="/admin/users">Usuarios</button>
-
-<!-- TEACHER -->
-<button routerLink="/teacher">Dashboard Maestro</button>
-<button routerLink="/teacher/classes">Clases</button>
-
+  }
 
 </div>

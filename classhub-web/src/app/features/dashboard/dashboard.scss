@@ -1,0 +1,36 @@
+.container {
+
+  padding: 24px;
+}
+
+.cards-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(
+        220px,
+        1fr
+      )
+    );
+
+  gap: 16px;
+
+  margin-bottom: 24px;
+}
+
+.metric {
+
+  font-size: 40px;
+
+  font-weight: bold;
+
+  margin-top: 8px;
+}
+
+.next-class {
+
+  margin-top: 24px;
+}
