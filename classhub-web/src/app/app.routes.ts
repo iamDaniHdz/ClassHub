@@ -331,6 +331,21 @@ export const routes: Routes = [
       ),
   },
 
+  {
+    path: 'my-schedule',
+
+    canActivate: [
+      authGuard,
+    ],
+
+    loadComponent: () =>
+      import(
+        './features/teachers/my-schedule/my-schedule'
+      ).then(
+        m => m.MyScheduleComponent
+      ),
+  },
+
   // DEFAULT
   {
     path: '',
