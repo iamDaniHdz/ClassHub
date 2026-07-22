@@ -1,0 +1,51 @@
+.form-container {
+
+  max-width: 800px;
+
+  margin: 32px auto;
+
+  padding: 24px;
+}
+
+form {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 16px;
+}
+
+mat-form-field {
+
+  width: 100%;
+}
+
+.schools-section {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+
+  padding: 16px;
+
+  border: 1px solid #ddd;
+
+  border-radius: 8px;
+}
+
+.schools-section h3 {
+
+  margin: 0 0 8px 0;
+}
+
+.actions {
+
+  display: flex;
+
+  gap: 12px;
+
+  margin-top: 16px;
+}

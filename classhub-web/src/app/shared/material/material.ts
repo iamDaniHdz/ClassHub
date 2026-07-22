@@ -22,6 +22,12 @@ import {
   MatSelectModule
 } from '@angular/material/select';
 
+
+import {
+  MatCheckboxModule,
+} from '@angular/material/checkbox';
+
+
 export const MATERIAL_IMPORTS = [
   MatTableModule,
   MatCardModule,
@@ -29,4 +35,5 @@ export const MATERIAL_IMPORTS = [
   MatFormFieldModule,
   MatInputModule,
   MatSelectModule,
+  MatCheckboxModule,
 ];

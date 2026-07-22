@@ -20,6 +20,20 @@ class UserController extends Controller
                 'schools',
             ]);
 
+        if ($request->school_id) {
+
+            $query->whereHas(
+                'schools',
+                function ($q) use ($request) {
+
+                    $q->where(
+                        'schools.id',
+                        $request->school_id
+                    );
+                }
+            );
+        }
+
         if ($request->role_id) {
 
             $query->where(

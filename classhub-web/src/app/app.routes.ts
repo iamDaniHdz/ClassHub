@@ -265,6 +265,41 @@ export const routes: Routes = [
         .then(m => m.ClassesComponent),
   },
 
+  // USERS
+
+  {
+    path: 'users',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import(
+        './features/users/users-list/users-list'
+      ).then(
+        m => m.UsersListComponent
+      ),
+  },
+
+  {
+    path: 'users/new',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import(
+        './features/users/user-form/user-form'
+      ).then(
+        m => m.UserFormComponent
+      ),
+  },
+
+  {
+    path: 'users/edit/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import(
+        './features/users/user-form/user-form'
+      ).then(
+        m => m.UserFormComponent
+      ),
+  },
+
   // DEFAULT
   {
     path: '',
