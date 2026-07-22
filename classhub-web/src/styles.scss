@@ -7,16 +7,16 @@
 
 html {
   height: 100%;
-  @include mat.theme(
-    (
-      color: (
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
-      ),
-      typography: Roboto,
-      density: 0,
-    )
-  );
+  
+  @include mat.theme((
+    color: (
+      primary: mat.$rose-palette,
+      tertiary: mat.$violet-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+
 }
 
 body {
@@ -37,3 +37,7 @@ body {
   height: 100%;
 }
 /* You can add global styles to this file, and also import other style files */
+
+.page-container {
+  padding: 10vh 30vh;
+}

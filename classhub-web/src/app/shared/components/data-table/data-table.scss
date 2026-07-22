@@ -1,0 +1,35 @@
+.table {
+
+  width: 100%;
+}
+
+.mat-mdc-row {
+
+  background: #FFFFFF;
+}
+
+.mat-mdc-row:hover {
+
+  background: #FBEFF2;
+}
+
+.mat-mdc-header-row {
+
+  background: #F7DEE5;
+}
+
+.mat-mdc-header-cell {
+
+  font-weight: 600;
+}
+
+.mat-mdc-cell,
+.mat-mdc-header-cell {
+
+  padding: 12px 16px;
+}
+
+mat-paginator {
+
+  margin-top: 16px;
+}

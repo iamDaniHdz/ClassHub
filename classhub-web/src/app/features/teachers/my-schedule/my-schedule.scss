@@ -1,39 +1,122 @@
-.container {
 
-  padding: 24px;
+.page-header {
 
-  max-width: 1000px;
-
-  margin: 0 auto;
+  margin-bottom: 24px;
 }
 
-.day-section {
+.page-header h1 {
 
-  margin-bottom: 32px;
+  margin-bottom: 4px;
 }
 
-.schedule-card {
+.page-header p {
+
+  color: #666;
+}
+
+.schedule-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(
+        340px,
+        1fr
+      )
+    );
+
+  gap: 24px;
+}
+
+.day-card {
+
+  height: fit-content;
+}
+
+.schedule-item {
+
+  padding: 16px;
 
   margin-bottom: 12px;
+
+  border-radius: 12px;
+
+  border: 1px solid #ececec;
+
+  transition: all .2s ease;
 }
 
-.schedule-time {
+.schedule-item:hover {
+
+  background: #fafafa;
+
+  transform: translateY(-2px);
+}
+
+.time-block {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
 
   font-weight: 600;
 
-  margin-bottom: 8px;
+  color: #E89CB1;
 }
 
-.schedule-academy {
+.academy-name {
+
+  margin-top: 12px;
 
   font-size: 18px;
 
   font-weight: 600;
 }
 
-.schedule-classroom {
+.classroom-name {
 
-  color: #666;
+  margin-top: 8px;
 
-  margin-top: 4px;
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  color: #6b7280;
+}
+
+.loading-container {
+
+  display: flex;
+
+  justify-content: center;
+
+  padding: 80px;
+}
+
+.empty-state {
+
+  max-width: 500px;
+
+  margin: 60px auto;
+
+  text-align: center;
+}
+
+.empty-state mat-icon {
+
+  font-size: 48px;
+
+  width: 48px;
+
+  height: 48px;
+
+  color: #9ca3af;
+
+  margin-bottom: 16px;
 }

@@ -1,7 +1,10 @@
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   OnInit,
+  TemplateRef,
+  ViewChild,
   inject,
 } from '@angular/core';
 
@@ -25,6 +28,11 @@ import {
   AcademiesManagementService,
 } from '../services/academies-management.service';
 
+import {
+  DataTableComponent,
+  DataTableColumn,
+} from '../../../shared/components/data-table/data-table';
+
 @Component({
   selector: 'app-academies-management-list',
 
@@ -34,6 +42,7 @@ import {
     CommonModule,
     RouterLink,
     AppHeaderComponent,
+    DataTableComponent,
     ...MATERIAL_IMPORTS,
   ],
 
@@ -44,7 +53,7 @@ import {
     './academies-management-list.scss',
 })
 export class AcademiesManagementListComponent
-  implements OnInit
+  implements OnInit, AfterViewInit
 {
   private readonly academiesService =
     inject(
@@ -54,13 +63,39 @@ export class AcademiesManagementListComponent
   private readonly cdr =
     inject(ChangeDetectorRef);
 
+  @ViewChild(
+    'actionsTemplate'
+  )
+  actionsTemplate!: TemplateRef<any>;
+
   academies: any[] = [];
 
   loading = true;
 
+  columns: DataTableColumn[] = [];
+
   ngOnInit(): void {
 
     this.load();
+  }
+
+  ngAfterViewInit(): void {
+
+    this.columns = [
+      {
+        key: 'name',
+        header: 'Nombre',
+        sortable: true,
+      },
+      {
+        key: 'actions',
+        header: 'Acciones',
+        cellTemplate:
+          this.actionsTemplate,
+      },
+    ];
+
+    this.cdr.detectChanges();
   }
 
   load(): void {
@@ -71,14 +106,16 @@ export class AcademiesManagementListComponent
       .getAll()
       .subscribe({
 
-        next: (response: any) => {
+        next: (
+          response: any
+        ) => {
 
           this.academies =
             response.data;
 
           this.loading =
             false;
-          
+
           this.cdr.detectChanges();
         },
 
@@ -106,7 +143,9 @@ export class AcademiesManagementListComponent
     }
 
     this.academiesService
-      .delete(academyId)
+      .delete(
+        academyId
+      )
       .subscribe({
 
         next: () => {

@@ -6,6 +6,7 @@ import {
 import {
   Router,
   RouterLink,
+  RouterLinkActive,
 } from '@angular/router';
 
 import {
@@ -15,6 +16,7 @@ import {
 import {
   SchoolContextService,
 } from '../../features/school-context/services/school-context.service';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-header',
@@ -23,6 +25,8 @@ import {
 
   imports: [
     RouterLink,
+    RouterLinkActive,
+    MatButtonModule,
   ],
 
   templateUrl: './app-header.html',

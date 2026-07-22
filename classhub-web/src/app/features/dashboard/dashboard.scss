@@ -1,6 +1,39 @@
-.container {
+.hero-card {
 
-  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.hero-content {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+}
+
+.hero-content p {
+  color: #666;
+}
+
+.hero-icon {
+
+  font-size: 64px;
+
+  width: 64px;
+
+  height: 64px;
+
+  opacity: .3;
+}
+
+.loading-container {
+
+  display: flex;
+
+  justify-content: center;
+
+  padding: 80px;
 }
 
 .cards-grid {
@@ -11,71 +44,80 @@
     repeat(
       auto-fit,
       minmax(
-        220px,
+        240px,
         1fr
       )
     );
 
   gap: 16px;
 
+  margin-top: 24px;
+
   margin-bottom: 24px;
+}
+
+.metric-card {
+
+  transition:
+    transform .2s ease;
+}
+
+.metric-card:hover {
+
+  transform:
+    translateY(-3px);
+}
+
+.metric-header {
+
+  display: flex;
+
+  justify-content: flex-end;
+}
+
+.metric-header mat-icon {
+
+  color: var(--primary-color);
+
+  opacity: .7;
 }
 
 .metric {
 
-  font-size: 40px;
+  font-size: 42px;
 
-  font-weight: bold;
+  font-weight: 700;
 
   margin-top: 8px;
 }
 
-.next-class {
+.metric-label {
 
-  margin-top: 24px;
+  color: #6b7280;
+
+  margin-top: 8px;
 }
 
 .overdue-metric {
 
-  color: #d32f2f;
+  color: #ef4444;
 }
 
-.upcoming-pendings {
+.next-class-card {
 
-  margin-top: 24px;
+  margin-bottom: 24px;
 }
 
-.pending-item {
+.next-class-academy {
 
-  padding: 12px 0;
-
-  border-bottom: 1px solid #eee;
-}
-
-.pending-item:last-child {
-
-  border-bottom: none;
-}
-
-.pending-title {
+  font-size: 22px;
 
   font-weight: 600;
 
-  font-size: 16px;
+  margin-bottom: 8px;
 }
 
-.pending-academy {
+.upcoming-card {
 
-  margin-top: 4px;
-
-  color: #666;
-}
-
-.pending-date {
-
-  margin-top: 4px;
-
-  color: #d32f2f;
-
-  font-size: 14px;
+  margin-bottom: 24px;
 }

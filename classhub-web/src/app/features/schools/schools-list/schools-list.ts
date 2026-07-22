@@ -1,7 +1,10 @@
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   OnInit,
+  TemplateRef,
+  ViewChild,
   inject,
 } from '@angular/core';
 
@@ -25,6 +28,11 @@ import {
   SchoolsManagementService,
 } from '../services/schools-management.service';
 
+import {
+  DataTableComponent,
+  DataTableColumn,
+} from '../../../shared/components/data-table/data-table';
+
 @Component({
   selector: 'app-schools-list',
 
@@ -34,6 +42,7 @@ import {
     CommonModule,
     RouterLink,
     AppHeaderComponent,
+    DataTableComponent,
     ...MATERIAL_IMPORTS,
   ],
 
@@ -44,7 +53,7 @@ import {
     './schools-list.scss',
 })
 export class SchoolsListComponent
-  implements OnInit
+  implements OnInit, AfterViewInit
 {
   private readonly schoolsService =
     inject(
@@ -54,13 +63,41 @@ export class SchoolsListComponent
   private readonly cdr =
     inject(ChangeDetectorRef);
 
+  @ViewChild(
+    'actionsTemplate'
+  )
+  actionsTemplate!: TemplateRef<any>;
+
   schools: any[] = [];
 
   loading = true;
 
+  columns: DataTableColumn[] = [];
+
   ngOnInit(): void {
 
     this.load();
+  }
+
+  ngAfterViewInit(): void {
+
+    this.columns = [
+
+      {
+        key: 'name',
+        header: 'Nombre',
+        sortable: true,
+      },
+
+      {
+        key: 'actions',
+        header: 'Acciones',
+        cellTemplate:
+          this.actionsTemplate,
+      },
+    ];
+
+    this.cdr.detectChanges();
   }
 
   load(): void {
@@ -71,7 +108,9 @@ export class SchoolsListComponent
       .getAll()
       .subscribe({
 
-        next: (response: any) => {
+        next: (
+          response: any
+        ) => {
 
           this.schools =
             response.data;
@@ -84,7 +123,9 @@ export class SchoolsListComponent
 
         error: error => {
 
-          console.error(error);
+          console.error(
+            error
+          );
 
           this.loading =
             false;
@@ -106,7 +147,9 @@ export class SchoolsListComponent
     }
 
     this.schoolsService
-      .delete(schoolId)
+      .delete(
+        schoolId
+      )
       .subscribe({
 
         next: () => {
@@ -116,7 +159,9 @@ export class SchoolsListComponent
 
         error: error => {
 
-          console.error(error);
+          console.error(
+            error
+          );
         },
       });
   }

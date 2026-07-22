@@ -1,7 +1,10 @@
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   OnInit,
+  TemplateRef,
+  ViewChild,
   inject,
 } from '@angular/core';
 
@@ -25,6 +28,11 @@ import {
   StudentsManagementService,
 } from '../services/students-management.service';
 
+import {
+  DataTableComponent,
+  DataTableColumn,
+} from '../../../shared/components/data-table/data-table';
+
 @Component({
   selector: 'app-students-list',
 
@@ -34,6 +42,7 @@ import {
     CommonModule,
     RouterLink,
     AppHeaderComponent,
+    DataTableComponent,
     ...MATERIAL_IMPORTS,
   ],
 
@@ -44,7 +53,7 @@ import {
     './students-list.scss',
 })
 export class StudentsListComponent
-  implements OnInit
+  implements OnInit, AfterViewInit
 {
   private readonly studentsService =
     inject(
@@ -54,19 +63,47 @@ export class StudentsListComponent
   private readonly cdr =
     inject(ChangeDetectorRef);
 
+  @ViewChild(
+    'actionsTemplate'
+  )
+  actionsTemplate!: TemplateRef<any>;
+
   students: any[] = [];
 
   loading = true;
 
-  displayedColumns = [
-    'name',
-    'classroom',
-    'actions',
-  ];
+  columns: DataTableColumn[] = [];
 
   ngOnInit(): void {
 
     this.load();
+  }
+
+  ngAfterViewInit(): void {
+
+    this.columns = [
+
+      {
+        key: 'full_name',
+        header: 'Nombre',
+        sortable: true,
+      },
+
+      {
+        key: 'classroom_name',
+        header: 'Grupo',
+        sortable: true,
+      },
+
+      {
+        key: 'actions',
+        header: 'Acciones',
+        cellTemplate:
+          this.actionsTemplate,
+      },
+    ];
+
+    this.cdr.detectChanges();
   }
 
   load(): void {
@@ -75,10 +112,21 @@ export class StudentsListComponent
       .getAll()
       .subscribe({
 
-        next: (response: any) => {
+        next: (
+          response: any
+        ) => {
 
           this.students =
-            response.data;
+            response.data.map(
+              (student: any) => ({
+
+                ...student,
+
+                classroom_name:
+                  student.classroom?.name ??
+                  'Sin grupo',
+              })
+            );
 
           this.loading =
             false;
@@ -88,10 +136,13 @@ export class StudentsListComponent
 
         error: error => {
 
-          console.error(error);
+          console.error(
+            error
+          );
 
-          this.loading = false;
-        }
+          this.loading =
+            false;
+        },
       });
   }
 
@@ -119,8 +170,10 @@ export class StudentsListComponent
 
         error: error => {
 
-          console.error(error);
-        }
+          console.error(
+            error
+          );
+        },
       });
   }
 }

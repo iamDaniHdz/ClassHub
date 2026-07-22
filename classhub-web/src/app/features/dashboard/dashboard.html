@@ -1,16 +1,46 @@
 <app-header />
 
-<div class="container">
+<div class="page-container">
 
-  <h1>
-    Dashboard
-  </h1>
+  <mat-card class="hero-card">
+
+    <mat-card-content>
+
+      <div class="hero-content">
+
+        <div>
+
+          <h1>
+            Dashboard
+          </h1>
+
+          <p>
+            Resumen general de tu actividad académica.
+          </p>
+
+        </div>
+
+        <mat-icon class="hero-icon">
+
+          dashboard
+
+        </mat-icon>
+
+      </div>
+
+    </mat-card-content>
+
+  </mat-card>
 
   @if (loading) {
 
-    <p>
-      Cargando información...
-    </p>
+    <div class="loading-container">
+
+      <mat-spinner
+        diameter="40">
+      </mat-spinner>
+
+    </div>
 
   } @else {
 
@@ -18,113 +48,185 @@
 
       <div class="cards-grid">
 
-        <mat-card>
+        <mat-card class="metric-card">
 
           <mat-card-content>
 
-            <h2>
-              Academias
-            </h2>
+            <div class="metric-header">
+
+              <mat-icon>
+                school
+              </mat-icon>
+
+            </div>
 
             <div class="metric">
+
               {{
                 dashboard.metrics.academies
               }}
+
+            </div>
+
+            <div class="metric-label">
+
+              Academias
+
             </div>
 
           </mat-card-content>
 
         </mat-card>
 
-        <mat-card>
+        <mat-card class="metric-card">
 
           <mat-card-content>
 
-            <h2>
-              Grupos
-            </h2>
+            <div class="metric-header">
+
+              <mat-icon>
+                groups
+              </mat-icon>
+
+            </div>
 
             <div class="metric">
+
               {{
                 dashboard.metrics.classrooms
               }}
+
+            </div>
+
+            <div class="metric-label">
+
+              Grupos
+
             </div>
 
           </mat-card-content>
 
         </mat-card>
 
-        <mat-card>
+        <mat-card class="metric-card">
 
           <mat-card-content>
 
-            <h2>
-              Estudiantes
-            </h2>
+            <div class="metric-header">
+
+              <mat-icon>
+                badge
+              </mat-icon>
+
+            </div>
 
             <div class="metric">
+
               {{
                 dashboard.metrics.students
               }}
+
+            </div>
+
+            <div class="metric-label">
+
+              Estudiantes
+
             </div>
 
           </mat-card-content>
 
         </mat-card>
 
-        <mat-card>
+        <mat-card class="metric-card">
 
           <mat-card-content>
 
-            <h2>
-              Docentes
-            </h2>
+            <div class="metric-header">
+
+              <mat-icon>
+                person
+              </mat-icon>
+
+            </div>
 
             <div class="metric">
+
               {{
                 dashboard.metrics.teachers
               }}
+
+            </div>
+
+            <div class="metric-label">
+
+              Docentes
+
             </div>
 
           </mat-card-content>
 
         </mat-card>
 
-        <mat-card>
+        <!-- <mat-card class="metric-card">
 
           <mat-card-content>
 
-            <h2>
-              Asignaciones
-            </h2>
+            <div class="metric-header">
+
+              <mat-icon>
+                assignment
+              </mat-icon>
+
+            </div>
 
             <div class="metric">
+
               {{
                 dashboard.metrics.academy_assignments
               }}
+
+            </div>
+
+            <div class="metric-label">
+
+              Asignaciones
+
             </div>
 
           </mat-card-content>
 
-        </mat-card>
+        </mat-card> -->
 
-        <mat-card>
+        <!-- <mat-card class="metric-card">
 
           <mat-card-content>
 
-            <h2>
-              Horarios
-            </h2>
+            <div class="metric-header">
+
+              <mat-icon>
+                schedule
+              </mat-icon>
+
+            </div>
 
             <div class="metric">
+
               {{
                 dashboard.metrics.schedules
               }}
+
+            </div>
+
+            <div class="metric-label">
+
+              Horarios
+
             </div>
 
           </mat-card-content>
 
-        </mat-card>
+        </mat-card> -->
 
       </div>
 
@@ -134,67 +236,107 @@
 
       <div class="cards-grid">
 
-        <mat-card>
+        <mat-card class="metric-card">
 
           <mat-card-content>
 
-            <h2>
-              Mis Academias
-            </h2>
+            <div class="metric-header">
+
+              <mat-icon>
+                school
+              </mat-icon>
+
+            </div>
 
             <div class="metric">
+
               {{
                 dashboard.metrics.academies
               }}
+
+            </div>
+
+            <div class="metric-label">
+
+              Mis Academias
+
             </div>
 
           </mat-card-content>
 
         </mat-card>
 
-        <mat-card>
+        <mat-card class="metric-card">
 
           <mat-card-content>
 
-            <h2>
-              Clases Hoy
-            </h2>
+            <div class="metric-header">
+
+              <mat-icon>
+                today
+              </mat-icon>
+
+            </div>
 
             <div class="metric">
+
               {{
                 dashboard.metrics.today_classes
               }}
+
+            </div>
+
+            <div class="metric-label">
+
+              Clases Hoy
+
             </div>
 
           </mat-card-content>
 
         </mat-card>
 
-        <mat-card>
+        <mat-card class="metric-card">
 
           <mat-card-content>
 
-            <h2>
-              Clases Semana
-            </h2>
+            <div class="metric-header">
+
+              <mat-icon>
+                calendar_month
+              </mat-icon>
+
+            </div>
 
             <div class="metric">
+
               {{
                 dashboard.metrics.weekly_classes
               }}
+
+            </div>
+
+            <div class="metric-label">
+
+              Clases Semana
+
             </div>
 
           </mat-card-content>
 
         </mat-card>
 
-        <mat-card>
+        <mat-card class="metric-card">
 
           <mat-card-content>
 
-            <h2>
-              Pendientes
-            </h2>
+            <div class="metric-header">
+
+              <mat-icon>
+                checklist
+              </mat-icon>
+
+            </div>
 
             <div class="metric">
 
@@ -204,24 +346,9 @@
 
             </div>
 
-          </mat-card-content>
+            <div class="metric-label">
 
-        </mat-card>
-
-        <mat-card>
-
-          <mat-card-content>
-
-            <h2>
-              Vencidos
-            </h2>
-
-            <div
-              class="metric overdue-metric">
-
-              {{
-                dashboard.metrics.overdue_pendings
-              }}
+              Pendientes
 
             </div>
 
@@ -229,37 +356,74 @@
 
         </mat-card>
 
+        <!-- <mat-card class="metric-card">
+
+          <mat-card-content>
+
+            <div class="metric-header">
+
+              <mat-icon color="warn">
+                warning
+              </mat-icon>
+
+            </div>
+
+            <div class="metric overdue-metric">
+
+              {{
+                dashboard.metrics.overdue_pendings
+              }}
+
+            </div>
+
+            <div class="metric-label">
+
+              Vencidos
+
+            </div>
+
+          </mat-card-content>
+
+        </mat-card> -->
+
       </div>
 
       @if (dashboard.next_class) {
 
         <mat-card
-          class="next-class">
+          class="next-class-card">
+
+          <mat-card-header>
+
+            <mat-icon
+              mat-card-avatar>
+
+              schedule
+
+            </mat-icon>
+
+            <mat-card-title>
+
+              Próxima Clase
+
+            </mat-card-title>
+
+          </mat-card-header>
 
           <mat-card-content>
 
-            <h2>
-              Próxima Clase
-            </h2>
-
-            <p>
-
-              <strong>
-                Academia:
-              </strong>
+            <div
+              class="next-class-academy">
 
               {{
                 dashboard.next_class.academy
               }}
 
-            </p>
+            </div>
 
             <p>
 
-              <strong>
-                Grupo:
-              </strong>
-
+              Grupo
               {{
                 dashboard.next_class.classroom
               }}
@@ -267,10 +431,6 @@
             </p>
 
             <p>
-
-              <strong>
-                Día:
-              </strong>
 
               {{
                 getDayName(
@@ -281,10 +441,6 @@
             </p>
 
             <p>
-
-              <strong>
-                Horario:
-              </strong>
 
               {{
                 dashboard.next_class.start_time
@@ -307,72 +463,73 @@
       ) {
 
         <mat-card
-          class="upcoming-pendings">
+          class="upcoming-card">
 
-          <mat-card-content>
+          <mat-card-header>
 
-            <h2>
+            <mat-card-title>
 
               Próximos Pendientes
 
-            </h2>
+            </mat-card-title>
+
+          </mat-card-header>
+
+          <mat-list>
 
             @for (
               pending of dashboard.upcoming_pendings;
               track pending.id
             ) {
 
-              <div
-                class="pending-item">
+              <mat-list-item>
+
+                <mat-icon
+                  matListItemIcon>
+
+                  task
+
+                </mat-icon>
 
                 <div
-                  class="pending-title">
+                  matListItemTitle>
 
                   {{ pending.title }}
 
                 </div>
 
                 <div
-                  class="pending-academy">
+                  matListItemLine>
 
                   {{
-                    pending.assignment
-                      ?.academy
-                      ?.name
+                    pending.assignment?.academy?.name
                   }}
 
                   -
 
                   {{
-                    pending.assignment
-                      ?.classroom
-                      ?.degree
+                    pending.assignment?.classroom?.degree
                   }}°
 
                   {{
-                    pending.assignment
-                      ?.classroom
-                      ?.group
+                    pending.assignment?.classroom?.group
                   }}
 
                 </div>
 
                 <div
-                  class="pending-date">
+                  matListItemLine>
 
                   Vence:
-
-                  {{
-                    pending.due_date
-                  }}
+                  {{ pending.due_date }}
 
                 </div>
 
-              </div>
+              </mat-list-item>
 
             }
 
-          </mat-card-content>
+          </mat-list>
 
         </mat-card>
 
