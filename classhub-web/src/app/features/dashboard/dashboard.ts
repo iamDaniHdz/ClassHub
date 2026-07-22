@@ -1,92 +1,131 @@
-import { Component } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 
-import { CommonModule } from '@angular/common';
+import {
+  CommonModule,
+} from '@angular/common';
 
-import { Observable, catchError, of } from 'rxjs';
+import {
+  AppHeaderComponent,
+} from '../../components/app-header/app-header';
 
-import { Router, RouterModule } from '@angular/router';
+import {
+  MATERIAL_IMPORTS,
+} from '../../shared/material/material';
 
-import { AuthService } from '../../core/services/auth';
-
-import { UserService } from '../../core/services/user';
-
-import { User } from '../../types/user';
-
-import { ApiResponse } from '../../types/api';
-
-import { MatCardModule } from '@angular/material/card';
-
-import { AppHeaderComponent } from '../../components/app-header/app-header';
-
-import { SchoolContextService } from '../school-context/services/school-context.service';
+import {
+  DashboardOverviewService,
+} from './services/dashboard-overview.service';
 
 @Component({
+  selector: 'app-dashboard',
+
   standalone: true,
 
-  selector: 'app-dashboard',
+  imports: [
+    CommonModule,
+    AppHeaderComponent,
+    ...MATERIAL_IMPORTS,
+  ],
 
   templateUrl: './dashboard.html',
 
-  imports: [CommonModule, MatCardModule, RouterModule, AppHeaderComponent],
+  styleUrl: './dashboard.scss',
 })
-export class DashboardComponent {
-  user$: Observable<ApiResponse<User> | null>;
+export class DashboardComponent
+  implements OnInit
+{
+  private readonly overviewService =
+    inject(
+      DashboardOverviewService
+    );
 
-  constructor(
-    private readonly userService: UserService,
+  private readonly cdr =
+    inject(ChangeDetectorRef);
 
-    private readonly router: Router,
+  loading = true;
 
-    private readonly auth: AuthService,
+  dashboard: any = null;
 
-    private readonly schoolContext: SchoolContextService,
-  ) {
-    const school = this.schoolContext.getSchool();
+  ngOnInit(): void {
 
-    /**
-     * Obligar a seleccionar
-     * una escuela activa
-     */
-    if (!school) {
-      this.router.navigate(['/school-selector']);
-    }
+    this.loadDashboard();
+  }
 
-    this.user$ = this.userService.me().pipe(
-      catchError((error) => {
-        console.error('Error cargando usuario:', error);
+  loadDashboard(): void {
 
-        throw error;
-      }),
+    this.overviewService
+      .getOverview()
+      .subscribe({
+
+        next: (
+          response: any
+        ) => {
+
+          this.dashboard =
+            response.data;
+
+          this.loading =
+            false;
+
+          this.cdr.detectChanges();
+        },
+
+        error: error => {
+
+          console.error(error);
+
+          this.loading =
+            false;
+        },
+      });
+  }
+
+  get isAdmin(): boolean {
+
+    return (
+      this.dashboard?.role ===
+      'admin'
     );
   }
 
-  get currentSchoolName(): string {
-    return this.schoolContext.getSchoolName() ?? 'Sin escuela seleccionada';
+  get isTeacher(): boolean {
+
+    return (
+      this.dashboard?.role ===
+      'teacher'
+    );
   }
 
-  changeSchool(): void {
-    this.router.navigate(['/school-selector']);
-  }
+  getDayName(
+    day: number
+  ): string {
 
-  logout(): void {
-    this.schoolContext.clear();
+    const days = {
 
-    this.auth.logout();
+      1: 'Lunes',
 
-    this.router.navigate(['/login']);
-  }
+      2: 'Martes',
 
-  force401(): void {
-    console.log('Forzando token inválido');
+      3: 'Miércoles',
 
-    localStorage.setItem('token', 'token_fake');
+      4: 'Jueves',
 
-    this.user$ = this.userService.me().pipe(
-      catchError((error) => {
-        console.error('Error forzado:', error);
+      5: 'Viernes',
 
-        return of(null);
-      }),
+      6: 'Sábado',
+
+      7: 'Domingo',
+    };
+
+    return (
+      days[
+        day as keyof typeof days
+      ] ?? ''
     );
   }
 }

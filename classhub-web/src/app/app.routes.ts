@@ -2,6 +2,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
 import { roleGuard } from './core/guards/role-guard';
+import { schoolContextGuard } from './core/guards/school-context-guard';
 
 export const routes: Routes = [
 
@@ -16,7 +17,12 @@ export const routes: Routes = [
   // DASHBOARD BASE
   {
     path: 'dashboard',
-    canActivate: [authGuard],
+    
+    canActivate: [
+      authGuard,
+      schoolContextGuard,
+    ],
+
     loadComponent: () =>
       import('./features/dashboard/dashboard')
         .then(m => m.DashboardComponent),
@@ -31,6 +37,7 @@ export const routes: Routes = [
     canActivate: [
       authGuard,
       roleGuard,
+      schoolContextGuard,
     ],
 
     data: {
@@ -287,6 +294,7 @@ export const routes: Routes = [
     canActivate: [
       authGuard,
       roleGuard,
+      schoolContextGuard,
     ],
 
     data: {
@@ -396,6 +404,7 @@ export const routes: Routes = [
     canActivate: [
       authGuard,
       roleGuard,
+      schoolContextGuard,
     ],
 
     data: {
@@ -480,6 +489,7 @@ export const routes: Routes = [
     canActivate: [
       authGuard,
       roleGuard,
+      schoolContextGuard,
     ],
 
     data: {
