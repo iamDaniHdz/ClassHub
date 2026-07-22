@@ -1,0 +1,162 @@
+<app-header />
+
+<div class="container">
+
+  <h1>
+    Horarios
+  </h1>
+
+  <div class="form-section">
+
+    <mat-form-field>
+
+      <mat-label>
+        Día
+      </mat-label>
+
+      <mat-select
+        [(ngModel)]="
+          dayOfWeek
+        ">
+
+        <mat-option
+          [value]="1">
+          Lunes
+        </mat-option>
+
+        <mat-option
+          [value]="2">
+          Martes
+        </mat-option>
+
+        <mat-option
+          [value]="3">
+          Miércoles
+        </mat-option>
+
+        <mat-option
+          [value]="4">
+          Jueves
+        </mat-option>
+
+        <mat-option
+          [value]="5">
+          Viernes
+        </mat-option>
+
+      </mat-select>
+
+    </mat-form-field>
+
+    <mat-form-field>
+
+      <mat-label>
+        Inicio
+      </mat-label>
+
+      <input
+        matInput
+        type="time"
+        [(ngModel)]="
+          startTime
+        ">
+    </mat-form-field>
+
+    <mat-form-field>
+
+      <mat-label>
+        Fin
+      </mat-label>
+
+      <input
+        matInput
+        type="time"
+        [(ngModel)]="
+          endTime
+        ">
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="save()">
+
+      Agregar
+
+    </button>
+
+  </div>
+
+  <table class="schedules-table">
+
+    <thead>
+
+      <tr>
+
+        <th>Día</th>
+
+        <th>Inicio</th>
+
+        <th>Fin</th>
+
+        <th>Acción</th>
+
+      </tr>
+
+    </thead>
+
+    <tbody>
+
+      @for (
+        schedule of schedules;
+        track schedule.id
+      ) {
+
+        <tr>
+
+          <td>
+            {{
+              getDayName(
+                schedule.day_of_week
+              )
+            }}
+          </td>
+
+          <td>
+            {{
+              schedule.start_time
+            }}
+          </td>
+
+          <td>
+            {{
+              schedule.end_time
+            }}
+          </td>
+
+          <td>
+
+            <button
+              mat-button
+              color="warn"
+              (click)="
+                remove(
+                  schedule.id
+                )
+              ">
+
+              Eliminar
+
+            </button>
+
+          </td>
+
+        </tr>
+
+      }
+
+    </tbody>
+
+  </table>
+
+</div>

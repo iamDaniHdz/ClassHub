@@ -312,6 +312,25 @@ export const routes: Routes = [
       ),
   },  
 
+  // SCHEDULE
+
+  {
+    path:
+      'classrooms/:classroomId/academy-assignments/:assignmentId/schedules',
+
+    canActivate: [
+      authGuard,
+    ],
+
+    loadComponent: () =>
+      import(
+        './features/classrooms/academy-assignment-schedules/academy-assignment-schedules'
+      ).then(
+        m =>
+          m.AcademyAssignmentSchedulesComponent
+      ),
+  },
+
   // DEFAULT
   {
     path: '',

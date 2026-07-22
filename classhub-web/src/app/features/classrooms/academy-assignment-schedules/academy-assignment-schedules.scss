@@ -1,0 +1,21 @@
+.container {
+  padding: 24px;
+}
+
+.form-section {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.schedules-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.schedules-table th,
+.schedules-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}

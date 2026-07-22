@@ -31,4 +31,11 @@ class AcademyAssignment extends Model
     {
         return $this->hasMany(StudentAssignment::class);
     }
+
+    public function schedules()
+    {
+        return $this->hasMany(
+            AcademyAssignmentSchedule::class
+        );
+    }
 }
