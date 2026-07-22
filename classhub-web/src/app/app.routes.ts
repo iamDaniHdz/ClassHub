@@ -142,6 +142,18 @@ export const routes: Routes = [
       ),
   },
 
+  {
+    path: 'users/:id/teacher-profile',
+
+    canActivate: [authGuard],
+
+    loadComponent: () =>
+      import(
+        './features/users/teacher-profile-form/teacher-profile-form'
+      ).then(
+        m => m.TeacherProfileFormComponent
+      ),
+  },
 
   // STUDENTS
 

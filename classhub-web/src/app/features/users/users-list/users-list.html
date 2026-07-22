@@ -120,6 +120,7 @@
 
             <td>
 
+                @if (user.role?.key === 'teacher') {
 
                 <button
                     mat-button
@@ -134,6 +135,7 @@
 
                 </button>
 
+                }
 
               <button
                 mat-button

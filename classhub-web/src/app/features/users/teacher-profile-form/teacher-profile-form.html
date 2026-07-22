@@ -1,1 +1,110 @@
-<p>teacher-profile-form works!</p>
+<app-header />
+
+<div class="form-container">
+
+  <h1>
+
+    @if (isEditMode) {
+
+      Editar Perfil Docente
+
+    } @else {
+
+      Crear Perfil Docente
+
+    }
+
+  </h1>
+
+  <form
+    [formGroup]="form"
+    (ngSubmit)="save()">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre(s)</mat-label>
+      <input
+        matInput
+        formControlName="first_name">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Segundo Nombre</mat-label>
+      <input
+        matInput
+        formControlName="middle_name">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Apellido Paterno</mat-label>
+      <input
+        matInput
+        formControlName="paternal_surname">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Apellido Materno</mat-label>
+      <input
+        matInput
+        formControlName="maternal_surname">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Número de Empleado</mat-label>
+      <input
+        matInput
+        formControlName="employee_number">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Grado Académico</mat-label>
+      <input
+        matInput
+        formControlName="degree">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Carrera</mat-label>
+      <input
+        matInput
+        formControlName="career">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Especialidad</mat-label>
+      <input
+        matInput
+        formControlName="specialty">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Teléfono</mat-label>
+      <input
+        matInput
+        formControlName="phone">
+    </mat-form-field>
+
+    <div class="actions">
+
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit">
+
+        Guardar
+
+      </button>
+
+      <button
+        mat-button
+        type="button"
+        (click)="cancel()">
+
+        Cancelar
+
+      </button>
+
+    </div>
+
+  </form>
+
+</div>
