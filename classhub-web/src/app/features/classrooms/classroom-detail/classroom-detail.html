@@ -1,103 +1,39 @@
 <app-header />
 
-@if (loading) {
+<div class="page-container">
 
-  <div class="container">
+  @if (loading) {
 
-    <h2>Cargando grupo...</h2>
+    <p>
+      Cargando estudiantes...
+    </p>
 
-  </div>
-
-} @else {
-
-  <div class="container">
+  } @else {
 
     <div class="page-header">
 
-      <h1>
-        Grupo {{ classroom.degree }}° {{ classroom.group }}
-      </h1>
+      <div>
 
-      <p>
-        Total de alumnos:
-        {{ classroom.students_count }}
-      </p>
+        <h1>
+          Estudiantes del grupo
+        </h1>
+
+        <p>
+          {{ classroom.degree }}°{{ classroom.group }}
+          ·
+          {{ classroom.students_count }}
+          alumnos
+        </p>
+
+      </div>
 
     </div>
 
-    <table
-      mat-table
-      [dataSource]="classroom.students"
-      class="students-table mat-elevation-z2">
+    <app-data-table
+      [data]="students"
+      [columns]="columns">
+    </app-data-table>
 
-      <!-- Alumno -->
+  }
 
-      <ng-container matColumnDef="name">
-
-        <th
-          mat-header-cell
-          *matHeaderCellDef>
-
-          Alumno
-
-        </th>
-
-        <td
-          mat-cell
-          *matCellDef="let item">
-
-          {{ item.student.name }}
-          {{ item.student.paternal_surname }}
-          {{ item.student.maternal_surname }}
-
-        </td>
-
-      </ng-container>
-
-      <!-- Acciones -->
-
-      <ng-container matColumnDef="actions">
-
-        <th
-          mat-header-cell
-          *matHeaderCellDef>
-
-          Acciones
-
-        </th>
-
-        <td mat-cell *matCellDef="let item">
-
-          <button mat-raised-button color="primary" [routerLink]="[
-                '/classrooms',
-                classroom.id,
-                'students',
-                item.student_assignment_id
-            ]">
-
-            Ver alumno
-
-          </button>
-
-        </td>
-
-      </ng-container>
-
-      <tr
-        mat-header-row
-        *matHeaderRowDef="displayedColumns">
-      </tr>
-
-      <tr
-        mat-row
-        *matRowDef="
-          let row;
-          columns: displayedColumns
-        ">
-      </tr>
-
-    </table>
-
-  </div>
-
-}
+</div>
