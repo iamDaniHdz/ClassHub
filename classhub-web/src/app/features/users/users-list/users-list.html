@@ -120,6 +120,23 @@
 
             <td>
 
+                @if (user.role?.key === 'teacher') {
+
+                <button
+                    mat-button
+                    color="accent"
+                    [routerLink]="[
+                    '/users',
+                    user.id,
+                    'teacher-profile'
+                    ]">
+
+                    Perfil Docente
+
+                </button>
+
+                }
+
               <button
                 mat-button
                 color="primary"
