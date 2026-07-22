@@ -19,6 +19,8 @@ use App\Http\Controllers\Api\TeacherProfileController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\UserSchoolController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AcademyAssignmentPendingController;
+use App\Http\Controllers\Api\MyPendingsController;
 
 Route::prefix('v1')->group(function () {
 
@@ -178,6 +180,28 @@ Route::prefix('v1')->group(function () {
             Route::get(
                 'dashboard-overview',
                 [DashboardOverviewController::class, 'index']
+            );
+
+            // PENDIENTES
+
+            Route::get(
+                'my-pendings',
+                [MyPendingsController::class, 'index']
+            );
+
+            Route::post(
+                'academy-assignment-pendings',
+                [AcademyAssignmentPendingController::class, 'store']
+            );
+
+            Route::put(
+                'academy-assignment-pendings/{academyAssignmentPending}',
+                [AcademyAssignmentPendingController::class, 'update']
+            );
+
+            Route::delete(
+                'academy-assignment-pendings/{academyAssignmentPending}',
+                [AcademyAssignmentPendingController::class, 'destroy']
             );
 
         });
