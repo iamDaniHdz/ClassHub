@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\UserSchoolController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\AcademyAssignmentScheduleController;
+use App\Http\Controllers\Api\MyScheduleController;
 
 Route::prefix('v1')->group(function () {
 
@@ -158,6 +159,11 @@ Route::prefix('v1')->group(function () {
                     AcademyAssignmentScheduleController::class,
                     'destroy'
                 ]
+            );
+
+            Route::get(
+                'my-schedule',
+                [MyScheduleController::class, 'index']
             );
 
         });
