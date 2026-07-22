@@ -1,0 +1,89 @@
+<app-header />
+
+<div class="container">
+
+  <h1>
+    Mis Horarios
+  </h1>
+
+  @if (loading) {
+
+    <p>
+      Cargando horarios...
+    </p>
+
+  } @else {
+
+    @if (
+      dayKeys.length === 0
+    ) {
+
+      <mat-card>
+
+        <mat-card-content>
+
+          No tienes horarios asignados.
+
+        </mat-card-content>
+
+      </mat-card>
+
+    } @else {
+
+      @for (
+        day of dayKeys;
+        track day
+      ) {
+
+        <div class="day-section">
+
+          <h2>
+            {{ day }}
+          </h2>
+
+          @for (
+            schedule of groupedSchedules[day];
+            track schedule.schedule_id
+          ) {
+
+            <mat-card
+              class="schedule-card">
+
+              <mat-card-content>
+
+                <div class="schedule-time">
+
+                  {{ schedule.start_time }}
+                  -
+                  {{ schedule.end_time }}
+
+                </div>
+
+                <div class="schedule-academy">
+
+                  {{ schedule.academy.name }}
+
+                </div>
+
+                <div class="schedule-classroom">
+
+                  Grupo
+                  {{ schedule.classroom.name }}
+
+                </div>
+
+              </mat-card-content>
+
+            </mat-card>
+
+          }
+
+        </div>
+
+      }
+
+    }
+
+  }
+
+</div>
