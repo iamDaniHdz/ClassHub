@@ -1,6 +1,7 @@
 import { View } from 'react-native';
 import { Button, Card, Text } from 'react-native-paper';
 import { useAuthStore } from '../../auth/store/auth.store';
+import React from 'react';
 
 export const SchoolSelectionScreen = ({ navigation }: any) => {
 
