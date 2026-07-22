@@ -1,0 +1,156 @@
+<app-header />
+
+<div class="container">
+
+  <div class="page-header">
+
+    <h1>
+      Mis Pendientes
+    </h1>
+
+    <button
+      mat-raised-button
+      color="primary"
+      routerLink="/my-pendings/new">
+
+      Nuevo Pendiente
+
+    </button>
+
+  </div>
+
+  @if (loading) {
+
+    <p>
+      Cargando...
+    </p>
+
+  } @else {
+
+    <table class="pendings-table">
+
+      <thead>
+
+        <tr>
+
+          <th>Status</th>
+
+          <th>Título</th>
+
+          <th>Academia</th>
+
+          <th>Grupo</th>
+
+          <th>Fecha límite</th>
+
+          <th>Acciones</th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        @for (
+          pending of pendings;
+          track pending.id
+        ) {
+
+          <tr>
+
+            <td>
+
+              <mat-checkbox
+                [checked]="
+                  pending.is_completed
+                "
+                (change)="
+                  toggleStatus(
+                    pending
+                  )
+                ">
+              </mat-checkbox>
+
+            </td>
+
+            <td>
+              {{ pending.title }}
+            </td>
+
+            <td>
+              {{
+                pending.assignment
+                  ?.academy
+                  ?.name
+              }}
+            </td>
+
+            <td>
+              {{
+                pending.assignment
+                  ?.classroom
+                  ?.degree
+              }}°
+              {{
+                pending.assignment
+                  ?.classroom
+                  ?.group
+              }}
+            </td>
+
+            <td>
+                <span
+                    [class.overdue]="
+                    isOverdue(
+                        pending
+                    )
+                    ">
+
+                    {{
+                    pending.due_date
+                    ?? 'Sin fecha'
+                    }}
+
+                </span>
+            </td>
+
+            <td>
+
+              <button
+                mat-button
+                color="primary"
+                [routerLink]="[
+                  '/my-pendings/edit',
+                  pending.id
+                ]">
+
+                Editar
+
+              </button>
+
+              <button
+                mat-button
+                color="warn"
+                (click)="
+                  deletePending(
+                    pending.id
+                  )
+                ">
+
+                Eliminar
+
+              </button>
+
+            </td>
+
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  }
+
+</div>

@@ -204,6 +204,14 @@ Route::prefix('v1')->group(function () {
                 [AcademyAssignmentPendingController::class, 'destroy']
             );
 
+            Route::get(
+                'academy-assignment-pendings/{academyAssignmentPending}',
+                [
+                    AcademyAssignmentPendingController::class,
+                    'show'
+                ]
+            );
+
         });
 
 

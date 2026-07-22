@@ -30,6 +30,12 @@ class AcademyAssignmentPendingController extends Controller
                 'nullable',
                 'string',
             ],
+
+            'due_date' => [
+                'nullable',
+                'date',
+            ],
+
         ]);
 
         $assignment = AcademyAssignment::findOrFail(
@@ -56,6 +62,10 @@ class AcademyAssignmentPendingController extends Controller
 
                 'description' =>
                     $data['description'] ?? null,
+
+                'due_date' =>
+                    $data['due_date']
+                    ?? null,
 
                 'is_completed' => false,
             ]);
@@ -92,6 +102,11 @@ class AcademyAssignmentPendingController extends Controller
                 'string',
             ],
 
+            'due_date' => [
+                'nullable',
+                'date',
+            ],
+
             'is_completed' => [
                 'sometimes',
                 'boolean',
@@ -126,6 +141,35 @@ class AcademyAssignmentPendingController extends Controller
 
         return response()->json([
             'success' => true,
+        ]);
+    }
+
+    /**
+     * Mostrar pendiente
+     */
+    public function show(
+        Request $request,
+        AcademyAssignmentPending $academyAssignmentPending
+    )
+    {
+        if (
+            $academyAssignmentPending->created_by
+            !==
+            $request->user()->id
+        ) {
+
+            abort(
+                403,
+                'Not allowed'
+            );
+        }
+
+        return response()->json([
+
+            'success' => true,
+
+            'data' =>
+                $academyAssignmentPending,
         ]);
     }
 }

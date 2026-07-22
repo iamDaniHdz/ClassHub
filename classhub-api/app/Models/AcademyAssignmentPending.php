@@ -16,6 +16,8 @@ class AcademyAssignmentPending extends Model
 
         'description',
 
+        'due_date',
+
         'is_completed',
     ];
 

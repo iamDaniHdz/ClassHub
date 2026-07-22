@@ -396,6 +396,71 @@ export const routes: Routes = [
         .then(m => m.ClassesComponent),
   },
 
+  // PENDIENTES
+
+  {
+    path: 'my-pendings',
+
+    canActivate: [
+      authGuard,
+      roleGuard,
+      schoolContextGuard,
+    ],
+
+    data: {
+      roles: ['teacher'],
+    },
+
+    loadComponent: () =>
+      import(
+        './features/teachers/my-pendings-list/my-pendings-list'
+      ).then(
+        m => m.MyPendingsListComponent
+      ),
+  },
+
+  {
+    path: 'my-pendings/new',
+
+    canActivate: [
+      authGuard,
+      roleGuard,
+      schoolContextGuard,
+    ],
+
+    data: {
+      roles: ['teacher'],
+    },
+
+    loadComponent: () =>
+      import(
+        './features/teachers/my-pending-form/my-pending-form'
+      ).then(
+        m => m.MyPendingFormComponent
+      ),
+  },
+
+  {
+    path: 'my-pendings/edit/:id',
+
+    canActivate: [
+      authGuard,
+      roleGuard,
+      schoolContextGuard,
+    ],
+
+    data: {
+      roles: ['teacher'],
+    },
+
+    loadComponent: () =>
+      import(
+        './features/teachers/my-pending-form/my-pending-form'
+      ).then(
+        m => m.MyPendingFormComponent
+      ),
+  },
+
   // USERS
 
   {
