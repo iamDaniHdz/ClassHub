@@ -4,6 +4,14 @@
     ClassHub
   </div>
 
+
+  <span class="school-name">
+
+    {{ schoolName }}
+
+  </span>
+
+
   <nav>
 
     <a [routerLink]="['/dashboard']">
@@ -32,12 +40,17 @@
 
   </nav>
 
-  <button
-    mat-button
-    color="warn"
-    (click)="logout()">
 
-    Logout
+  <button type="button" class="logout-button" (click)="logout()">
+
+    Cerrar sesión
+
+  </button>
+
+
+  <button type="button" class="action-button" (click)="changeSchool()">
+
+    Cambiar escuela
 
   </button>
 

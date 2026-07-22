@@ -181,6 +181,20 @@ export const routes: Routes = [
   // SCHOOLS
 
   {
+    path: 'school-selector',
+
+    canActivate: [authGuard],
+
+    loadComponent: () =>
+      import(
+        './features/school-context/school-selector/school-selector'
+      ).then(
+        m =>
+        m.SchoolSelectorComponent
+      ),
+  },
+
+  {
     path: 'schools',
     canActivate: [authGuard],
     loadComponent: () =>
