@@ -38,25 +38,26 @@ export const useAuthStore = create<AuthState>((set) => ({
   currentSchoolId: null,
 
   // LOGIN
-  login: async (email, password) => {
-    set({ loading: true });
+ login: async (email, password) => {
+  set({ loading: true });
 
-    try {
-      await AuthApi.login(email, password);
+  try {
 
-      const user = await AuthApi.me();
+    await AuthApi.login(email, password);
 
-      set({
-        user,
-        schools: user.schools || [],
-        loading: false
-      });
+    const user = await AuthApi.me();
 
-    } catch (error) {
-      set({ loading: false });
-      throw error;
-    }
-  },
+    set({
+      user,
+      schools: user.schools || [],
+      loading: false
+    });
+
+  } catch (error) {
+    set({ loading: false });
+    throw error;
+  }
+},
 
   register: async (name, email, password, role) => {
     set({ loading: true });

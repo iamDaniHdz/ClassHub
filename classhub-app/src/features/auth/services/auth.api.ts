@@ -15,7 +15,8 @@ export const AuthApi = {
 
   async me() {
     const response = await api.get('/me');
-    return response.data.data.user;
+
+    return response.data.data;
   },
 
   async logout() {
