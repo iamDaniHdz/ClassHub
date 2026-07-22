@@ -1,0 +1,152 @@
+<app-header />
+
+<div class="form-container">
+
+  <h1>
+
+    @if (isEditMode) {
+
+      Editar Usuario
+
+    } @else {
+
+      Nuevo Usuario
+
+    }
+
+  </h1>
+
+  <form
+    [formGroup]="form"
+    (ngSubmit)="save()">
+
+    <mat-form-field
+      appearance="outline">
+
+      <mat-label>
+        Nombre
+      </mat-label>
+
+      <input
+        matInput
+        formControlName="name">
+
+    </mat-form-field>
+
+    <mat-form-field
+      appearance="outline">
+
+      <mat-label>
+        Correo electrónico
+      </mat-label>
+
+      <input
+        matInput
+        type="email"
+        formControlName="email">
+
+    </mat-form-field>
+
+    @if (!isEditMode) {
+
+      <mat-form-field
+        appearance="outline">
+
+        <mat-label>
+          Contraseña
+        </mat-label>
+
+        <input
+          matInput
+          type="password"
+          formControlName="password">
+
+      </mat-form-field>
+
+    }
+
+    <mat-form-field
+      appearance="outline">
+
+      <mat-label>
+        Rol
+      </mat-label>
+
+      <mat-select
+        formControlName="role_id">
+
+        @for (
+          role of roles;
+          track role.id
+        ) {
+
+          <mat-option
+            [value]="role.id">
+
+            {{ role.name }}
+
+          </mat-option>
+
+        }
+
+      </mat-select>
+
+    </mat-form-field>
+
+    <div class="schools-section">
+
+      <h3>
+        Escuelas
+      </h3>
+
+      @for (
+        school of schools;
+        track school.id
+      ) {
+
+        <mat-checkbox
+          [checked]="
+            selectedSchools.includes(
+              school.id
+            )
+          "
+          (change)="
+            toggleSchool(
+              school.id,
+              $event.checked
+            )
+          ">
+
+          {{ school.name }}
+
+        </mat-checkbox>
+
+      }
+
+    </div>
+
+    <div class="actions">
+
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit">
+
+        Guardar
+
+      </button>
+
+      <button
+        mat-button
+        type="button"
+        (click)="cancel()">
+
+        Cancelar
+
+      </button>
+
+    </div>
+
+  </form>
+
+</div>
