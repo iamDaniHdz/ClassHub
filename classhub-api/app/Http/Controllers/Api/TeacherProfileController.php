@@ -238,4 +238,20 @@ class TeacherProfileController extends Controller
             'success' => true,
         ]);
     }
+
+    public function profileByUser(
+        User $user
+    )
+    {
+        $profile = TeacherProfile::where(
+            'user_id',
+            $user->id
+        )
+        ->first();
+
+        return response()->json([
+            'success' => true,
+            'data' => $profile,
+        ]);
+    }
 }

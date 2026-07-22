@@ -115,6 +115,14 @@ Route::prefix('v1')->group(function () {
             );
 
             Route::get(
+                'users/{user}/teacher-profile',
+                [
+                    TeacherProfileController::class,
+                    'profileByUser'
+                ]
+            );
+
+            Route::get(
                 'roles',
                 [RoleController::class, 'index']
             );
