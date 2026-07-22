@@ -59,9 +59,11 @@ class AcademyAssignmentScheduleController extends Controller
             ],
         ]);
 
+        /**
+         * Validar rango horario
+         */
         if (
-            $data['start_time']
-            >=
+            $data['start_time'] >=
             $data['end_time']
         ) {
 
@@ -72,28 +74,46 @@ class AcademyAssignmentScheduleController extends Controller
         }
 
         /**
-         * Validación de duplicado exacto
+         * Validar traslapes
+         *
+         * Dos rangos se traslapan cuando:
+         *
+         * nuevo_inicio < existente_fin
+         * AND
+         * nuevo_fin > existente_inicio
          */
-        $exists = AcademyAssignmentSchedule::where([
+        $overlap =
+            AcademyAssignmentSchedule::query()
 
-            'academy_assignment_id'
-                => $data['academy_assignment_id'],
+                ->where(
+                    'academy_assignment_id',
+                    $data['academy_assignment_id']
+                )
 
-            'day_of_week'
-                => $data['day_of_week'],
+                ->where(
+                    'day_of_week',
+                    $data['day_of_week']
+                )
 
-            'start_time'
-                => $data['start_time'],
+                ->where(
+                    'start_time',
+                    '<',
+                    $data['end_time']
+                )
 
-            'end_time'
-                => $data['end_time'],
-        ])->exists();
+                ->where(
+                    'end_time',
+                    '>',
+                    $data['start_time']
+                )
 
-        if ($exists) {
+                ->exists();
+
+        if ($overlap) {
 
             abort(
                 422,
-                'Schedule already exists'
+                'Schedule overlaps with an existing schedule'
             );
         }
 
