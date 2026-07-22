@@ -5,11 +5,16 @@ import {
 
 import {
   HttpClient,
+  HttpParams,
 } from '@angular/common/http';
 
 import {
   environment,
 } from '../../../../environments/environment';
+
+import {
+  SchoolContextService,
+} from '../../school-context/services/school-context.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,22 +24,57 @@ export class ClassroomsManagementService {
   private readonly http =
     inject(HttpClient);
 
+  private readonly schoolContext =
+    inject(SchoolContextService);
+
+  private getSchoolParams(): HttpParams {
+
+    const schoolId =
+      this.schoolContext.getSchoolId();
+
+    let params =
+      new HttpParams();
+
+    if (schoolId) {
+
+      params = params.set(
+        'school_id',
+        schoolId
+      );
+    }
+
+    return params;
+  }
+
   getAll() {
+
     return this.http.get(
-      `${environment.apiUrl}/classrooms`
+      `${environment.apiUrl}/classrooms`,
+      {
+        params:
+          this.getSchoolParams(),
+      }
     );
   }
 
   getById(id: number) {
+
     return this.http.get(
       `${environment.apiUrl}/classrooms/${id}`
     );
   }
 
   create(data: any) {
+
+    const payload = {
+      ...data,
+      school_id:
+        this.schoolContext.getSchoolId(),
+    };
+
     return this.http.post(
       `${environment.apiUrl}/classrooms`,
-      data
+      payload
     );
   }
 
@@ -42,6 +82,7 @@ export class ClassroomsManagementService {
     id: number,
     data: any
   ) {
+
     return this.http.put(
       `${environment.apiUrl}/classrooms/${id}`,
       data
@@ -49,6 +90,7 @@ export class ClassroomsManagementService {
   }
 
   delete(id: number) {
+
     return this.http.delete(
       `${environment.apiUrl}/classrooms/${id}`
     );
@@ -57,14 +99,20 @@ export class ClassroomsManagementService {
   getAcademyAssignments(
     classroomId: number
   ) {
+
     return this.http.get(
       `${environment.apiUrl}/classrooms/${classroomId}/academy-assignments`
     );
   }
 
   getAcademies() {
+
     return this.http.get(
-      `${environment.apiUrl}/academies`
+      `${environment.apiUrl}/academies`,
+      {
+        params:
+          this.getSchoolParams(),
+      }
     );
   }
 
@@ -72,6 +120,7 @@ export class ClassroomsManagementService {
     academyId: number,
     classroomId: number
   ) {
+
     return this.http.get(
       `${environment.apiUrl}/academies/${academyId}/teachers`,
       {
@@ -84,6 +133,7 @@ export class ClassroomsManagementService {
   }
 
   assignAcademy(data: any) {
+
     return this.http.post(
       `${environment.apiUrl}/academy-assignments`,
       data
@@ -93,6 +143,7 @@ export class ClassroomsManagementService {
   deleteAcademyAssignment(
     assignmentId: number
   ) {
+
     return this.http.delete(
       `${environment.apiUrl}/academy-assignments/${assignmentId}`
     );
