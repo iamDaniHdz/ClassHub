@@ -34,3 +34,48 @@
 
   margin-top: 24px;
 }
+
+.overdue-metric {
+
+  color: #d32f2f;
+}
+
+.upcoming-pendings {
+
+  margin-top: 24px;
+}
+
+.pending-item {
+
+  padding: 12px 0;
+
+  border-bottom: 1px solid #eee;
+}
+
+.pending-item:last-child {
+
+  border-bottom: none;
+}
+
+.pending-title {
+
+  font-weight: 600;
+
+  font-size: 16px;
+}
+
+.pending-academy {
+
+  margin-top: 4px;
+
+  color: #666;
+}
+
+.pending-date {
+
+  margin-top: 4px;
+
+  color: #d32f2f;
+
+  font-size: 14px;
+}

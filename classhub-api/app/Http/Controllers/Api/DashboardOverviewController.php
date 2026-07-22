@@ -10,6 +10,7 @@ use App\Models\Classroom;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\AcademyAssignmentPending;
 
 class DashboardOverviewController extends Controller
 {
@@ -102,7 +103,80 @@ class DashboardOverviewController extends Controller
         /**
          * TEACHER DASHBOARD
          */
+
+        $pendingCount =
+            AcademyAssignmentPending::where(
+                'created_by',
+                $user->id
+            )
+            ->whereHas(
+                'assignment.classroom',
+                fn ($q) =>
+                    $q->where(
+                        'school_id',
+                        $schoolId
+                    )
+            )
+            ->where(
+                'is_completed',
+                false
+            )
+            ->count();
         
+        $overdueCount =
+            AcademyAssignmentPending::where(
+                'created_by',
+                $user->id
+            )
+            ->where(
+                'is_completed',
+                false
+            )
+            ->whereDate(
+                'due_date',
+                '<',
+                now()
+            )
+            ->whereHas(
+                'assignment.classroom',
+                fn ($q) =>
+                    $q->where(
+                        'school_id',
+                        $schoolId
+                    )
+            )
+            ->count();
+        
+        $upcomingPendings =
+            AcademyAssignmentPending::with([
+                'assignment.academy',
+                'assignment.classroom',
+            ])
+            ->where(
+                'created_by',
+                $user->id
+            )
+            ->where(
+                'is_completed',
+                false
+            )
+            ->whereNotNull(
+                'due_date'
+            )
+            ->whereHas(
+                'assignment.classroom',
+                fn ($q) =>
+                    $q->where(
+                        'school_id',
+                        $schoolId
+                    )
+            )
+            ->orderBy(
+                'due_date'
+            )
+            ->limit(5)
+            ->get();
+
         $today =
             now()->dayOfWeek;
 
@@ -228,6 +302,12 @@ class DashboardOverviewController extends Controller
 
                     'weekly_classes' =>
                         $weeklyClasses,
+
+                    'pendings' =>
+                        $pendingCount,
+
+                    'overdue_pendings' =>
+                        $overdueCount,
                 ],
 
                 'next_class' => $nextClass
@@ -263,6 +343,10 @@ class DashboardOverviewController extends Controller
                                 ->end_time,
                     ]
                     : null,
+
+                'upcoming_pendings' =>
+                    $upcomingPendings,
+
             ],
         ]);
     }
