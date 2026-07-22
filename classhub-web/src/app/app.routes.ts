@@ -180,7 +180,10 @@ export const routes: Routes = [
     ],
 
     data: {
-      roles: ['admin'],
+      roles: [
+        'admin',
+        'teacher',
+      ],
     },
 
     loadComponent: () =>
