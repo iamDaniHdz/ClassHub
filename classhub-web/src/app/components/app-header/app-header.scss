@@ -38,3 +38,24 @@ nav a:hover {
 
   color: #e91e63;
 }
+
+.school-context {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.school-label {
+
+  font-weight: 600;
+}
+
+.school-name {
+
+  color: #000;
+
+  font-weight: 500;
+}

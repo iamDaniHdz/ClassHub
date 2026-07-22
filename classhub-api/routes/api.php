@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\AcademyAssignmentScheduleController;
 use App\Http\Controllers\Api\MyScheduleController;
+use App\Http\Controllers\Api\MySchoolController;
 
 Route::prefix('v1')->group(function () {
 
@@ -133,6 +134,11 @@ Route::prefix('v1')->group(function () {
             Route::get(
                 '/me/profile',
                 [ProfileController::class, 'me']
+            );
+
+            Route::get(
+                'my-schools',
+                [MySchoolController::class, 'index']
             );
 
             //Horarios

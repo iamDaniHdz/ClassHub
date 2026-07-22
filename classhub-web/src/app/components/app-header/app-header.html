@@ -1,52 +1,77 @@
-<header class="header">
+<nav>
 
-  <div class="logo">
-    ClassHub
+
+  <div class="school-context">
+
+    <span class="school-label">
+
+      Escuela:
+
+    </span>
+
+    <span class="school-name">
+
+      {{ schoolName }}
+
+    </span>
+
   </div>
 
+  <a [routerLink]="['/dashboard']">
 
-  <span class="school-name">
+    Dashboard
 
-    {{ schoolName }}
+  </a>
 
-  </span>
+  @if (isTeacher) {
 
+  <a [routerLink]="['/academies']">
 
-  <nav>
+    Mis academias
 
-    <a [routerLink]="['/dashboard']">
-      Dashboard
-    </a>
+  </a>
 
-    <a [routerLink]="['/academies']">
-      Mis academias
-    </a>
+  <a [routerLink]="['/my-schedule']">
 
-    <a [routerLink]="['/my-schedule']">
-      Mis horarios
-    </a>
+    Mis horarios
 
-    <a [routerLink]="['/academies-management']">
-      Academias
-    </a>
+  </a>
 
-    <a [routerLink]="['/classrooms']">
-      Grupos
-    </a>
+  }
 
-    <a [routerLink]="['/students']">
-      Estudiantes
-    </a>
+  @if (isAdmin) {
 
-    <a [routerLink]="['/schools']">
-      Escuelas
-    </a>
+  <a [routerLink]="['/academies-management']">
 
-    <a [routerLink]="['/users']">
-      Usuarios
-    </a>
+    Academias
 
-  </nav>
+  </a>
+
+  <a [routerLink]="['/classrooms']">
+
+    Grupos
+
+  </a>
+
+  <a [routerLink]="['/students']">
+
+    Estudiantes
+
+  </a>
+
+  <a [routerLink]="['/schools']">
+
+    Escuelas
+
+  </a>
+
+  <a [routerLink]="['/users']">
+
+    Usuarios
+
+  </a>
+
+  }
 
 
   <button type="button" class="logout-button" (click)="logout()">
@@ -62,4 +87,4 @@
 
   </button>
 
-</header>
+</nav>
