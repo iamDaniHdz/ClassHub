@@ -1,25 +1,22 @@
-.container {
-  padding: 24px;
-}
-
 .page-header {
+
   display: flex;
+
   justify-content: space-between;
+
   align-items: center;
+
   margin-bottom: 24px;
 }
 
-.custom-table {
-  width: 100%;
-  border-collapse: collapse;
+.page-header h1 {
+
+  margin: 0;
 }
 
-.custom-table th,
-.custom-table td {
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-}
+.page-header p {
 
-.custom-table th {
-  text-align: left;
+  margin-top: 8px;
+
+  color: #666;
 }

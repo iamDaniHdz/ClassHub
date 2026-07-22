@@ -1,16 +1,32 @@
 <app-header />
 
-<div class="container">
+<div class="page-container">
 
-  <h1>
-    Mis Horarios
-  </h1>
+  <div class="page-header">
+
+    <div>
+
+      <h1>
+        Mis Horarios
+      </h1>
+
+      <p>
+        Consulta tus clases programadas por día
+      </p>
+
+    </div>
+
+  </div>
 
   @if (loading) {
 
-    <p>
-      Cargando horarios...
-    </p>
+    <div class="loading-container">
+
+      <mat-spinner
+        diameter="40">
+      </mat-spinner>
+
+    </div>
 
   } @else {
 
@@ -18,11 +34,22 @@
       dayKeys.length === 0
     ) {
 
-      <mat-card>
+      <mat-card
+        class="empty-state">
 
         <mat-card-content>
 
-          No tienes horarios asignados.
+          <mat-icon>
+            event_busy
+          </mat-icon>
+
+          <h2>
+            Sin horarios asignados
+          </h2>
+
+          <p>
+            Aún no tienes clases programadas.
+          </p>
 
         </mat-card-content>
 
@@ -30,57 +57,99 @@
 
     } @else {
 
-      @for (
-        day of dayKeys;
-        track day
-      ) {
+      <div class="schedule-grid">
 
-        <div class="day-section">
+        @for (
+          day of dayKeys;
+          track day
+        ) {
 
-          <h2>
-            {{ day }}
-          </h2>
+          <mat-card
+            class="day-card">
 
-          @for (
-            schedule of groupedSchedules[day];
-            track schedule.schedule_id
-          ) {
+            <mat-card-header>
 
-            <mat-card
-              class="schedule-card">
+              <mat-icon
+                mat-card-avatar>
 
-              <mat-card-content>
+                calendar_today
 
-                <div class="schedule-time">
+              </mat-icon>
 
-                  {{ schedule.start_time }}
-                  -
-                  {{ schedule.end_time }}
+              <mat-card-title>
+
+                {{ day }}
+
+              </mat-card-title>
+
+              <mat-card-subtitle>
+
+                {{
+                  groupedSchedules[day].length
+                }}
+                clases
+
+              </mat-card-subtitle>
+
+            </mat-card-header>
+
+            <mat-card-content>
+
+              @for (
+                schedule of groupedSchedules[day];
+                track schedule.schedule_id
+              ) {
+
+                <div
+                  class="schedule-item">
+
+                  <div
+                    class="time-block">
+
+                    <mat-icon>
+                      schedule
+                    </mat-icon>
+
+                    <span>
+
+                      {{ schedule.start_time }}
+                      -
+                      {{ schedule.end_time }}
+
+                    </span>
+
+                  </div>
+
+                  <div
+                    class="academy-name">
+
+                    {{ schedule.academy.name }}
+
+                  </div>
+
+                  <div
+                    class="classroom-name">
+
+                    <mat-icon>
+                      groups
+                    </mat-icon>
+
+                    Grupo
+                    {{ schedule.classroom.name }}
+
+                  </div>
 
                 </div>
 
-                <div class="schedule-academy">
+              }
 
-                  {{ schedule.academy.name }}
+            </mat-card-content>
 
-                </div>
+          </mat-card>
 
-                <div class="schedule-classroom">
+        }
 
-                  Grupo
-                  {{ schedule.classroom.name }}
-
-                </div>
-
-              </mat-card-content>
-
-            </mat-card>
-
-          }
-
-        </div>
-
-      }
+      </div>
 
     }
 

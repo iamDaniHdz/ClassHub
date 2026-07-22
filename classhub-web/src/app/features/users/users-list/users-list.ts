@@ -1,7 +1,10 @@
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   OnInit,
+  TemplateRef,
+  ViewChild,
   inject,
 } from '@angular/core';
 
@@ -29,6 +32,11 @@ import {
   UsersManagementService,
 } from '../services/users-management.service';
 
+import {
+  DataTableComponent,
+  DataTableColumn,
+} from '../../../shared/components/data-table/data-table';
+
 @Component({
   selector: 'app-users-list',
 
@@ -39,6 +47,7 @@ import {
     FormsModule,
     RouterLink,
     AppHeaderComponent,
+    DataTableComponent,
     ...MATERIAL_IMPORTS,
   ],
 
@@ -49,7 +58,7 @@ import {
     './users-list.scss',
 })
 export class UsersListComponent
-  implements OnInit
+  implements OnInit, AfterViewInit
 {
   private readonly usersService =
     inject(
@@ -58,6 +67,16 @@ export class UsersListComponent
 
   private readonly cdr =
     inject(ChangeDetectorRef);
+
+  @ViewChild(
+    'schoolsTemplate'
+  )
+  schoolsTemplate!: TemplateRef<any>;
+
+  @ViewChild(
+    'actionsTemplate'
+  )
+  actionsTemplate!: TemplateRef<any>;
 
   users: any[] = [];
 
@@ -68,11 +87,53 @@ export class UsersListComponent
 
   loading = true;
 
+  columns: DataTableColumn[] = [];
+
   ngOnInit(): void {
 
     this.loadRoles();
 
     this.loadUsers();
+  }
+
+  ngAfterViewInit(): void {
+
+    this.columns = [
+
+      {
+        key: 'name',
+        header: 'Nombre',
+        sortable: true,
+      },
+
+      {
+        key: 'email',
+        header: 'Email',
+        sortable: true,
+      },
+
+      {
+        key: 'role_name',
+        header: 'Rol',
+        sortable: true,
+      },
+
+      {
+        key: 'schools',
+        header: 'Escuelas',
+        cellTemplate:
+          this.schoolsTemplate,
+      },
+
+      {
+        key: 'actions',
+        header: 'Acciones',
+        cellTemplate:
+          this.actionsTemplate,
+      },
+    ];
+
+    this.cdr.detectChanges();
   }
 
   loadRoles(): void {
@@ -81,7 +142,9 @@ export class UsersListComponent
       .getRoles()
       .subscribe({
 
-        next: (response: any) => {
+        next: (
+          response: any
+        ) => {
 
           this.roles =
             response.data;
@@ -95,25 +158,41 @@ export class UsersListComponent
 
     this.usersService
       .getUsers(
-        this.selectedRoleId ?? undefined
+        this.selectedRoleId ??
+        undefined
       )
       .subscribe({
 
-        next: (response: any) => {
+        next: (
+          response: any
+        ) => {
 
           this.users =
-            response.data;
+            response.data.map(
+              (user: any) => ({
 
-          this.loading = false;
+                ...user,
+
+                role_name:
+                  user.role?.name ??
+                  '',
+              })
+            );
+
+          this.loading =
+            false;
 
           this.cdr.detectChanges();
         },
 
         error: error => {
 
-          console.error(error);
+          console.error(
+            error
+          );
 
-          this.loading = false;
+          this.loading =
+            false;
         },
       });
   }
@@ -138,6 +217,13 @@ export class UsersListComponent
         next: () => {
 
           this.loadUsers();
+        },
+
+        error: error => {
+
+          console.error(
+            error
+          );
         },
       });
   }

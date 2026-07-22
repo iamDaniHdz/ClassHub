@@ -1,35 +1,14 @@
-.container {
-
-  padding: 24px;
-}
-
 .page-header {
-
-  display: flex;
-
-  justify-content: space-between;
 
   margin-bottom: 24px;
 }
 
-.pendings-table {
+.page-header h1 {
 
-  width: 100%;
-
-  border-collapse: collapse;
+  margin-bottom: 4px;
 }
 
-.pendings-table th,
-.pendings-table td {
+.page-header p {
 
-  padding: 12px;
-
-  border-bottom: 1px solid #ddd;
-}
-
-.overdue {
-
-  color: #d32f2f;
-
-  font-weight: 600;
+  color: #666;
 }

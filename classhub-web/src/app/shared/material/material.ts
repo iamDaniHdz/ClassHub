@@ -22,11 +22,13 @@ import {
   MatSelectModule
 } from '@angular/material/select';
 
-
 import {
   MatCheckboxModule,
 } from '@angular/material/checkbox';
 
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatListModule } from '@angular/material/list';
 
 export const MATERIAL_IMPORTS = [
   MatTableModule,
@@ -36,4 +38,8 @@ export const MATERIAL_IMPORTS = [
   MatInputModule,
   MatSelectModule,
   MatCheckboxModule,
+  MatCardModule,
+  MatIconModule,
+  MatProgressSpinnerModule,
+  MatListModule,
 ];

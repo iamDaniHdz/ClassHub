@@ -1,12 +1,20 @@
 <app-header />
 
-<div class="container">
+<div class="page-container">
 
   <div class="page-header">
 
-    <h1>
-      Usuarios
-    </h1>
+    <div>
+
+      <h1>
+        Usuarios
+      </h1>
+
+      <p>
+        Catálogo de usuarios
+      </p>
+
+    </div>
 
     <button
       mat-raised-button
@@ -54,6 +62,76 @@
 
   </mat-form-field>
 
+  <ng-template
+    #schoolsTemplate
+    let-user>
+
+    @for (
+      school of user.schools;
+      track school.id
+    ) {
+
+      <div>
+
+        {{ school.name }}
+
+      </div>
+
+    }
+
+  </ng-template>
+
+  <ng-template
+    #actionsTemplate
+    let-user>
+
+    @if (
+      user.role?.key ===
+      'teacher'
+    ) {
+
+      <button
+        mat-button
+        color="accent"
+        [routerLink]="[
+          '/users',
+          user.id,
+          'teacher-profile'
+        ]">
+
+        Perfil Docente
+
+      </button>
+
+    }
+
+    <button
+      mat-button
+      color="primary"
+      [routerLink]="[
+        '/users/edit',
+        user.id
+      ]">
+
+      Editar
+
+    </button>
+
+    <button
+      mat-button
+      color="warn"
+      (click)="
+        deleteUser(
+          user.id
+        )
+      ">
+
+      Eliminar
+
+    </button>
+
+  </ng-template>
+
   @if (loading) {
 
     <p>
@@ -62,113 +140,10 @@
 
   } @else {
 
-    <table class="users-table">
-
-      <thead>
-
-        <tr>
-
-          <th>Nombre</th>
-
-          <th>Email</th>
-
-          <th>Rol</th>
-
-          <th>Escuelas</th>
-
-          <th>Acciones</th>
-
-        </tr>
-
-      </thead>
-
-      <tbody>
-
-        @for (
-          user of users;
-          track user.id
-        ) {
-
-          <tr>
-
-            <td>
-              {{ user.name }}
-            </td>
-
-            <td>
-              {{ user.email }}
-            </td>
-
-            <td>
-              {{ user.role?.name }}
-            </td>
-
-            <td>
-
-              @for (
-                school of user.schools;
-                track school.id
-              ) {
-
-                <span>
-                  {{ school.name }}
-                </span><br>
-
-              }
-
-            </td>
-
-            <td>
-
-                @if (user.role?.key === 'teacher') {
-
-                <button
-                    mat-button
-                    color="accent"
-                    [routerLink]="[
-                    '/users',
-                    user.id,
-                    'teacher-profile'
-                    ]">
-
-                    Perfil Docente
-
-                </button>
-
-                }
-
-              <button
-                mat-button
-                color="primary"
-                [routerLink]="[
-                  '/users/edit',
-                  user.id
-                ]">
-
-                Editar
-
-              </button>
-
-              <button
-                mat-button
-                color="warn"
-                (click)="deleteUser(
-                  user.id
-                )">
-
-                Eliminar
-
-              </button>
-
-            </td>
-
-          </tr>
-
-        }
-
-      </tbody>
-
-    </table>
+    <app-data-table
+      [data]="users"
+      [columns]="columns">
+    </app-data-table>
 
   }
 

@@ -1,7 +1,10 @@
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   OnInit,
+  TemplateRef,
+  ViewChild,
   inject,
 } from '@angular/core';
 
@@ -25,6 +28,11 @@ import {
   ClassroomsManagementService,
 } from '../services/classrooms-management.service';
 
+import {
+  DataTableComponent,
+  DataTableColumn,
+} from '../../../shared/components/data-table/data-table';
+
 @Component({
   selector: 'app-classrooms-list',
 
@@ -34,6 +42,7 @@ import {
     CommonModule,
     RouterLink,
     AppHeaderComponent,
+    DataTableComponent,
     ...MATERIAL_IMPORTS,
   ],
 
@@ -44,7 +53,7 @@ import {
     './classrooms-list.scss',
 })
 export class ClassroomsListComponent
-  implements OnInit
+  implements OnInit, AfterViewInit
 {
   private readonly classroomsService =
     inject(
@@ -54,20 +63,53 @@ export class ClassroomsListComponent
   private readonly cdr =
     inject(ChangeDetectorRef);
 
+  @ViewChild(
+    'actionsTemplate'
+  )
+  actionsTemplate!: TemplateRef<any>;
+
   classrooms: any[] = [];
 
   loading = true;
 
-  displayedColumns: string[] = [
-    'group',
-    'degree',
-    'students',
-    'actions',
-  ];
+  columns: DataTableColumn[] = [];
 
   ngOnInit(): void {
 
     this.load();
+  }
+
+  ngAfterViewInit(): void {
+
+    this.columns = [
+
+      {
+        key: 'group',
+        header: 'Grupo',
+        sortable: true,
+      },
+
+      {
+        key: 'degree',
+        header: 'Grado',
+        sortable: true,
+      },
+
+      {
+        key: 'students_count',
+        header: 'Alumnos',
+        sortable: true,
+      },
+
+      {
+        key: 'actions',
+        header: 'Acciones',
+        cellTemplate:
+          this.actionsTemplate,
+      },
+    ];
+
+    this.cdr.detectChanges();
   }
 
   load(): void {
@@ -76,7 +118,9 @@ export class ClassroomsListComponent
       .getAll()
       .subscribe({
 
-        next: (response: any) => {
+        next: (
+          response: any
+        ) => {
 
           this.classrooms =
             response.data;
@@ -85,14 +129,9 @@ export class ClassroomsListComponent
             false;
 
           this.cdr.detectChanges();
-
-          console.log(
-            'CLASSROOMS',
-            this.classrooms
-          );
         },
 
-        error: (error) => {
+        error: error => {
 
           console.error(
             error
@@ -118,7 +157,9 @@ export class ClassroomsListComponent
     }
 
     this.classroomsService
-      .delete(classroomId)
+      .delete(
+        classroomId
+      )
       .subscribe({
 
         next: () => {
@@ -128,7 +169,9 @@ export class ClassroomsListComponent
 
         error: error => {
 
-          console.error(error);
+          console.error(
+            error
+          );
         },
       });
   }

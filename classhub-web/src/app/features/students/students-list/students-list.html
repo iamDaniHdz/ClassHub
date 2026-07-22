@@ -1,12 +1,14 @@
 <app-header />
 
-<div class="container">
+<div class="page-container">
 
   <div class="page-header">
 
     <div>
 
-      <h1>Estudiantes</h1>
+      <h1>
+        Estudiantes
+      </h1>
 
       <p>
         Administración de estudiantes
@@ -25,6 +27,37 @@
 
   </div>
 
+  <ng-template
+    #actionsTemplate
+    let-student>
+
+    <button
+      mat-button
+      color="primary"
+      [routerLink]="[
+        '/students/edit',
+        student.id
+      ]">
+
+      Editar
+
+    </button>
+
+    <button
+      mat-button
+      color="warn"
+      (click)="
+        deleteStudent(
+          student.id
+        )
+      ">
+
+      Eliminar
+
+    </button>
+
+  </ng-template>
+
   @if (loading) {
 
     <p>
@@ -33,111 +66,10 @@
 
   } @else {
 
-    <table
-      mat-table
-      [dataSource]="students"
-      class="students-table mat-elevation-z2">
-
-      <ng-container matColumnDef="name">
-
-        <th
-          mat-header-cell
-          *matHeaderCellDef>
-
-          Nombre
-
-        </th>
-
-        <td
-          mat-cell
-          *matCellDef="let student">
-
-          {{ student.full_name }}
-
-        </td>
-
-      </ng-container>
-
-      <ng-container matColumnDef="classroom">
-
-        <th
-          mat-header-cell
-          *matHeaderCellDef>
-
-          Grupo
-
-        </th>
-
-        <td
-          mat-cell
-          *matCellDef="let student">
-
-          {{ student.classroom?.name }}
-
-        </td>
-
-      </ng-container>
-
-      <ng-container matColumnDef="actions">
-
-        <th
-          mat-header-cell
-          *matHeaderCellDef>
-
-          Acciones
-
-        </th>
-
-        <td
-          mat-cell
-          *matCellDef="let student">
-
-          <button
-            mat-button
-            color="primary"
-            [routerLink]="[
-              '/students/edit',
-              student.id
-            ]">
-
-            Editar
-
-          </button>
-
-          <button
-            mat-button
-            color="warn"
-            (click)="
-              deleteStudent(
-                student.id
-              )
-            ">
-
-            Eliminar
-
-          </button>
-
-        </td>
-
-      </ng-container>
-
-      <tr
-        mat-header-row
-        *matHeaderRowDef="
-          displayedColumns
-        ">
-      </tr>
-
-      <tr
-        mat-row
-        *matRowDef="
-          let row;
-          columns:
-          displayedColumns
-        ">
-      </tr>
-
-    </table>
+    <app-data-table
+      [data]="students"
+      [columns]="columns">
+    </app-data-table>
 
   }
 

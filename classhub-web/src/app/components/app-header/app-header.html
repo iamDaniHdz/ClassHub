@@ -1,96 +1,140 @@
-<nav>
+<header class="header">
 
+  <div class="brand-text">
 
-  <div class="school-context">
+    <img
+      src="/images/logo.png"
+      class="logo">
 
-    <span class="school-label">
+   <div>
+     <div class="app-name">
 
-      Escuela:
+      ClassHub
 
-    </span>
+    </div>
 
-    <span class="school-name">
+    <div class="school-name">
 
       {{ schoolName }}
 
-    </span>
+    </div>
+   </div>
 
   </div>
 
-  <a [routerLink]="['/dashboard']">
+  <nav class="nav-links">
 
-    Dashboard
+    <button
+      mat-button
+      routerLink="/dashboard"
+      routerLinkActive="active-link">
 
-  </a>
+      Dashboard
 
-  @if (isTeacher) {
+    </button>
 
-  <a [routerLink]="['/academies']">
+    @if (isTeacher) {
 
-    Mis academias
+      <button
+        mat-button
+        routerLink="/academies"
+        routerLinkActive="active-link">
 
-  </a>
+        Mis Academias
 
-  <a [routerLink]="['/my-schedule']">
+      </button>
 
-    Mis horarios
+      <button
+        mat-button
+        routerLink="/my-schedule"
+        routerLinkActive="active-link">
 
-  </a>
+        Mis Horarios
 
-  <a [routerLink]="['/my-pendings']">
+      </button>
 
-    Mis pendientes
+      <button
+        mat-button
+        routerLink="/my-pendings"
+        routerLinkActive="active-link">
 
-  </a>
+        Mis Pendientes
 
-  }
+      </button>
 
-  @if (isAdmin) {
+    }
 
-  <a [routerLink]="['/academies-management']">
+    @if (isAdmin) {
 
-    Academias
+      <button
+        mat-button
+        routerLink="/academies-management"
+        routerLinkActive="active-link">
 
-  </a>
+        Academias
 
-  <a [routerLink]="['/classrooms']">
+      </button>
 
-    Grupos
+      <button
+        mat-button
+        routerLink="/classrooms"
+        routerLinkActive="active-link">
 
-  </a>
+        Grupos
 
-  <a [routerLink]="['/students']">
+      </button>
 
-    Estudiantes
+      <button
+        mat-button
+        routerLink="/students"
+        routerLinkActive="active-link">
 
-  </a>
+        Estudiantes
 
-  <a [routerLink]="['/schools']">
+      </button>
 
-    Escuelas
+      <button
+        mat-button
+        routerLink="/schools"
+        routerLinkActive="active-link">
 
-  </a>
+        Escuelas
 
-  <a [routerLink]="['/users']">
+      </button>
 
-    Usuarios
+      <button
+        mat-button
+        routerLink="/users"
+        routerLinkActive="active-link">
 
-  </a>
+        Usuarios
 
-  }
+      </button>
 
+    }
 
-  <button type="button" class="logout-button" (click)="logout()">
+  </nav>
 
-    Cerrar sesión
+  <div class="actions">
 
-  </button>
+    <button
+      mat-stroked-button
+      color="primary"
+      (click)="changeSchool()">
 
+      Cambiar Escuela
 
-  <button type="button" class="action-button" (click)="changeSchool()">
+    </button>
 
-    Cambiar escuela
+    <button
+      mat-flat-button
+      color="warn"
+      (click)="logout()">
 
-  </button>
+      Cerrar Sesión
 
-</nav>
+    </button>
+
+  </div>
+
+</header>

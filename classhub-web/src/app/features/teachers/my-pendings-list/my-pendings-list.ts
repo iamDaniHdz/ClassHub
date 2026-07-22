@@ -1,7 +1,10 @@
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   OnInit,
+  TemplateRef,
+  ViewChild,
   inject,
 } from '@angular/core';
 
@@ -25,6 +28,11 @@ import {
   MyPendingsService,
 } from '../services/my-pendings.service';
 
+import {
+  DataTableComponent,
+  DataTableColumn,
+} from '../../../shared/components/data-table/data-table';
+
 @Component({
   selector: 'app-my-pendings-list',
 
@@ -34,6 +42,7 @@ import {
     CommonModule,
     RouterLink,
     AppHeaderComponent,
+    DataTableComponent,
     ...MATERIAL_IMPORTS,
   ],
 
@@ -44,7 +53,7 @@ import {
     './my-pendings-list.scss',
 })
 export class MyPendingsListComponent
-  implements OnInit
+  implements OnInit, AfterViewInit
 {
   private readonly pendingsService =
     inject(MyPendingsService);
@@ -52,13 +61,78 @@ export class MyPendingsListComponent
   private readonly cdr =
     inject(ChangeDetectorRef);
 
+  @ViewChild(
+    'statusTemplate'
+  )
+  statusTemplate!: TemplateRef<any>;
+
+  @ViewChild(
+    'dueDateTemplate'
+  )
+  dueDateTemplate!: TemplateRef<any>;
+
+  @ViewChild(
+    'actionsTemplate'
+  )
+  actionsTemplate!: TemplateRef<any>;
+
   pendings: any[] = [];
 
   loading = true;
 
+  columns: DataTableColumn[] = [];
+
   ngOnInit(): void {
 
     this.loadPendings();
+  }
+
+  ngAfterViewInit(): void {
+
+    this.columns = [
+
+      {
+        key: 'status',
+        header: 'Status',
+        cellTemplate:
+          this.statusTemplate,
+      },
+
+      {
+        key: 'title',
+        header: 'Título',
+        sortable: true,
+      },
+
+      {
+        key: 'academy_name',
+        header: 'Academia',
+        sortable: true,
+      },
+
+      {
+        key: 'classroom_name',
+        header: 'Grupo',
+        sortable: true,
+      },
+
+      {
+        key: 'due_date',
+        header: 'Fecha límite',
+        sortable: true,
+        cellTemplate:
+          this.dueDateTemplate,
+      },
+
+      {
+        key: 'actions',
+        header: 'Acciones',
+        cellTemplate:
+          this.actionsTemplate,
+      },
+    ];
+
+    this.cdr.detectChanges();
   }
 
   loadPendings(): void {
@@ -72,7 +146,20 @@ export class MyPendingsListComponent
         ) => {
 
           this.pendings =
-            response.data;
+            response.data.map(
+              (pending: any) => ({
+
+                ...pending,
+
+                academy_name:
+                  pending.assignment
+                    ?.academy
+                    ?.name ?? '',
+
+                classroom_name:
+                  `${pending.assignment?.classroom?.degree ?? ''}° ${pending.assignment?.classroom?.group ?? ''}`,
+              })
+            );
 
           this.loading =
             false;
@@ -103,6 +190,7 @@ export class MyPendingsListComponent
         }
       )
       .subscribe({
+
         next: () => {
 
           this.loadPendings();
@@ -128,6 +216,7 @@ export class MyPendingsListComponent
         pendingId
       )
       .subscribe({
+
         next: () => {
 
           this.loadPendings();

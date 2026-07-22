@@ -14,10 +14,6 @@ import {
 } from '@angular/router';
 
 import {
-  AppHeaderComponent,
-} from '../../../components/app-header/app-header';
-
-import {
   MATERIAL_IMPORTS,
 } from '../../../shared/material/material';
 
@@ -40,7 +36,6 @@ import {
 
   imports: [
     CommonModule,
-    AppHeaderComponent,
     ...MATERIAL_IMPORTS,
   ],
 
