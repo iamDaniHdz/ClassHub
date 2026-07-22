@@ -16,28 +16,48 @@ class ClassroomController extends Controller
     {
         $user = $request->user();
 
+        $selectedSchoolId = $request->input(
+            'school_id'
+        );
+
         $query = Classroom::query()
             ->withCount('students');
 
-        if ($user->isAdmin()) {
-            $classrooms = $query->latest()->get();
-        } else {
+        // Multi-tenant
+        if (!$user->isAdmin()) {
 
-            $schoolIds = $user->schools()->pluck('schools.id');
+            $schoolIds = $user
+                ->schools()
+                ->pluck('schools.id');
 
-            $classrooms = $query
-                ->whereIn('school_id', $schoolIds)
-                ->latest()
-                ->get();
+            $query->whereIn(
+                'school_id',
+                $schoolIds
+            );
+        }
+
+        // Escuela activa
+        if ($selectedSchoolId) {
+
+            $query->where(
+                'school_id',
+                $selectedSchoolId
+            );
         }
 
         if ($request->boolean('with_students')) {
             $query->with('students');
         }
 
+        $classrooms = $query
+            ->latest()
+            ->get();
+
         return response()->json([
             'success' => true,
-            'data' => ClassroomResource::collection($classrooms),
+            'data' => ClassroomResource::collection(
+                $classrooms
+            ),
         ]);
     }
 

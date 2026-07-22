@@ -300,6 +300,14 @@ public function catalog(Request $request)
 
     $query = Student::query()
         ->with('classroom');
+    
+    if ($request->school_id) {
+
+        $query->where(
+            'school_id',
+            $request->school_id
+        );
+    }
 
     // multi tenant
     if (!$user->isAdmin()) {
