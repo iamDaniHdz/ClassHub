@@ -13,6 +13,8 @@ use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\TeacherProfileController;
 use App\Http\Controllers\Api\UserSchoolController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\RoleController;
 
 Route::prefix('v1')->group(function () {
 
@@ -105,6 +107,16 @@ Route::prefix('v1')->group(function () {
                     AcademyTeacherController::class,
                     'availableTeachers'
                 ]
+            );
+
+            Route::apiResource(
+                'users',
+                UserController::class
+            );
+
+            Route::get(
+                'roles',
+                [RoleController::class, 'index']
             );
 
 
