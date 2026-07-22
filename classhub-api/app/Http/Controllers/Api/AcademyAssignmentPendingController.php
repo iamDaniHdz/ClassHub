@@ -128,4 +128,33 @@ class AcademyAssignmentPendingController extends Controller
             'success' => true,
         ]);
     }
+
+    /**
+     * Mostrar pendiente
+     */
+    public function show(
+        Request $request,
+        AcademyAssignmentPending $academyAssignmentPending
+    )
+    {
+        if (
+            $academyAssignmentPending->created_by
+            !==
+            $request->user()->id
+        ) {
+
+            abort(
+                403,
+                'Not allowed'
+            );
+        }
+
+        return response()->json([
+
+            'success' => true,
+
+            'data' =>
+                $academyAssignmentPending,
+        ]);
+    }
 }
