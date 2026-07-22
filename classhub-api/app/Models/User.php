@@ -87,4 +87,12 @@ class User extends Authenticatable
             'academy_teacher'
         );
     }
+
+    public function pendings()
+    {
+        return $this->hasMany(
+            AcademyAssignmentPending::class,
+            'created_by'
+        );
+    }
 }

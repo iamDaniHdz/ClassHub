@@ -38,4 +38,11 @@ class AcademyAssignment extends Model
             AcademyAssignmentSchedule::class
         );
     }
+
+    public function pendings()
+    {
+        return $this->hasMany(
+            AcademyAssignmentPending::class
+        );
+    }
 }
