@@ -18,17 +18,37 @@ class AcademyController extends Controller
     {
         $user = $request->user();
 
-        // ADMIN → todas las academias
-        if ($user->isAdmin()) {
-            $academies = Academy::latest()->get();
-        } else {
-            // TEACHER → solo sus escuelas
-            $schoolIds = $user->schools()->pluck('schools.id');
+        $selectedSchoolId =
+            $request->input(
+                'school_id'
+            );
 
-            $academies = Academy::whereIn('school_id', $schoolIds)
-                ->latest()
-                ->get();
+        // ADMIN → todas las academias
+        $query = Academy::query();
+
+        if (!$user->isAdmin()) {
+
+            $schoolIds = $user
+                ->schools()
+                ->pluck('schools.id');
+
+            $query->whereIn(
+                'school_id',
+                $schoolIds
+            );
         }
+
+        if ($request->school_id) {
+
+            $query->where(
+                'school_id',
+                $request->school_id
+            );
+        }
+
+        $academies = $query
+            ->latest()
+            ->get();
 
         return response()->json([
             'success' => true,
