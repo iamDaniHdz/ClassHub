@@ -83,40 +83,59 @@ export const MyPendingsScreen = () => {
     return formatLocalDate(new Date());
   }, []);
 
-  const todayPendings = useMemo(() => {
+  const overduePendings =
+  useMemo(() => {
+
     return pendings.filter(
-      pending => pending.due_date === today && !pending.is_completed,
+      pending =>
+        pending.due_date < today &&
+        !pending.is_completed,
     );
-  }, [pendings, today]);
+
+  }, [
+    pendings,
+    today,
+  ]);
 
   const upcomingPendings = useMemo(() => {
+
     return pendings.filter(
-      pending => pending.due_date > today && !pending.is_completed,
+      pending =>
+        pending.due_date >= today &&
+        !pending.is_completed,
     );
-  }, [pendings, today]);
+
+  }, [
+    pendings,
+    today,
+  ]);
 
   const completedPendings = useMemo(() => {
     return pendings.filter(pending => pending.is_completed);
   }, [pendings]);
 
   const sections = useMemo(() => {
+
     const data: any[] = [];
 
-    if (todayPendings.length) {
+    if (overduePendings.length) {
+
       data.push({
-        title: 'Hoy',
-        data: todayPendings,
+        title: 'Atrasadas',
+        data: overduePendings,
       });
     }
 
     if (upcomingPendings.length) {
+
       data.push({
-        title: 'Próximas',
+        title: 'Pendientes',
         data: upcomingPendings,
       });
     }
 
     if (completedPendings.length) {
+
       data.push({
         title: 'Completadas',
         data: completedPendings,
@@ -124,7 +143,12 @@ export const MyPendingsScreen = () => {
     }
 
     return data;
-  }, [todayPendings, upcomingPendings, completedPendings]);
+
+  }, [
+    overduePendings,
+    upcomingPendings,
+    completedPendings,
+  ]);
 
   const togglePending = async (pendingId: number, value: boolean) => {
     const previous = [...pendings];
@@ -156,7 +180,17 @@ export const MyPendingsScreen = () => {
     }
   };
 
-  const renderPending = ({ item }: { item: Pending }) => (
+  const renderPending = ({
+  item,
+}: {
+  item: Pending;
+}) => {
+
+  const isOverdue =
+    item.due_date < today &&
+    !item.is_completed;
+
+  return (
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={() => {
@@ -218,20 +252,22 @@ export const MyPendingsScreen = () => {
               </Text>
 
               <Text
-                style={{
-                  marginTop: 6,
-                  color: colors.outline,
-                }}
-              >
-                Vence: {item.due_date}
-              </Text>
+                  style={{
+                    marginTop: 6,
+                    color: isOverdue
+                      ? colors.error
+                      : colors.textColor,
+                  }}
+                >
+                  Vence: {item.due_date}
+                </Text>
             </View>
 
             <View
               style={[
                 styles.statusDot,
                 {
-                  backgroundColor: item.is_completed ? '#4CAF50' : '#FF9800',
+                  backgroundColor: item.is_completed ? colors.success : isOverdue ? colors.error : colors.warning,
                 },
               ]}
             />
@@ -239,7 +275,8 @@ export const MyPendingsScreen = () => {
         </Card.Content>
       </Card>
     </TouchableOpacity>
-  );
+      );
+  };
 
   if (loading) {
     return (
@@ -307,44 +344,68 @@ export const MyPendingsScreen = () => {
             </Text>
 
             <View style={styles.statsRow}>
+
               <Card
                 mode="contained"
                 style={[
                   styles.statCard,
-                  { backgroundColor: colors.cardBackground },
+                  {
+                    backgroundColor:
+                      colors.cardBackground,
+                  },
                 ]}
               >
+
                 <Card.Content>
+
                   <View
                     style={{
-                      backgroundColor: colors.terciary,
+                      backgroundColor:
+                        colors.textErrorBackground,
+
                       alignSelf: 'center',
+
                       padding: 8,
+
                       borderRadius: 10,
+
                       marginBottom: 5,
                     }}
                   >
+
                     <Ionicons
-                      name={'time-outline'}
+                      name="alert-circle-outline"
                       size={25}
-                      color={colors.primary}
+                      color={colors.error}
                     />
+
                   </View>
 
                   <Text
                     variant="labelSmall"
-                    style={{ color: colors.textColor, textAlign: 'center' }}
+                    style={{
+                      color:
+                        colors.textColor,
+
+                      textAlign:
+                        'center',
+                    }}
                   >
-                    Hoy
+                    Atrasadas
                   </Text>
 
                   <Text
                     variant="headlineMedium"
-                    style={{ textAlign: 'center' }}
+                    style={{
+                      textAlign:
+                        'center',
+                    }}
                   >
-                    {todayPendings.length}
+                    {overduePendings.length}
                   </Text>
+
                 </Card.Content>
+
               </Card>
 
               <Card
@@ -374,7 +435,7 @@ export const MyPendingsScreen = () => {
                     variant="labelSmall"
                     style={{ color: colors.textColor, textAlign: 'center' }}
                   >
-                    Próximas
+                    Pendientes
                   </Text>
 
                   <Text
