@@ -1,15 +1,11 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   RefreshControl,
   SectionList,
   StyleSheet,
   View,
+  TouchableOpacity,
 } from 'react-native';
 
 import {
@@ -23,16 +19,13 @@ import {
 
 import { PendingsApi } from '../services/pendings.api';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { PendingDetailModal } from './PendingDetailModal';
 
 interface Pending {
   id: number;
-
   title: string;
-
   description: string;
-
   due_date: string;
-
   is_completed: boolean;
 
   assignment: {
@@ -46,524 +39,473 @@ interface Pending {
   };
 }
 
-const formatLocalDate = (
-  date: Date,
-): string => {
+const formatLocalDate = (date: Date): string => {
+  const year = date.getFullYear();
 
-  const year =
-    date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
 
-  const month =
-    String(
-      date.getMonth() + 1,
-    ).padStart(2, '0');
-
-  const day =
-    String(
-      date.getDate(),
-    ).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
 
   return `${year}-${month}-${day}`;
 };
 
 export const MyPendingsScreen = () => {
+  const { colors } = useTheme() as any;
 
-  const { colors } =
-    useTheme() as any;
+  const [loading, setLoading] = useState(true);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const [refreshing, setRefreshing] =
-    useState(false);
+  const [pendings, setPendings] = useState<Pending[]>([]);
 
-  const [pendings, setPendings] =
-    useState<Pending[]>([]);
+  const [selectedPending, setSelectedPending] = useState<Pending | null>(null);
 
-  const load =
-    useCallback(async () => {
+  const [detailVisible, setDetailVisible] = useState(false);
 
-      try {
+  const load = useCallback(async () => {
+    try {
+      const data = await PendingsApi.getAll();
 
-        const data =
-          await PendingsApi.getAll();
-
-        setPendings(data);
-
-      } catch (error) {
-
-        console.error(error);
-
-      } finally {
-
-        setLoading(false);
-        setRefreshing(false);
-      }
-
-    }, []);
+      setPendings(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
 
   useEffect(() => {
-
     load();
-
   }, [load]);
 
-  const today =
-    useMemo(() => {
+  const today = useMemo(() => {
+    return formatLocalDate(new Date());
+  }, []);
 
-      return formatLocalDate(
-        new Date(),
-      );
+  const todayPendings = useMemo(() => {
+    return pendings.filter(
+      pending => pending.due_date === today && !pending.is_completed,
+    );
+  }, [pendings, today]);
 
-    }, []);
+  const upcomingPendings = useMemo(() => {
+    return pendings.filter(
+      pending => pending.due_date > today && !pending.is_completed,
+    );
+  }, [pendings, today]);
 
-  const todayPendings =
-    useMemo(() => {
+  const completedPendings = useMemo(() => {
+    return pendings.filter(pending => pending.is_completed);
+  }, [pendings]);
 
-      return pendings.filter(
-        pending =>
-          pending.due_date ===
-            today &&
-          !pending.is_completed,
-      );
+  const sections = useMemo(() => {
+    const data: any[] = [];
 
-    }, [
-      pendings,
-      today,
-    ]);
+    if (todayPendings.length) {
+      data.push({
+        title: 'Hoy',
+        data: todayPendings,
+      });
+    }
 
-  const upcomingPendings =
-    useMemo(() => {
+    if (upcomingPendings.length) {
+      data.push({
+        title: 'Próximas',
+        data: upcomingPendings,
+      });
+    }
 
-      return pendings.filter(
-        pending =>
-          pending.due_date >
-            today &&
-          !pending.is_completed,
-      );
+    if (completedPendings.length) {
+      data.push({
+        title: 'Completadas',
+        data: completedPendings,
+      });
+    }
 
-    }, [
-      pendings,
-      today,
-    ]);
+    return data;
+  }, [todayPendings, upcomingPendings, completedPendings]);
 
-  const completedPendings =
-    useMemo(() => {
+  const togglePending = async (pendingId: number, value: boolean) => {
+    const previous = [...pendings];
 
-      return pendings.filter(
-        pending =>
-          pending.is_completed,
-      );
-
-    }, [pendings]);
-
-  const sections =
-    useMemo(() => {
-
-      const data: any[] =
-        [];
-
-      if (
-        todayPendings.length
-      ) {
-
-        data.push({
-          title: 'Hoy',
-          data: todayPendings,
-        });
-      }
-
-      if (
-        upcomingPendings.length
-      ) {
-
-        data.push({
-          title: 'Próximas',
-          data: upcomingPendings,
-        });
-      }
-
-      if (
-        completedPendings.length
-      ) {
-
-        data.push({
-          title: 'Completadas',
-          data:
-            completedPendings,
-        });
-      }
-
-      return data;
-
-    }, [
-      todayPendings,
-      upcomingPendings,
-      completedPendings,
-    ]);
-
-  const renderPending =
-    ({
-      item,
-    }: {
-      item: Pending;
-    }) => (
-
-      <Card
-        mode='contained'
-        style={
-          [styles.taskCard, {backgroundColor:colors.cardBackground}]
-        }
-      >
-
-        <Card.Content>
-
-          <View
-            style={
-              styles.taskRow
+    setPendings(current =>
+      current.map(item =>
+        item.id === pendingId
+          ? {
+              ...item,
+              is_completed: value,
             }
-          >
+          : item,
+      ),
+    );
 
+    try {
+      await PendingsApi.toggleCompleted(pendingId, value);
+
+      if (selectedPending?.id === pendingId) {
+        setSelectedPending({
+          ...selectedPending,
+          is_completed: value,
+        });
+      }
+    } catch (error) {
+      setPendings(previous);
+
+      console.error(error);
+    }
+  };
+
+  const renderPending = ({ item }: { item: Pending }) => (
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={() => {
+        setSelectedPending(item);
+
+        setDetailVisible(true);
+      }}
+    >
+      <Card mode='contained' style={[styles.taskCard, {backgroundColor:colors.cardBackground}]}>
+        <Card.Content>
+          <View style={styles.taskRow}>
             <Checkbox
-              status={
-                item.is_completed
-                  ? 'checked'
-                  : 'unchecked'
-              }
-              color={colors.primary}
+              status={item.is_completed ? 'checked' : 'unchecked'}
+              color="#4CAF50"
+              onPress={() => togglePending(item.id, !item.is_completed)}
             />
 
-            <View
-              style={
-                styles.content
-              }
-            >
-
+            <View style={styles.content}>
               <Text
                 variant="titleMedium"
                 style={{
-                  textDecorationLine:
-                    item.is_completed
-                      ? 'line-through'
-                      : 'none',
+                  textDecorationLine: item.is_completed
+                    ? 'line-through'
+                    : 'none',
 
-                  opacity:
-                    item.is_completed
-                      ? 0.55
-                      : 1,
+                  opacity: item.is_completed ? 0.55 : 1,
                 }}
               >
                 {item.title}
               </Text>
 
               {!!item.description && (
-
                 <Text
-                  numberOfLines={2}
                   style={{
-                    marginTop:
-                      4,
+                    marginTop: 4,
 
-                    color:
-                      colors.outline,
+                    color: colors.outline,
 
-                    textDecorationLine:
-                      item.is_completed
-                        ? 'line-through'
-                        : 'none',
+                    textDecorationLine: item.is_completed
+                      ? 'line-through'
+                      : 'none',
 
-                    opacity:
-                      item.is_completed
-                        ? 0.55
-                        : 1,
+                    opacity: item.is_completed ? 0.55 : 1,
                   }}
                 >
-                  {
-                    item.description
-                  }
+                  {item.description}
                 </Text>
-
               )}
 
               <Text
                 style={{
-                  marginTop:
-                    6,
-
-                  color:
-                    colors.outline,
+                  marginTop: 6,
+                  color: colors.outline,
                 }}
               >
-                {
-                  item.assignment
-                    ?.academy
-                    ?.name
-                }
-
-                {' - '}
-
-                {
-                  item.assignment
-                    ?.classroom
-                    ?.name
-                }
+                {item.assignment?.academy?.name}
+                {' • '}
+                {item.assignment?.classroom?.name}
               </Text>
-                
-                <View style={{
-                    flexDirection:'row',
-                    backgroundColor:colors.terciary,
-                    alignSelf:'flex-start',
-                    alignItems: 'center',
-                    gap: 5,
-                    marginTop: 5,
-                    borderRadius: 10,
-                    paddingVertical: 5,
-                    paddingHorizontal: 10
-                }}>
-                    <Ionicons
-                            name={'calendar-outline'}
-                            size={20}
-                            color={colors.primary}
-                        />
-                
-                    <Text
-                        style={{
-                        color:
-                            colors.primary,
-                        }}
-                    >
-                        {
-                        item.due_date
-                        }
-                    </Text>
-                </View>
+
+              <Text
+                style={{
+                  marginTop: 6,
+                  color: colors.outline,
+                }}
+              >
+                Vence: {item.due_date}
+              </Text>
             </View>
 
             <View
               style={[
                 styles.statusDot,
-
                 {
-                  backgroundColor:
-                    item.is_completed
-                      ? colors.success
-                      : colors.warning,
+                  backgroundColor: item.is_completed ? '#4CAF50' : '#FF9800',
                 },
               ]}
             />
-
           </View>
-
         </Card.Content>
-
       </Card>
-
-    );
+    </TouchableOpacity>
+  );
 
   if (loading) {
-
     return (
-
-      <View
-        style={
-          [styles.loadingContainer, {backgroundColor:colors.background}]
-        }
-      >
-
+      <View style={styles.loadingContainer}>
         <ActivityIndicator />
-
       </View>
     );
   }
 
   return (
-    <SectionList
-      sections={sections}
-      keyExtractor={item => item.id.toString()}
-      renderItem={renderPending}
-      renderSectionHeader={({ section }) => (
-        <View style={{
-            flexDirection: 'row',
-            alignSelf: 'flex-start',
-            alignItems: 'center',
-            gap: 5,
-
-        }}>
+    <>
+      <SectionList
+        sections={sections}
+        keyExtractor={item => item.id.toString()}
+        renderItem={renderPending}
+        renderSectionHeader={({ section }) => (
+          <View
+            style={{
+              flexDirection: 'row',
+              alignSelf: 'flex-start',
+              alignItems: 'center',
+              gap: 5,
+            }}
+          >
             <Text variant="labelLarge" style={styles.sectionTitle}>
-            {section.title}
+              {section.title}
             </Text>
             {/* <Ionicons name={'arrow-forward-outline'} size={10} color={colors.primary} /> */}
-        </View>
-      )}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={() => {
-            setRefreshing(true);
-
-            load();
-          }}
-        />
-      }
-      contentContainerStyle={{
-        padding: 16,
-        backgroundColor: colors.background,
-      }}
-      ListHeaderComponent={
-        <View>
-          <Text
-            variant="headlineSmall"
-            style={{
-              color: colors.titleColor,
-              marginBottom: 4,
-            }}
-          >
-            Mis pendientes
-          </Text>
-
-          <Text
-            style={{
-              color: colors.textColor,
-
-              marginBottom: 20,
-            }}
-          >
-            Organiza tus actividades
-          </Text>
-
-          <View style={styles.statsRow}>
-            <Card mode='contained' style={[styles.statCard, {backgroundColor:colors.cardBackground}]}>
-              <Card.Content>
-                <View style={{
-                    backgroundColor:colors.terciary,
-                    alignSelf:'center',
-                    padding: 8,
-                    borderRadius: 10,
-                    marginBottom: 5,
-                }}>
-                    <Ionicons name={'time-outline'} size={25} color={colors.primary} />
-                </View>
-
-                <Text variant='labelSmall' style={{color:colors.textColor, textAlign:'center'}}>Hoy</Text>
-
-                <Text variant="headlineMedium" style={{textAlign:'center'}}>{todayPendings.length}</Text>
-              </Card.Content>
-            </Card>
-
-            <Card mode='contained' style={[styles.statCard, {backgroundColor:colors.cardBackground}]}>
-              <Card.Content>
-                <View style={{
-                    backgroundColor:colors.textWarningBackground,
-                    alignSelf:'center',
-                    padding: 8,
-                    borderRadius: 10,
-                    marginBottom: 5,
-                }}>
-                    <Ionicons name={'calendar-outline'} size={25} color={colors.textWarning} />
-                </View>
-                <Text variant='labelSmall' style={{color:colors.textColor, textAlign:'center'}}>Próximas</Text>
-
-                <Text variant="headlineMedium" style={{textAlign:'center'}}>{upcomingPendings.length}</Text>
-              </Card.Content>
-            </Card>
-
-            <Card mode='contained' style={[styles.statCard, {backgroundColor:colors.cardBackground}]}>
-              <Card.Content>
-                <View style={{
-                    backgroundColor:colors.textSuccessBackground,
-                    alignSelf:'center',
-                    padding: 8,
-                    borderRadius: 10,
-                    marginBottom: 5,
-                }}>
-                    <Ionicons name={'checkmark-circle-outline'} size={25} color={colors.textSuccess} />
-                </View>
-                <Text variant='labelSmall' style={{color:colors.textColor, textAlign:'center'}}>Completadas</Text>
-
-                <Text variant="headlineMedium" style={{textAlign:'center'}}>{completedPendings.length}</Text>
-              </Card.Content>
-            </Card>
           </View>
+        )}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => {
+              setRefreshing(true);
 
-          <Divider
-            style={{
-              marginVertical: 24,
-                backgroundColor:colors.titleColor
+              load();
             }}
           />
-        </View>
-      }
-    />
+        }
+        contentContainerStyle={{
+          padding: 16,
+          backgroundColor: colors.background,
+        }}
+        ListHeaderComponent={
+          <View>
+            <Text
+              variant="headlineSmall"
+              style={{
+                color: colors.titleColor,
+                marginBottom: 4,
+              }}
+            >
+              Mis pendientes
+            </Text>
+
+            <Text
+              style={{
+                color: colors.textColor,
+
+                marginBottom: 20,
+              }}
+            >
+              Organiza tus actividades
+            </Text>
+
+            <View style={styles.statsRow}>
+              <Card
+                mode="contained"
+                style={[
+                  styles.statCard,
+                  { backgroundColor: colors.cardBackground },
+                ]}
+              >
+                <Card.Content>
+                  <View
+                    style={{
+                      backgroundColor: colors.terciary,
+                      alignSelf: 'center',
+                      padding: 8,
+                      borderRadius: 10,
+                      marginBottom: 5,
+                    }}
+                  >
+                    <Ionicons
+                      name={'time-outline'}
+                      size={25}
+                      color={colors.primary}
+                    />
+                  </View>
+
+                  <Text
+                    variant="labelSmall"
+                    style={{ color: colors.textColor, textAlign: 'center' }}
+                  >
+                    Hoy
+                  </Text>
+
+                  <Text
+                    variant="headlineMedium"
+                    style={{ textAlign: 'center' }}
+                  >
+                    {todayPendings.length}
+                  </Text>
+                </Card.Content>
+              </Card>
+
+              <Card
+                mode="contained"
+                style={[
+                  styles.statCard,
+                  { backgroundColor: colors.cardBackground },
+                ]}
+              >
+                <Card.Content>
+                  <View
+                    style={{
+                      backgroundColor: colors.textWarningBackground,
+                      alignSelf: 'center',
+                      padding: 8,
+                      borderRadius: 10,
+                      marginBottom: 5,
+                    }}
+                  >
+                    <Ionicons
+                      name={'calendar-outline'}
+                      size={25}
+                      color={colors.textWarning}
+                    />
+                  </View>
+                  <Text
+                    variant="labelSmall"
+                    style={{ color: colors.textColor, textAlign: 'center' }}
+                  >
+                    Próximas
+                  </Text>
+
+                  <Text
+                    variant="headlineMedium"
+                    style={{ textAlign: 'center' }}
+                  >
+                    {upcomingPendings.length}
+                  </Text>
+                </Card.Content>
+              </Card>
+
+              <Card
+                mode="contained"
+                style={[
+                  styles.statCard,
+                  { backgroundColor: colors.cardBackground },
+                ]}
+              >
+                <Card.Content>
+                  <View
+                    style={{
+                      backgroundColor: colors.textSuccessBackground,
+                      alignSelf: 'center',
+                      padding: 8,
+                      borderRadius: 10,
+                      marginBottom: 5,
+                    }}
+                  >
+                    <Ionicons
+                      name={'checkmark-circle-outline'}
+                      size={25}
+                      color={colors.textSuccess}
+                    />
+                  </View>
+                  <Text
+                    variant="labelSmall"
+                    style={{ color: colors.textColor, textAlign: 'center' }}
+                  >
+                    Completadas
+                  </Text>
+
+                  <Text
+                    variant="headlineMedium"
+                    style={{ textAlign: 'center' }}
+                  >
+                    {completedPendings.length}
+                  </Text>
+                </Card.Content>
+              </Card>
+            </View>
+
+            <Divider
+              style={{
+                marginVertical: 24,
+                backgroundColor: colors.titleColor,
+              }}
+            />
+          </View>
+        }
+      />
+
+      <PendingDetailModal
+        visible={detailVisible}
+        pending={selectedPending}
+        onClose={() => {
+          setDetailVisible(false);
+
+          setSelectedPending(null);
+        }}
+        onToggleCompleted={value => {
+          if (!selectedPending) {
+            return;
+          }
+
+          togglePending(selectedPending.id, value);
+        }}
+      />
+    </>
   );
 };
 
-const styles =
-  StyleSheet.create({
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
 
-    loadingContainer: {
+    justifyContent: 'center',
 
-      flex: 1,
+    alignItems: 'center',
+  },
 
-      justifyContent:
-        'center',
+  statsRow: {
+    flexDirection: 'row',
 
-      alignItems:
-        'center',
-    },
+    gap: 10,
+  },
 
-    statsRow: {
+  statCard: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 
-      flexDirection:
-        'row',
+  sectionTitle: {
+    marginTop: 12,
 
-      gap: 10,
-    },
+    marginBottom: 10,
+  },
 
-    statCard: {
-    
-      flex: 1,
-      justifyContent:'center',
-      alignItems: 'center',
-    },
+  taskCard: {
+    marginBottom: 12,
+  },
 
-    sectionTitle: {
+  taskRow: {
+    flexDirection: 'row',
 
-      marginTop: 12,
+    alignItems: 'flex-start',
+  },
 
-      marginBottom: 10,
+  content: {
+    flex: 1,
 
-    },
+    marginRight: 12,
+  },
 
-    taskCard: {
+  statusDot: {
+    width: 10,
 
-      marginBottom: 12,
-    },
+    height: 10,
 
-    taskRow: {
+    borderRadius: 5,
 
-      flexDirection:
-        'row',
-
-      alignItems:
-        'flex-start',
-    },
-
-    content: {
-
-      flex: 1,
-
-      marginRight:
-        12,
-    },
-
-    statusDot: {
-
-      width: 10,
-
-      height: 10,
-
-      borderRadius: 5,
-
-      marginTop: 12,
-    },
-  });
+    marginTop: 12,
+  },
+});
