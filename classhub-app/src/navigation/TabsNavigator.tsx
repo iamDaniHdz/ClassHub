@@ -7,7 +7,9 @@ import { CalendarScreen } from '../features/calendar/screens/CalendarScreen';
 import { AcademiesScreen } from '../features/academies/screens/AcademiesScreen';
 import { ProfileScreen } from '../features/profile/screens/ProfileScreen';
 import { SettingsScreen } from '../features/settings/screens/SettingsScreen';
+import { MyPendingsScreen } from '../features/pendings/screens/MyPendingsScreen';
 import { useTheme } from 'react-native-paper';
+import React from 'react';
 
 const Tab = createBottomTabNavigator();
 
@@ -38,6 +40,12 @@ export const TabsNavigator = () => {
               iconName = focused
                 ? 'school'
                 : 'school-outline';
+              break;
+
+            case 'Pendings':
+              iconName = focused
+                ? 'checkmark-circle'
+                : 'checkmark-circle-outline';
               break;
 
             case 'Profile':
@@ -98,6 +106,15 @@ export const TabsNavigator = () => {
         options={{
             headerShown: false,
             title: 'Academias'
+        }}
+      />
+
+      <Tab.Screen
+        name="Pendings"
+        component={MyPendingsScreen}
+        options={{
+          headerShown: false,
+          title: 'Pendientes',
         }}
       />
 
