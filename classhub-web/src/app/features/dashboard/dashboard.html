@@ -388,7 +388,7 @@
 
       </div>
 
-      @if (dashboard.next_class) {
+      @if (classInfo) {
 
         <mat-card
           class="next-class-card">
@@ -404,7 +404,11 @@
 
             <mat-card-title>
 
-              Próxima Clase
+              {{
+                isCurrentClass
+                  ? 'Clase en Curso'
+                  : 'Próxima Clase'
+              }}
 
             </mat-card-title>
 
@@ -412,11 +416,19 @@
 
           <mat-card-content>
 
+            @if (isCurrentClass) {
+
+              <div class="current-class-badge">
+                EN CURSO
+              </div>
+
+            }
+
             <div
               class="next-class-academy">
 
               {{
-                dashboard.next_class.academy
+                classInfo.academy
               }}
 
             </div>
@@ -425,7 +437,7 @@
 
               Grupo
               {{
-                dashboard.next_class.classroom
+                classInfo.classroom
               }}
 
             </p>
@@ -434,23 +446,43 @@
 
               {{
                 getDayName(
-                  dashboard.next_class.day_of_week
+                  classInfo.day_of_week
                 )
               }}
 
             </p>
 
-            <p>
+            @if (isCurrentClass) {
 
-              {{
-                dashboard.next_class.start_time
-              }}
-              -
-              {{
-                dashboard.next_class.end_time
-              }}
+              <p>
+                Clase activa
+              </p>
 
-            </p>
+              <p>
+
+                Finaliza a las
+
+                {{ classInfo.end_time }}
+
+              </p>
+
+            } @else {
+
+              <p>
+
+                {{
+                  classInfo.start_time
+                }}
+
+                -
+
+                {{
+                  classInfo.end_time
+                }}
+
+              </p>
+
+            }
 
           </mat-card-content>
 
