@@ -257,17 +257,12 @@ export const AcademiesScreen = ({
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor:
-          theme.background,
+        backgroundColor: theme.background,
       }}
     >
       <FlatList
         data={filteredData}
-        keyExtractor={item =>
-          String(
-            item.assignment_id
-          )
-        }
+        keyExtractor={item => String(item.assignment_id)}
         numColumns={2}
         refreshing={refreshing}
         onRefresh={onRefresh}
@@ -278,36 +273,34 @@ export const AcademiesScreen = ({
         ListHeaderComponent={
           <>
             <Text
+              variant="headlineSmall"
+              style={{
+                color: colors.titleColor,
+                marginBottom: 4,
+                fontWeight: 'bold',
+              }}
+            >
+              Mis academias
+            </Text>
+
+            <Text
               variant="bodyLarge"
               style={{
-                color:
-                  theme.textColor,
-                marginBottom: 8,
+                color: colors.textColor,
+                marginBottom: 20,
               }}
             >
               Tus asignaturas y grupos asignados
             </Text>
 
-            <Text
-              variant="headlineSmall"
-              style={{
-                marginBottom: 16,
-                fontWeight: 'bold',
-              }}
-            >
-              ACADEMIAS
-            </Text>
-
             <Searchbar
               placeholder="Buscar academia"
               value={search}
-              onChangeText={
-                setSearch
-              }
+              onChangeText={setSearch}
               style={{
                 marginBottom: 16,
                 borderRadius: 26,
-                backgroundColor:colors.backgroundShadow,
+                backgroundColor: colors.backgroundShadow,
               }}
             />
           </>
@@ -336,7 +329,7 @@ export const AcademiesScreen = ({
               }}
             >
               {search
-                ?  `No se encontraron resultados`
+                ? `No se encontraron resultados`
                 : 'No tienes academias asignadas'}
             </Text>
 

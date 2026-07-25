@@ -162,6 +162,14 @@ Route::prefix('v1')->group(function () {
                 ]
             );
 
+            Route::put(
+                'academy-assignment-schedules/{academyAssignmentSchedule}',
+                [
+                    AcademyAssignmentScheduleController::class,
+                    'update',
+                ]
+            );
+
             Route::delete(
                 'academy-assignment-schedules/{academyAssignmentSchedule}',
                 [
