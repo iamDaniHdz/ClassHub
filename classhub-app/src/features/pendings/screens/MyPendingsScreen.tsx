@@ -337,15 +337,16 @@ export const MyPendingsScreen = () => {
               style={{
                 color: colors.titleColor,
                 marginBottom: 4,
+                fontWeight: 'bold',
               }}
             >
               Mis pendientes
             </Text>
 
             <Text
+              variant="bodyLarge"
               style={{
                 color: colors.textColor,
-
                 marginBottom: 20,
               }}
             >

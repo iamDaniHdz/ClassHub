@@ -59,40 +59,49 @@ class AcademyAssignmentScheduleController extends Controller
             ],
         ]);
 
-        /**
-         * Validar rango horario
-         */
         if (
             $data['start_time'] >=
             $data['end_time']
         ) {
 
-            abort(
-                422,
-                'End time must be greater than start time'
-            );
+            return response()->json([
+
+                'success' => false,
+
+                'message' =>
+                    'La hora de fin debe ser mayor que la hora de inicio.'
+
+            ], 422);
         }
 
-        /**
-         * Validar traslapes
-         *
-         * Dos rangos se traslapan cuando:
-         *
-         * nuevo_inicio < existente_fin
-         * AND
-         * nuevo_fin > existente_inicio
-         */
-        $overlap =
-            AcademyAssignmentSchedule::query()
+        $assignment =
+            AcademyAssignment::with([
+                'classroom',
+            ])
+            ->findOrFail(
+                $data['academy_assignment_id']
+            );
 
-                ->where(
-                    'academy_assignment_id',
-                    $data['academy_assignment_id']
-                )
+        /**
+         * VALIDAR CONFLICTO DEL DOCENTE
+         */
+        $teacherConflict =
+            AcademyAssignmentSchedule::query()
 
                 ->where(
                     'day_of_week',
                     $data['day_of_week']
+                )
+
+                ->whereHas(
+                    'assignment',
+                    function ($query) use ($assignment) {
+
+                        $query->where(
+                            'user_id',
+                            $assignment->user_id
+                        );
+                    }
                 )
 
                 ->where(
@@ -109,12 +118,64 @@ class AcademyAssignmentScheduleController extends Controller
 
                 ->exists();
 
-        if ($overlap) {
+        if ($teacherConflict) {
 
-            abort(
-                422,
-                'Schedule overlaps with an existing schedule'
-            );
+            return response()->json([
+
+                'success' => false,
+
+                'message' =>
+                    'El docente ya tiene una clase asignada en ese horario.',
+
+            ], 422);
+        }
+
+        /**
+         * VALIDAR CONFLICTO DEL GRUPO
+         */
+        $classroomConflict =
+            AcademyAssignmentSchedule::query()
+
+                ->where(
+                    'day_of_week',
+                    $data['day_of_week']
+                )
+
+                ->whereHas(
+                    'assignment',
+                    function ($query) use ($assignment) {
+
+                        $query->where(
+                            'classroom_id',
+                            $assignment->classroom_id
+                        );
+                    }
+                )
+
+                ->where(
+                    'start_time',
+                    '<',
+                    $data['end_time']
+                )
+
+                ->where(
+                    'end_time',
+                    '>',
+                    $data['start_time']
+                )
+
+                ->exists();
+
+        if ($classroomConflict) {
+
+            return response()->json([
+
+                'success' => false,
+
+                'message' =>
+                    'El grupo ya tiene una clase asignada en ese horario.',
+
+            ], 422);
         }
 
         $schedule =
@@ -129,6 +190,192 @@ class AcademyAssignmentScheduleController extends Controller
             'data' => $schedule,
 
         ], 201);
+    }
+
+    /**
+     * Actualizar horario
+     */
+    public function update(
+        Request $request,
+        AcademyAssignmentSchedule $academyAssignmentSchedule
+    )
+    {
+        $data = $request->validate([
+
+            'day_of_week' => [
+                'sometimes',
+                'integer',
+                'between:1,7',
+            ],
+
+            'start_time' => [
+                'sometimes',
+                'date_format:H:i',
+            ],
+
+            'end_time' => [
+                'sometimes',
+                'date_format:H:i',
+            ],
+        ]);
+
+        $dayOfWeek =
+            $data['day_of_week']
+            ?? $academyAssignmentSchedule->day_of_week;
+
+        $startTime =
+            $data['start_time']
+            ?? $academyAssignmentSchedule->start_time;
+
+        $endTime =
+            $data['end_time']
+            ?? $academyAssignmentSchedule->end_time;
+
+        /**
+         * Validar rango horario
+         */
+        if ($startTime >= $endTime) {
+
+            return response()->json([
+
+                'success' => false,
+
+                'message' =>
+                    'La hora de fin debe ser mayor que la hora de inicio.',
+
+            ], 422);
+        }
+
+        $assignment =
+            AcademyAssignment::findOrFail(
+                $academyAssignmentSchedule
+                    ->academy_assignment_id
+            );
+
+        /**
+         * CONFLICTO DEL DOCENTE
+         */
+        $teacherConflict =
+            AcademyAssignmentSchedule::query()
+
+                ->where(
+                    'id',
+                    '!=',
+                    $academyAssignmentSchedule->id
+                )
+
+                ->where(
+                    'day_of_week',
+                    $dayOfWeek
+                )
+
+                ->whereHas(
+                    'assignment',
+                    function ($query) use (
+                        $assignment
+                    ) {
+
+                        $query->where(
+                            'user_id',
+                            $assignment->user_id
+                        );
+                    }
+                )
+
+                ->where(
+                    'start_time',
+                    '<',
+                    $endTime
+                )
+
+                ->where(
+                    'end_time',
+                    '>',
+                    $startTime
+                )
+
+                ->exists();
+
+        if ($teacherConflict) {
+
+            return response()->json([
+
+                'success' => false,
+
+                'message' =>
+                    'El docente ya tiene una clase asignada en ese horario.',
+
+            ], 422);
+        }
+
+        /**
+         * CONFLICTO DEL GRUPO
+         */
+        $classroomConflict =
+            AcademyAssignmentSchedule::query()
+
+                ->where(
+                    'id',
+                    '!=',
+                    $academyAssignmentSchedule->id
+                )
+
+                ->where(
+                    'day_of_week',
+                    $dayOfWeek
+                )
+
+                ->whereHas(
+                    'assignment',
+                    function ($query) use (
+                        $assignment
+                    ) {
+
+                        $query->where(
+                            'classroom_id',
+                            $assignment->classroom_id
+                        );
+                    }
+                )
+
+                ->where(
+                    'start_time',
+                    '<',
+                    $endTime
+                )
+
+                ->where(
+                    'end_time',
+                    '>',
+                    $startTime
+                )
+
+                ->exists();
+
+        if ($classroomConflict) {
+
+            return response()->json([
+
+                'success' => false,
+
+                'message' =>
+                    'El grupo ya tiene una clase asignada en ese horario.',
+
+            ], 422);
+        }
+
+        $academyAssignmentSchedule->update(
+            $data
+        );
+
+        return response()->json([
+
+            'success' => true,
+
+            'data' =>
+                $academyAssignmentSchedule
+                    ->fresh(),
+        ]);
     }
 
     /**
