@@ -1,5 +1,5 @@
 import React, {
-  useEffect,
+  useCallback,
   useMemo,
   useState,
 } from 'react';
@@ -24,6 +24,10 @@ import { ClassroomDetailApi } from '../services/classroomDetail.api';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import {
+  useFocusEffect,
+} from '@react-navigation/native';
+
 export const ClassroomDetailScreen = ({
   route,
   navigation,
@@ -41,32 +45,55 @@ export const ClassroomDetailScreen = ({
   const [loading, setLoading] =
     useState(true);
 
+  const [refreshing, setRefreshing] =
+    useState(false);
+
   const [search, setSearch] =
     useState('');
 
   const [data, setData] =
     useState<any>(null);
 
-  useEffect(() => {
-    load();
-  }, []);
+  
+  const load = useCallback(async () => {
 
-  const load = async () => {
     try {
 
       const result =
         await ClassroomDetailApi.getById(
-          classroomId
+          classroomId,
         );
 
       setData(result);
 
     } catch (error) {
+
       console.error(error);
+
     } finally {
+
       setLoading(false);
+
+      setRefreshing(false);
     }
+
+  }, [classroomId]);
+
+  const onRefresh = () => {
+
+    setRefreshing(true);
+
+    load();
   };
+
+
+  useFocusEffect(
+    useCallback(() => {
+
+      load();
+
+    }, [load]),
+  );
     
     const filteredStudents =
     useMemo(() => {
@@ -209,6 +236,8 @@ export const ClassroomDetailScreen = ({
 
       <FlatList
         data={filteredStudents}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
         keyExtractor={item => item.student_assignment_id.toString()}
         renderItem={({ item }) => (
           <Card
