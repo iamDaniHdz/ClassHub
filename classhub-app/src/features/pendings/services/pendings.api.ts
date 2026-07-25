@@ -51,4 +51,20 @@ export const PendingsApi = {
 
     return response.data.data;
   },
+
+  async create(payload: {
+    academy_assignment_id: number;
+    title: string;
+    description?: string;
+    due_date?: string;
+  }) {
+
+    const response =
+      await api.post(
+        '/academy-assignment-pendings',
+        payload,
+      );
+
+    return response.data.data;
+  },
 };
