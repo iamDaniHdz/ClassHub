@@ -12,6 +12,7 @@ import {
 import {
   ActivityIndicator,
   Card,
+  ProgressBar,
   Text,
   useTheme,
 } from 'react-native-paper';
@@ -20,11 +21,9 @@ import {
   useFocusEffect,
 } from '@react-navigation/native';
 
-import Ionicons
-from 'react-native-vector-icons/Ionicons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import { ScheduleApi }
-from '../services/schedule.api';
+import { ScheduleApi } from '../services/schedule.api';
 
 const DAYS = [
   {
@@ -57,6 +56,9 @@ export const CalendarScreen = () => {
   const [loading, setLoading] =
     useState(true);
 
+  const [refreshing, setRefreshing] =
+    useState(false);
+
   const [selectedDay, setSelectedDay] =
     useState(1);
 
@@ -64,25 +66,34 @@ export const CalendarScreen = () => {
     useState<any[]>([]);
 
   const load =
-    useCallback(async () => {
+  useCallback(async () => {
 
-      try {
+    try {
 
-        const data =
-          await ScheduleApi.getAll();
+      const data =
+        await ScheduleApi.getAll();
 
-        setSchedule(data);
+      setSchedule(data);
 
-      } catch (error) {
+    } catch (error) {
 
-        console.error(error);
+      console.error(error);
 
-      } finally {
+    } finally {
 
-        setLoading(false);
-      }
+      setLoading(false);
+      setRefreshing(false);
+    }
 
-    }, []);
+  }, []);
+
+  const onRefresh =
+    () => {
+
+      setRefreshing(true);
+
+      load();
+    };
 
   useFocusEffect(
     useCallback(() => {
@@ -113,6 +124,98 @@ export const CalendarScreen = () => {
       selectedDay,
     ]);
 
+  const todayWeekDay =
+    useMemo(() => {
+
+      const day =
+        new Date().getDay();
+
+      return day === 0
+        ? 7
+        : day;
+
+    }, []);
+
+  const isTodaySelected =
+    selectedDay ===
+    todayWeekDay;
+
+  const todayProgress =
+    useMemo(() => {
+
+      const now =
+        new Date();
+
+      const currentMinutes =
+        now.getHours() * 60 +
+        now.getMinutes();
+
+      const completedClasses =
+        filtered.filter(item => {
+
+          const [
+            hour,
+            minute,
+          ] = item.end_time
+            .split(':');
+
+          const endMinutes =
+            Number(hour) * 60 +
+            Number(minute);
+
+          return (
+            endMinutes <=
+            currentMinutes
+          );
+        });
+
+      const progress =
+        filtered.length > 0
+
+          ? completedClasses.length /
+            filtered.length
+
+          : 0;
+
+      const nextClass =
+        filtered.find(item => {
+
+          const [
+            hour,
+            minute,
+          ] = item.start_time
+            .split(':');
+
+          const startMinutes =
+            Number(hour) * 60 +
+            Number(minute);
+
+          return (
+            startMinutes >
+            currentMinutes
+          );
+        });
+
+      return {
+
+        completed:
+          completedClasses.length,
+
+        total:
+          filtered.length,
+
+        progress,
+
+        percentage:
+          Math.round(
+            progress * 100,
+          ),
+
+        nextClass,
+      };
+
+    }, [filtered]);
+
   if (loading) {
 
     return (
@@ -125,19 +228,32 @@ export const CalendarScreen = () => {
   }
 
   return (
+
     <FlatList
+
       data={filtered}
-      keyExtractor={item => item.schedule_id.toString()}
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+      keyExtractor={item =>
+        item.schedule_id.toString()
+      }
+
       contentContainerStyle={{
         padding: 16,
+        backgroundColor:
+          colors.background,
+        flexGrow: 1,
       }}
+
       ListHeaderComponent={
+
         <View>
-          
+
           <Text
             variant="headlineSmall"
             style={{
-              color: colors.titleColor,
+              color:
+                colors.titleColor,
               marginBottom: 4,
               fontWeight: 'bold',
             }}
@@ -148,7 +264,8 @@ export const CalendarScreen = () => {
           <Text
             variant="bodyLarge"
             style={{
-              color: colors.textColor,
+              color:
+                colors.textColor,
               marginBottom: 20,
             }}
           >
@@ -156,34 +273,67 @@ export const CalendarScreen = () => {
           </Text>
 
           <FlatList
+
             horizontal
+
             data={DAYS}
-            keyExtractor={item => item.key.toString()}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => (
+
+            keyExtractor={item =>
+              item.key.toString()
+            }
+
+            showsHorizontalScrollIndicator={
+              false
+            }
+
+            renderItem={({
+              item,
+            }) => (
+
               <Card
+
                 mode="contained"
-                onPress={() => setSelectedDay(item.key)}
+
+                onPress={() =>
+                  setSelectedDay(
+                    item.key,
+                  )
+                }
+
                 style={{
                   marginRight: 10,
 
                   backgroundColor:
-                    selectedDay === item.key
+                    selectedDay ===
+                    item.key
+
                       ? colors.primary
+
                       : colors.cardBackground,
                 }}
               >
+
                 <Card.Content>
+
                   <Text
                     style={{
                       color:
-                        selectedDay === item.key ? '#FFF' : colors.textColor,
+
+                        selectedDay ===
+                        item.key
+
+                          ? '#FFF'
+
+                          : colors.textColor,
                     }}
                   >
                     {item.label}
                   </Text>
+
                 </Card.Content>
+
               </Card>
+
             )}
           />
 
@@ -192,14 +342,199 @@ export const CalendarScreen = () => {
             style={{
               marginTop: 20,
               marginBottom: 20,
-              backgroundColor: colors.cardBackground,
+              backgroundColor:
+                colors.cardBackground,
             }}
           >
-            <Card.Content>
-              <Text>Clases</Text>
 
-              <Text variant="headlineMedium">{filtered.length}</Text>
+            <Card.Content>
+
+              {isTodaySelected ? (
+
+                <>
+
+                  <View
+                    style={{
+                      flexDirection:
+                        'row',
+
+                      justifyContent:
+                        'space-between',
+
+                      alignItems:
+                        'center',
+                    }}
+                  >
+
+                    <Text
+                      variant="titleMedium"
+                      style={{
+                        fontWeight:
+                          '700',
+                      }}
+                    >
+                      Clases de hoy
+                    </Text>
+
+                    <Text>
+
+                      {
+                        todayProgress.completed
+                      }
+
+                      /
+
+                      {
+                        todayProgress.total
+                      }
+
+                    </Text>
+
+                  </View>
+
+                  <Text
+                    style={{
+                      marginTop: 8,
+                    }}
+                  >
+                    Progreso
+                  </Text>
+
+                  <ProgressBar
+
+                    progress={
+                      todayProgress.progress
+                    }
+
+                    color={
+                      colors.primary
+                    }
+
+                    style={{
+                      marginTop: 10,
+                      height: 10,
+                      borderRadius: 5,
+                    }}
+                  />
+
+                  <Text
+                    style={{
+                      marginTop: 8,
+                      textAlign:
+                        'right',
+                    }}
+                  >
+                    {
+                      todayProgress.percentage
+                    }
+                    %
+                  </Text>
+
+                  {todayProgress.nextClass && (
+
+                    <View
+                      style={{
+                        marginTop: 12,
+                      }}
+                    >
+
+                      <Text
+                        variant="labelMedium"
+                      >
+                        Siguiente clase
+                      </Text>
+
+                      <Text
+                        variant="bodyLarge"
+                      >
+                        {
+                          todayProgress
+                            .nextClass
+                            .academy?.name
+                        }
+                      </Text>
+
+                      <Text>
+                        {
+                          todayProgress
+                            .nextClass
+                            .classroom?.name
+                        }
+
+                        {' · '}
+
+                        {
+                          todayProgress
+                            .nextClass
+                            .start_time
+                            ?.substring(
+                              0,
+                              5,
+                            )
+                        }
+
+                        {' - '}
+
+                        {
+                          todayProgress
+                            .nextClass
+                            .end_time
+                            ?.substring(
+                              0,
+                              5,
+                            )
+                        }
+                      </Text>
+
+                    </View>
+
+                  )}
+
+                </>
+
+              ) : (
+
+                <>
+
+                  <Text
+                    variant="titleMedium"
+                    style={{
+                      fontWeight:
+                        '700',
+                    }}
+                  >
+                    Clases programadas
+                  </Text>
+
+                  <Text
+                    variant="displaySmall"
+                    style={{
+                      marginTop: 8,
+                    }}
+                  >
+                    {filtered.length}
+                  </Text>
+
+                  <Text
+                    style={{
+                      marginTop: 4,
+                    }}
+                  >
+                    {
+                      filtered.length === 1
+
+                        ? 'Clase programada'
+
+                        : 'Clases programadas'
+                    }
+                  </Text>
+
+                </>
+
+              )}
+
             </Card.Content>
+
           </Card>
 
           <Text
@@ -210,18 +545,27 @@ export const CalendarScreen = () => {
           >
             Cronograma
           </Text>
+
         </View>
+
       }
+
       renderItem={({ item }) => (
+
         <Card
           mode="contained"
           style={{
             marginBottom: 12,
-            backgroundColor: colors.cardBackground,
+            backgroundColor:
+              colors.cardBackground,
           }}
         >
+
           <Card.Content>
-            <Text variant="titleMedium">{item.academy?.name}</Text>
+
+            <Text variant="titleMedium">
+              {item.academy?.name}
+            </Text>
 
             <Text
               style={{
@@ -233,35 +577,74 @@ export const CalendarScreen = () => {
 
             <View
               style={{
-                flexDirection: 'row',
+                flexDirection:
+                  'row',
+
                 marginTop: 8,
-                alignItems: 'center',
+
+                alignItems:
+                  'center',
               }}
             >
-              <Ionicons name="time-outline" size={18} color={colors.primary} />
+
+              <Ionicons
+                name="time-outline"
+                size={18}
+                color={
+                  colors.primary
+                }
+              />
 
               <Text
                 style={{
                   marginLeft: 6,
                 }}
               >
-                {item.start_time?.substring(0, 5)}
+                {
+                  item.start_time
+                    ?.substring(
+                      0,
+                      5,
+                    )
+                }
+
                 {' - '}
-                {item.end_time?.substring(0, 5)}
+
+                {
+                  item.end_time
+                    ?.substring(
+                      0,
+                      5,
+                    )
+                }
               </Text>
+
             </View>
+
           </Card.Content>
+
         </Card>
+
       )}
+
       ListEmptyComponent={
+
         <View
           style={{
-            alignItems: 'center',
+            alignItems:
+              'center',
 
             marginTop: 50,
           }}
         >
-          <Ionicons name="calendar-outline" size={64} color={colors.outline} />
+
+          <Ionicons
+            name="calendar-outline"
+            size={64}
+            color={
+              colors.outline
+            }
+          />
 
           <Text
             style={{
@@ -270,8 +653,12 @@ export const CalendarScreen = () => {
           >
             No tienes clases este día
           </Text>
+
         </View>
+
       }
+
     />
+
   );
 };
