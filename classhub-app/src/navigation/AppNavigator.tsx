@@ -17,6 +17,8 @@ import { StudentsScreen } from '../features/students/screens/StudentsScreen';
 import { StudentDetailScreen } from '../features/students/screens/StudentDetailScreen';
 import { TabsNavigator } from './TabsNavigator';
 import { ClassroomDetailScreen } from '../features/classrooms/screens/ClassroomDetailScreen';
+import React from 'react';
+import { PendingFormScreen } from '../features/pendings/screens/PendingFormScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -60,6 +62,14 @@ export const AppNavigator = () => {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name="PendingForm"
+            component={PendingFormScreen}
+            options={{
+              title: 'Nuevo pendiente',
+            }}
+          />
+
 
           {user?.role?.key === 'admin' && (
             <>

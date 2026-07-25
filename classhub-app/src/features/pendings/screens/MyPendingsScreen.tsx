@@ -13,6 +13,7 @@ import {
   Card,
   Checkbox,
   Divider,
+  FAB,
   Text,
   useTheme,
 } from 'react-native-paper';
@@ -20,6 +21,8 @@ import {
 import { PendingsApi } from '../services/pendings.api';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { PendingDetailModal } from './PendingDetailModal';
+import { useFocusEffect } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 interface Pending {
   id: number;
@@ -62,6 +65,8 @@ export const MyPendingsScreen = () => {
 
   const [detailVisible, setDetailVisible] = useState(false);
 
+  const navigation = useNavigation<any>();
+
   const load = useCallback(async () => {
     try {
       const data = await PendingsApi.getAll();
@@ -75,9 +80,13 @@ export const MyPendingsScreen = () => {
     }
   }, []);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useFocusEffect(
+    useCallback(() => {
+
+      load();
+
+    }, [load]),
+  );
 
   const today = useMemo(() => {
     return formatLocalDate(new Date());
@@ -494,6 +503,20 @@ export const MyPendingsScreen = () => {
               }}
             />
           </View>
+        }
+      />
+
+      <FAB
+        icon="plus"
+        style={{
+          position: 'absolute',
+          right: 16,
+          bottom: 16,
+        }}
+        onPress={() =>
+          navigation.navigate(
+            'PendingForm',
+          )
         }
       />
 
