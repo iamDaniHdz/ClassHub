@@ -1,5 +1,5 @@
 import React, {
-  useEffect,
+  useCallback,
   useMemo,
   useState,
 } from 'react';
@@ -21,6 +21,7 @@ import { AcademiesApi } from '../services/academies.api';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useFocusEffect } from '@react-navigation/native';2
 
 type AcademyCard = {
   assignment_id: number;
@@ -60,21 +61,34 @@ export const AcademiesScreen = ({
     AcademyCard[]
   >([]);
 
-  useEffect(() => {
-    load();
-  }, []);
+  const load = useCallback(async () => {
 
-  const load = async () => {
     try {
+
       const result =
         await AcademiesApi.getAll();
+
       setData(result);
+
     } catch (e) {
+
       console.error(e);
+
     } finally {
+
       setLoading(false);
     }
-  };
+
+  }, []);
+
+
+  useFocusEffect(
+    useCallback(() => {
+
+      load();
+
+    }, [load]),
+  );
 
   const onRefresh = async () => {
     setRefreshing(true);
