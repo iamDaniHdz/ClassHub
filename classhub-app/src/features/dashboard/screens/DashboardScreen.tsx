@@ -1,76 +1,239 @@
-import React from 'react';
+import React, {
+  useCallback,
+  useState,
+} from 'react';
+
 import {
+  RefreshControl,
   ScrollView,
   View,
 } from 'react-native';
 
 import {
+  ActivityIndicator,
   Avatar,
   Card,
-  IconButton,
+  Button,
   Text,
+  useTheme,
 } from 'react-native-paper';
 
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+} from 'react-native-safe-area-context';
+
+import {
+  useFocusEffect,
+} from '@react-navigation/native';
+
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import { DashboardApi } from '../services/dashboard.api';
 
 import { useAuthStore } from '../../auth/store/auth.store';
-import { useAppTheme } from '../../../theme/useAppTheme';
 
-export const DashboardScreen = () => {
+export const DashboardScreen = ({
+  navigation,
+}: any) => {
 
-  const { user } = useAuthStore();
-  const theme = useAppTheme();
+  const { user } =
+    useAuthStore();
 
-  const academies = [
-    {
-      id: 1,
-      name: 'Humanidades 2',
-      icon: 'brain',
-    },
-    {
-      id: 2,
-      name: 'Orientación Profesional',
-      icon: 'school',
-    },
-    {
-      id: 3,
-      name: 'Danza Moderna',
-      icon: 'dance-ballroom',
-    },
-  ];
+  const { colors } =
+    useTheme() as any;
 
-  const pendingTasks = [
-    {
-      id: 1,
-      title: 'Subir calificaciones',
-      subtitle: 'Humanidades 2 | 1° D',
-      date: 'Jul 20',
-      completed: true,
-    },
-    {
-      id: 2,
-      title: 'Calificar ADAS',
-      subtitle: 'Orientación Profesional | 2° I',
-      date: 'Jul 22',
-      completed: false,
-    },
-    {
-      id: 3,
-      title: 'Añadir pendiente',
-      subtitle: '',
-      date: '',
-      completed: false,
-    },
-  ];
+  const [loading, setLoading] =
+    useState(true);
+
+  const [refreshing, setRefreshing] =
+    useState(false);
+
+  const [dashboard, setDashboard] =
+    useState<any>(null);
+
+  const load =
+    useCallback(async () => {
+
+      try {
+
+        const data =
+          await DashboardApi.getOverview();
+
+        setDashboard(data);
+
+      } catch (error) {
+
+        console.error(error);
+
+      } finally {
+
+        setLoading(false);
+        setRefreshing(false);
+      }
+
+    }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+
+      load();
+
+    }, [load]),
+  );
+
+  const onRefresh =
+    () => {
+
+      setRefreshing(true);
+
+      load();
+    };
+
+  const getDayName =
+    (day: number) => {
+
+      const days: Record<
+        number,
+        string
+      > = {
+
+        1: 'Lunes',
+        2: 'Martes',
+        3: 'Miércoles',
+        4: 'Jueves',
+        5: 'Viernes',
+        6: 'Sábado',
+        7: 'Domingo',
+      };
+
+      return days[day] ?? '';
+    };
+
+  const classInfo =
+    dashboard?.current_class
+      ?? dashboard?.next_class;
+
+  const isCurrentClass =
+    !!dashboard?.current_class;
+
+  const visiblePendings =
+    dashboard?.upcoming_pendings
+      ?.slice(0, 3) ?? [];
+
+  const remainingPendings =
+    Math.max(
+      (
+        dashboard?.upcoming_pendings
+          ?.length ?? 0
+      ) - 3,
+      0,
+    );
+
+  const MetricCard = ({
+    label,
+    value,
+    icon,
+    iconColor,
+    backgroundColor,
+  }: any) => (
+
+    <Card
+      mode="contained"
+      style={{
+        flex: 1,
+        backgroundColor:
+          colors.cardBackground,
+      }}
+    >
+
+      <Card.Content>
+
+        <View
+          style={{
+            alignSelf: 'center',
+            backgroundColor,
+            borderRadius: 12,
+            padding: 10,
+            marginBottom: 8,
+          }}
+        >
+
+          <Ionicons
+            name={icon}
+            size={24}
+            color={iconColor}
+          />
+
+        </View>
+
+        <Text
+          variant="headlineMedium"
+          style={{
+            textAlign: 'center',
+          }}
+        >
+          {value}
+        </Text>
+
+        <Text
+          style={{
+            textAlign: 'center',
+            color:
+              colors.textColor,
+          }}
+        >
+          {label}
+        </Text>
+
+      </Card.Content>
+
+    </Card>
+  );
+
+  if (loading) {
+
+    return (
+
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor:
+            colors.background,
+        }}
+      >
+
+        <ActivityIndicator
+          style={{
+            marginTop: 50,
+          }}
+        />
+
+      </SafeAreaView>
+
+    );
+  }
 
   return (
+
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: theme.background,
+        backgroundColor:
+          colors.background,
       }}
     >
+
       <ScrollView
+
+        refreshControl={
+
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+
+        }
+
         contentContainerStyle={{
           padding: 20,
         }}
@@ -82,30 +245,28 @@ export const DashboardScreen = () => {
           style={{
             flexDirection: 'row',
             alignItems: 'center',
+            gap: 12,
             marginBottom: 24,
-            gap: 10,
           }}
         >
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
 
-            <Avatar.Image
-              size={44}
-              source={{
-                uri:
-                  'https://i.pravatar.cc/300',
-              }}
-            />
-          </View>
+          <Avatar.Text
+            size={48}
+            label={
+              user?.name
+                ?.charAt(0)
+                ?.toUpperCase() ??
+              '?'
+            }
+          />
+
           <View>
+
             <Text
               variant="bodyMedium"
               style={{
-                color: theme.textColor,
+                color:
+                  colors.textColor,
               }}
             >
               Hola {user?.role?.name}
@@ -114,253 +275,531 @@ export const DashboardScreen = () => {
             <Text
               variant="headlineSmall"
               style={{
-                fontWeight: 'bold',
-                color: theme.titleColor,
+                fontWeight: '700',
+                color:
+                  colors.titleColor,
               }}
             >
               {user?.name}
             </Text>
+
           </View>
 
-          
         </View>
 
-        {/* ACADEMIAS */}
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={{
-            marginBottom: 24,
-          }}
-        >
-          {academies.map(item => (
-            <Card
-              key={item.id}
-              style={{
-                width: 120,
-                marginRight: 12,
-                backgroundColor:
-                  '#FCE8EF',
-              }}
-            >
-              <Card.Content
-                style={{
-                  alignItems: 'center',
-                }}
-              >
-                <Avatar.Icon
-                  size={48}
-                  icon={item.icon}
-                  color={theme.primary}
-                  style={{
-                    backgroundColor:
-                      'transparent',
-                  }}
-                />
-
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    marginTop: 8,
-                  }}
-                >
-                  {item.name}
-                </Text>
-              </Card.Content>
-            </Card>
-          ))}
-        </ScrollView>
-
-        {/* PRÓXIMA CLASE */}
+        {/* KPIS */}
 
         <View
           style={{
-            marginBottom: 20,
+            flexDirection: 'row',
+            gap: 10,
+            marginBottom: 10,
           }}
         >
-          <Text
-            variant="bodyLarge"
+
+          <MetricCard
+            label="Academias"
+            value={
+              dashboard?.metrics
+                ?.academies ?? 0
+            }
+            icon="school-outline"
+            iconColor={
+              colors.primary
+            }
+            backgroundColor={
+              colors.terciary
+            }
+          />
+
+          <MetricCard
+            label="Clases de hoy"
+            value={
+              dashboard?.metrics
+                ?.today_classes ?? 0
+            }
+            icon="today-outline"
+            iconColor={
+              colors.textWarning
+            }
+            backgroundColor={
+              colors.textWarningBackground
+            }
+          />
+
+        </View>
+
+        <View
+          style={{
+            flexDirection: 'row',
+            gap: 10,
+            marginBottom: 24,
+          }}
+        >
+
+          <MetricCard
+            label="Clases de la semana"
+            value={
+              dashboard?.metrics
+                ?.weekly_classes ?? 0
+            }
+            icon="calendar-outline"
+            iconColor={
+              colors.textSuccess
+            }
+            backgroundColor={
+              colors.textSuccessBackground
+            }
+          />
+
+          <MetricCard
+            label="Pendientes"
+            value={
+              dashboard?.metrics
+                ?.pendings ?? 0
+            }
+            icon="checkmark-circle-outline"
+            iconColor={
+              colors.error
+            }
+            backgroundColor={
+              colors.textErrorBackground
+            }
+          />
+
+        </View>
+
+        {/* CLASE */}
+
+        {!!classInfo && (
+
+          <View
             style={{
-              fontWeight: 'bold',
-              marginBottom: 12,
+              marginBottom: 24,
             }}
           >
-            Próxima clase →
-          </Text>
 
-          <Card
-            style={{
-              backgroundColor:
-                theme.primary,
-              borderRadius: 24,
-            }}
-          >
-            <Card.Content>
+            <Text
+              variant="bodyLarge"
+              style={{
+                fontWeight: '700',
+                marginBottom: 12,
 
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginBottom: 16,
-                }}
-              >
-                <Avatar.Icon
-                  size={52}
-                  icon="book-open-page-variant"
+                color:
+                  isCurrentClass
+                    ? colors.textSuccess
+                    : colors.titleColor,
+              }}
+            >
+              {
+                isCurrentClass
+                  ? 'Clase en curso'
+                  : 'Próxima clase'
+              }
+            </Text>
+
+            <Card
+              mode="contained"
+              style={{
+                backgroundColor:
+                  colors.primary,
+              }}
+            >
+
+              <Card.Content>
+
+                {isCurrentClass && (
+
+                  <View
+                    style={{
+                      alignSelf:
+                        'flex-start',
+
+                      backgroundColor:
+                        colors.textSuccessBackground,
+
+                      paddingHorizontal:
+                        10,
+
+                      paddingVertical:
+                        4,
+
+                      borderRadius: 20,
+
+                      marginBottom: 10,
+                    }}
+                  >
+
+                    <Text
+                      style={{
+                        color:
+                          colors.textSuccess,
+
+                        fontWeight:
+                          '700',
+                      }}
+                    >
+                      EN CURSO
+                    </Text>
+
+                  </View>
+
+                )}
+
+                <Text
+                  variant="titleLarge"
                   style={{
-                    backgroundColor:
-                      '#B05A78',
+                    color: 'white',
+                    fontWeight:
+                      '700',
                   }}
-                />
+                >
+                  {classInfo.academy}
+                </Text>
+
+                <Text
+                  style={{
+                    color:
+                      '#FFE0EA',
+                    marginTop: 4,
+                  }}
+                >
+                  Grupo {classInfo.classroom}
+                </Text>
 
                 <View
                   style={{
-                    marginLeft: 12,
+                    backgroundColor:
+                      'rgba(255,255,255,0.15)',
+
+                    padding: 12,
+
+                    borderRadius: 16,
+
+                    marginTop: 16,
                   }}
                 >
-                  <Text
-                    variant="titleLarge"
-                    style={{
-                      color: 'white',
-                      fontWeight: 'bold',
-                    }}
-                  >
-                    Orientación Profesional
-                  </Text>
 
-                  <Text
-                    style={{
-                      color: '#FFE0EA',
-                    }}
-                  >
-                    Grupo 2° I
-                  </Text>
+                  {isCurrentClass ? (
+
+                    <>
+
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontWeight: '700',
+                        }}
+                      >
+                        Clase activa
+                      </Text>
+
+                      <Text
+                        style={{
+                          color: 'white',
+                          marginTop: 4,
+                        }}
+                      >
+                        Finaliza a las{' '}
+                        {
+                          classInfo.end_time
+                            ?.substring(0, 5)
+                        }
+                      </Text>
+
+                    </>
+
+                  ) : (
+
+                    <>
+
+                      <View style={{
+                        flexDirection: 'row',
+                        gap: 5,
+                        marginBottom: 5,
+                      }}>
+                        <Ionicons
+                          name="calendar-outline"
+                          size={18}
+                          color={
+                            colors.white
+                          }
+                        />
+                        <Text
+                          style={{
+                            color: 'white',
+                          }}
+                        >
+                          {
+                            getDayName(
+                              classInfo.day_of_week,
+                            )
+                          }
+                        </Text>
+                      </View>
+
+                      <View style={{
+                        flexDirection: 'row',
+                        gap: 5,
+                      }}>
+                        <Ionicons
+                          name="time-outline"
+                          size={18}
+                          color={
+                            colors.white
+                          }
+                        />
+                        <Text
+                          style={{
+                            color: 'white',
+                          }}
+                        >
+                          {
+                          classInfo.start_time
+                              ?.substring(0, 5)
+                          }
+                          {' - '}
+                          {
+                            classInfo.end_time
+                              ?.substring(0, 5)
+                          }
+                        </Text>
+                      </View>
+
+                    </>
+
+                  )}
+
                 </View>
-              </View>
 
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  backgroundColor:
-                    'rgba(255,255,255,0.15)',
-                  padding: 12,
-                  borderRadius: 16,
-                }}
-              >
-                <Text
-                  style={{
-                    color: 'white',
-                  }}
-                >
-                  📅 Vie, 17 Jul 2026
-                </Text>
+              </Card.Content>
 
-                <Text
-                  style={{
-                    color: 'white',
-                  }}
-                >
-                  ⏰ 11:05 AM - 11:50 AM
-                </Text>
-              </View>
+            </Card>
 
-            </Card.Content>
-          </Card>
-        </View>
+          </View>
+
+        )}
 
         {/* PENDIENTES */}
 
         <View>
+
           <Text
             variant="bodyLarge"
             style={{
-              fontWeight: 'bold',
+              fontWeight: '700',
               marginBottom: 12,
             }}
           >
-            Pendientes →
+            Próximos pendientes
           </Text>
 
           <Card
+            mode="contained"
             style={{
               backgroundColor:
-                theme.cardBackground,
-              borderRadius: 20,
+                colors.cardBackground,
             }}
           >
+
             <Card.Content>
 
-              {pendingTasks.map(task => (
-                <View
-                  key={task.id}
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent:
-                      'space-between',
-                    alignItems: 'center',
-                    paddingVertical: 12,
-                    borderBottomWidth:
-                      task.id !==
-                      pendingTasks.length
-                        ? 1
-                        : 0,
-                    borderColor: '#E0E0E0',
-                  }}
-                >
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      flex: 1,
-                    }}
-                  >
-                    <IconButton
-                      icon={
-                        task.completed
-                          ? 'check-circle'
-                          : 'circle-outline'
-                      }
-                      iconColor={
-                        task.completed
-                          ? theme.primary
-                          : theme.textColor
-                      }
-                    />
+              {visiblePendings.length > 0 ? (
 
-                    <View>
-                      <Text
-                        variant="titleMedium"
+                <>
+
+                  {visiblePendings.map(
+                    pending => (
+
+                      <View
+
+                        key={
+                          pending.id
+                        }
+
+                        style={{
+                          flexDirection:
+                            'row',
+
+                          alignItems:
+                            'center',
+
+                          paddingVertical:
+                            12,
+
+                          borderBottomWidth:
+                            1,
+
+                          borderColor:
+                            colors
+                              .outlineVariant,
+                        }}
                       >
-                        {task.title}
-                      </Text>
 
-                      {!!task.subtitle && (
-                        <Text
+                        <Ionicons
+                          name="ellipse-outline"
+                          size={18}
+                          color={
+                            colors.primary
+                          }
+                        />
+
+                        <View
                           style={{
-                            color:
-                              theme.textColor,
+                            flex: 1,
+                            marginLeft: 10,
                           }}
                         >
-                          {task.subtitle}
-                        </Text>
-                      )}
-                    </View>
-                  </View>
 
-                  {!!task.date && (
-                    <Text>
-                      {task.date}
-                    </Text>
+                          <Text
+                            variant="titleMedium"
+                          >
+                            {pending.title}
+                          </Text>
+
+                          <Text
+                            style={{
+                              color:
+                                colors.textColor,
+                            }}
+                          >
+                            {
+                              pending
+                                .assignment
+                                ?.academy
+                                ?.name
+                            }
+
+                            {' • '}
+
+                            {
+                              pending
+                                .assignment
+                                ?.classroom
+                                ?.degree
+                            }
+
+                            °
+
+                            {
+                              pending
+                                .assignment
+                                ?.classroom
+                                ?.group
+                            }
+                          </Text>
+
+                        </View>
+
+                        <Text>
+                          {
+                            pending
+                              .due_date
+                          }
+                        </Text>
+
+                      </View>
+
+                    ),
                   )}
+
+                  {remainingPendings > 0 && (
+
+                    <View
+                      style={{
+                        paddingTop: 12,
+                      }}
+                    >
+
+                      <Text
+                        style={{
+                          textAlign:
+                            'center',
+
+                          color:
+                            colors.primary,
+
+                          fontWeight:
+                            '700',
+                        }}
+                      >
+                        +{remainingPendings} más
+                      </Text>
+
+                    </View>
+
+                  )}
+
+                </>
+
+              ) : (
+
+                <View
+                  style={{
+                    alignItems: 'center',
+                    paddingVertical: 20,
+                  }}
+                >
+
+                  <Ionicons
+                    name="checkmark-circle-outline"
+                    size={56}
+                    color={
+                      colors.primary
+                    }
+                  />
+
+                  <Text
+                    variant="titleMedium"
+                    style={{
+                      marginTop: 12,
+                      textAlign: 'center',
+                    }}
+                  >
+                    No tienes pendientes registrados
+                  </Text>
+
+                  <Text
+                    style={{
+                      marginTop: 6,
+                      textAlign: 'center',
+                      color:
+                        colors.textColor,
+                    }}
+                  >
+                    Crea tu primer pendiente para comenzar.
+                  </Text>
+
+                  <Button
+                    mode="contained"
+                    icon="plus"
+                    style={{
+                      marginTop: 16,
+                    }}
+                    labelStyle={{
+                      color:colors.white
+                    }}
+                    onPress={() =>
+                      navigation.navigate(
+                        'PendingForm',
+                      )
+                    }
+                  >
+                    Crear pendiente
+                  </Button>
+
                 </View>
-              ))}
+
+              )}
 
             </Card.Content>
+
           </Card>
+
         </View>
 
       </ScrollView>
+
     </SafeAreaView>
+
   );
 };

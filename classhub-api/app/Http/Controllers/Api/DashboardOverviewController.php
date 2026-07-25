@@ -251,38 +251,178 @@ class DashboardOverviewController extends Controller
             )
             ->count();
 
-        $nextClass =
-            AcademyAssignmentSchedule::with([
-                'assignment.academy',
-                'assignment.classroom',
-            ])
-            ->whereHas(
-                'assignment',
-                function ($q) use (
-                    $user,
-                    $schoolId
+            $nowTime =
+                now()->format('H:i:s');
+
+            $schedules =
+                AcademyAssignmentSchedule::with([
+                    'assignment.academy',
+                    'assignment.classroom',
+                ])
+
+                ->whereHas(
+                    'assignment',
+                    function ($q) use (
+                        $user,
+                        $schoolId
+                    ) {
+
+                        $q->where(
+                            'user_id',
+                            $user->id
+                        )
+
+                        ->whereHas(
+                            'classroom',
+                            fn ($cq) =>
+                                $cq->where(
+                                    'school_id',
+                                    $schoolId
+                                )
+                        );
+                    }
+                )
+
+                ->get();
+
+            /**
+             * CLASE EN CURSO
+             */
+            $currentClass =
+                $schedules->first(
+                    function ($schedule) use (
+                        $today,
+                        $nowTime
+                    ) {
+
+                        return
+
+                            $schedule->day_of_week ===
+                            $today
+
+                            &&
+
+                            $schedule->start_time <=
+                            $nowTime
+
+                            &&
+
+                            $schedule->end_time >
+                            $nowTime;
+                    }
+                );
+
+            /**
+             * PRÓXIMA CLASE
+             */
+            $nextClass =
+                $schedules
+
+                    ->sortBy(
+                        function ($schedule) use (
+                            $today
+                        ) {
+
+                            $offset =
+                                $schedule->day_of_week
+                                - $today;
+
+                            if ($offset < 0) {
+
+                                $offset += 7;
+                            }
+
+                            return sprintf(
+                                '%02d-%s',
+                                $offset,
+                                $schedule->start_time
+                            );
+                        }
+                    )
+
+        ->first(
+            function ($schedule) use (
+                $today,
+                $nowTime
+            ) {
+
+                if (
+                    $schedule->day_of_week >
+                    $today
                 ) {
 
-                    $q->where(
-                        'user_id',
-                        $user->id
-                    )
-                    ->whereHas(
-                        'classroom',
-                        fn ($cq) => $cq->where(
-                            'school_id',
-                            $schoolId
-                        )
-                    );
+                    return true;
                 }
-            )
-            ->orderBy(
-                'day_of_week'
-            )
-            ->orderBy(
-                'start_time'
-            )
-            ->first();
+
+                if (
+                    $schedule->day_of_week ===
+                    $today
+
+                    &&
+
+                    $schedule->start_time >
+                    $nowTime
+                ) {
+
+                    return true;
+                }
+
+                /**
+                 * Cuando es fin de semana,
+                 * el lunes vuelve a ser válido
+                 */
+                if (
+                    $schedule->day_of_week <
+                    $today
+                ) {
+
+                    return true;
+                }
+
+                return false;
+            }
+        );
+
+        $mapSchedule =
+            function ($schedule) {
+
+                if (!$schedule) {
+
+                    return null;
+                }
+
+                return [
+
+                    'academy' =>
+                        $schedule
+                            ->assignment
+                            ->academy
+                            ->name,
+
+                    'classroom' =>
+                        $schedule
+                            ->assignment
+                            ->classroom
+                            ->degree .
+                        '° ' .
+                        $schedule
+                            ->assignment
+                            ->classroom
+                            ->group,
+
+                    'day_of_week' =>
+                        $schedule
+                            ->day_of_week,
+
+                    'start_time' =>
+                        $schedule
+                            ->start_time,
+
+                    'end_time' =>
+                        $schedule
+                            ->end_time,
+                ];
+            };
 
         return response()->json([
 
@@ -310,39 +450,15 @@ class DashboardOverviewController extends Controller
                         $overdueCount,
                 ],
 
-                'next_class' => $nextClass
-                    ? [
+                'current_class' =>
+                    $mapSchedule(
+                        $currentClass
+                    ),
 
-                        'academy' =>
-                            $nextClass
-                                ->assignment
-                                ->academy
-                                ->name,
-
-                        'classroom' =>
-                            $nextClass
-                                ->assignment
-                                ->classroom
-                                ->degree .
-                            '° ' .
-                            $nextClass
-                                ->assignment
-                                ->classroom
-                                ->group,
-
-                        'day_of_week' =>
-                            $nextClass
-                                ->day_of_week,
-
-                        'start_time' =>
-                            $nextClass
-                                ->start_time,
-
-                        'end_time' =>
-                            $nextClass
-                                ->end_time,
-                    ]
-                    : null,
+                'next_class' =>
+                    $mapSchedule(
+                        $nextClass
+                    ),
 
                 'upcoming_pendings' =>
                     $upcomingPendings,

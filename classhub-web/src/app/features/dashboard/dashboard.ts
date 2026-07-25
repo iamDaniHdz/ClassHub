@@ -101,6 +101,19 @@ export class DashboardComponent
     );
   }
 
+  get classInfo(): any {
+
+    return (
+      this.dashboard?.current_class
+      ?? this.dashboard?.next_class
+    );
+  }
+
+  get isCurrentClass(): boolean {
+
+    return !!this.dashboard?.current_class;
+  }
+
   getDayName(
     day: number
   ): string {
