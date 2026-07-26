@@ -30,6 +30,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatListModule } from '@angular/material/list';
 
+import {
+  MatSlideToggleModule,
+} from '@angular/material/slide-toggle';
+import { MatChip } from '@angular/material/chips';
+
+
 export const MATERIAL_IMPORTS = [
   MatTableModule,
   MatCardModule,
@@ -42,4 +48,6 @@ export const MATERIAL_IMPORTS = [
   MatIconModule,
   MatProgressSpinnerModule,
   MatListModule,
+  MatSlideToggleModule,
+  MatChip,
 ];

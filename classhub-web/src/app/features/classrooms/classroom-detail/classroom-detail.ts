@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   OnInit,
@@ -30,6 +31,11 @@ import {
   ClassroomsService,
 } from '../services/classrooms.service';
 
+import {
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
+
 @Component({
   selector: 'app-classroom-detail',
 
@@ -49,8 +55,14 @@ import {
     './classroom-detail.scss',
 })
 export class ClassroomDetailComponent
-  implements OnInit
+  implements OnInit, AfterViewInit
 {
+  
+  @ViewChild(
+    'statusTemplate'
+  )
+  statusTemplate!: TemplateRef<any>;
+
   private readonly route =
     inject(ActivatedRoute);
 
@@ -66,13 +78,34 @@ export class ClassroomDetailComponent
 
   loading = true;
 
-  columns: DataTableColumn[] = [
+  columns: DataTableColumn[] = [];
+
+  ngAfterViewInit(): void {
+
+  this.columns = [
+
     {
       key: 'fullName',
       header: 'Alumno',
       sortable: true,
     },
+
+    {
+      key: 'studentEnrollment',
+      header: 'Matrícula',
+      sortable: true,
+    },
+
+    {
+      key: 'is_active',
+      header: 'Estado',
+      cellTemplate:
+        this.statusTemplate,
+    },
   ];
+
+  this.cdr.detectChanges();
+}
 
   ngOnInit(): void {
 
@@ -105,6 +138,9 @@ export class ClassroomDetailComponent
           this.classroom =
             response.data;
 
+            console.log(response);
+            
+
           this.students =
             response.data.students.map(
               (item: any) => ({
@@ -115,14 +151,26 @@ export class ClassroomDetailComponent
                 studentAssignmentId:
                   item.student_assignment_id,
 
-                fullName: [
-                  item.student.name,
-                  item.student.paternal_surname,
-                  item.student.maternal_surname,
-                ]
-                  .filter(Boolean)
-                  .join(' '),
-              })
+                fullName:
+                  item.student.full_name ??
+                  [
+                    item.student.name,
+                    item.student.second_name,
+                    item.student.paternal_surname,
+                    item.student.maternal_surname,
+                  ]
+                    .filter(Boolean)
+                    .join(' '),
+
+                studentEnrollment:
+                  item.student
+                    ?.student_enrollment
+                  ?? '-',
+
+                is_active:
+                  item.student
+                    ?.is_active ?? false,
+              }),
             );
 
           this.loading = false;

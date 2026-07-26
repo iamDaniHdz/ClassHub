@@ -111,12 +111,7 @@ class ClassroomController extends Controller
                 return [
                     'student_assignment_id' => $sa->id,
 
-                    'student' => [
-                        'id' => $sa->student->id,
-                        'name' => $sa->student->name,
-                        'paternal_surname' => $sa->student->paternal_surname,
-                        'maternal_surname' => $sa->student->maternal_surname,
-                    ]
+                    'student' => $sa->student,
                 ];
             });
         }

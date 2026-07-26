@@ -89,6 +89,10 @@ export class StudentFormComponent
       Validators.required,
     ],
 
+    second_name: [
+      '',
+    ],
+
     paternal_surname: [
       '',
       Validators.required,
@@ -97,6 +101,15 @@ export class StudentFormComponent
     maternal_surname: [
       '',
       Validators.required,
+    ],
+
+    student_enrollment: [
+      '',
+      Validators.required,
+    ],
+
+    is_active: [
+      true,
     ],
 
     classroom_id: [
