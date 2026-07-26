@@ -67,4 +67,16 @@ export const PendingsApi = {
 
     return response.data.data;
   },
+
+  async delete(
+    pendingId: number,
+  ) {
+
+    const response =
+      await api.delete(
+        `/academy-assignment-pendings/${pendingId}`,
+      );
+
+    return response.data;
+  },
 };

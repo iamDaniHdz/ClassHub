@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import {
   RefreshControl,
@@ -15,7 +15,10 @@ import {
   Divider,
   FAB,
   Text,
+  Dialog,
   useTheme,
+  Portal,
+  Button,
 } from 'react-native-paper';
 
 import { PendingsApi } from '../services/pendings.api';
@@ -23,6 +26,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { PendingDetailModal } from './PendingDetailModal';
 import { useFocusEffect } from '@react-navigation/native';
 import {useNavigation} from '@react-navigation/native';
+
+import moment from 'moment';
+import 'moment/locale/es';
+
+moment.locale('es')
 
 interface Pending {
   id: number;
@@ -65,7 +73,52 @@ export const MyPendingsScreen = () => {
 
   const [detailVisible, setDetailVisible] = useState(false);
 
+  const [
+    deleteVisible,
+    setDeleteVisible,
+  ] = useState(false);
+
+  const [
+    pendingToDelete,
+    setPendingToDelete,
+  ] = useState<Pending | null>(
+    null,
+  );
+
   const navigation = useNavigation<any>();
+  
+  const deletePending =
+    async () => {
+
+      if (!pendingToDelete) {
+        return;
+      }
+
+      try {
+
+        await PendingsApi.delete(
+          pendingToDelete.id,
+        );
+
+        setPendings(current =>
+          current.filter(
+            item =>
+              item.id !==
+              pendingToDelete.id,
+          ),
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+      } finally {
+
+        setDeleteVisible(false);
+
+        setPendingToDelete(null);
+      }
+    };
 
   const load = useCallback(async () => {
     try {
@@ -207,8 +260,16 @@ export const MyPendingsScreen = () => {
 
         setDetailVisible(true);
       }}
+
+      onLongPress={() => {
+        setPendingToDelete(item);
+        setDeleteVisible(true);
+      }}
     >
-      <Card mode='contained' style={[styles.taskCard, {backgroundColor:colors.cardBackground}]}>
+      <Card
+        mode="contained"
+        style={[styles.taskCard, { backgroundColor: colors.cardBackground }]}
+      >
         <Card.Content>
           <View style={styles.taskRow}>
             <Checkbox
@@ -231,7 +292,7 @@ export const MyPendingsScreen = () => {
                 {item.title}
               </Text>
 
-              {!!item.description && (
+              {/* {!!item.description && (
                 <Text
                   style={{
                     marginTop: 4,
@@ -247,7 +308,7 @@ export const MyPendingsScreen = () => {
                 >
                   {item.description}
                 </Text>
-              )}
+              )} */}
 
               <Text
                 style={{
@@ -260,23 +321,46 @@ export const MyPendingsScreen = () => {
                 {item.assignment?.classroom?.name}
               </Text>
 
-              <Text
-                  style={{
-                    marginTop: 6,
-                    color: isOverdue
+              <View style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 5,
+                marginTop: 3,
+              }}>
+                <Ionicons
+                  name={'calendar-outline'}
+                  size={18}
+                  color={
+                    item.is_completed
+                      ? colors.success
+                      : isOverdue
                       ? colors.error
-                      : colors.textColor,
+                      : colors.warning
+                  }
+                />
+
+                <Text
+                  style={{
+                    color: isOverdue ? colors.error : colors.textColor,
                   }}
                 >
-                  Vence: {item.due_date}
+                  {
+                    moment(item.due_date)
+                      .format('ddd DD, MMMM YYYY')
+                  }
                 </Text>
+              </View>
             </View>
 
             <View
               style={[
                 styles.statusDot,
                 {
-                  backgroundColor: item.is_completed ? colors.success : isOverdue ? colors.error : colors.warning,
+                  backgroundColor: item.is_completed
+                    ? colors.success
+                    : isOverdue
+                    ? colors.error
+                    : colors.warning,
                 },
               ]}
             />
@@ -284,7 +368,7 @@ export const MyPendingsScreen = () => {
         </Card.Content>
       </Card>
     </TouchableOpacity>
-      );
+  );
   };
 
   if (loading) {
@@ -509,10 +593,12 @@ export const MyPendingsScreen = () => {
 
       <FAB
         icon="plus"
+        color='white'
         style={{
           position: 'absolute',
           right: 16,
           bottom: 16,
+          backgroundColor: colors.primary,
         }}
         onPress={() =>
           navigation.navigate(
@@ -537,6 +623,65 @@ export const MyPendingsScreen = () => {
           togglePending(selectedPending.id, value);
         }}
       />
+
+      <Portal>
+
+        <Dialog
+          style={{
+            backgroundColor: colors.cardBackground
+          }}
+          visible={deleteVisible}
+          onDismiss={() =>
+            setDeleteVisible(false)
+          }
+        >
+
+          <Dialog.Title>
+            Eliminar pendiente
+          </Dialog.Title>
+
+          <Dialog.Content>
+
+            <Text>
+
+              ¿Deseas eliminar el
+              pendiente
+
+              {' "'}
+              {
+                pendingToDelete?.title
+              }
+              {'"'}
+
+              ?
+
+            </Text>
+
+          </Dialog.Content>
+
+          <Dialog.Actions>
+
+            <Button
+              textColor={colors.titleColor}
+              onPress={() =>
+                setDeleteVisible(false)
+              }
+            >
+              Cancelar
+            </Button>
+
+            <Button
+              textColor={colors.error}
+              onPress={deletePending}
+            >
+              Eliminar
+            </Button>
+
+          </Dialog.Actions>
+
+        </Dialog>
+
+      </Portal>
     </>
   );
 };
