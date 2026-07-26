@@ -68,6 +68,11 @@ export class StudentsListComponent
   )
   actionsTemplate!: TemplateRef<any>;
 
+  @ViewChild(
+    'statusTemplate'
+  )
+  statusTemplate!: TemplateRef<any>;
+
   students: any[] = [];
 
   loading = true;
@@ -96,6 +101,12 @@ export class StudentsListComponent
       },
 
       {
+        key: 'is_active',
+        header: 'Estado',
+        cellTemplate: this.statusTemplate,
+      },
+
+      {
         key: 'actions',
         header: 'Acciones',
         cellTemplate:
@@ -115,6 +126,8 @@ export class StudentsListComponent
         next: (
           response: any
         ) => {
+
+          console.log(response.data);
 
           this.students =
             response.data.map(

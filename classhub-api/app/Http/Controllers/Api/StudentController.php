@@ -370,20 +370,28 @@ public function catalog(Request $request)
 
                     'name' => $student->name,
 
+                    'second_name' => 
+                        $student->second_name,
+
                     'paternal_surname' =>
                         $student->paternal_surname,
 
                     'maternal_surname' =>
                         $student->maternal_surname,
 
-                    'full_name' =>
-                        trim(
-                            $student->name .
-                            ' ' .
-                            $student->paternal_surname .
-                            ' ' .
-                            $student->maternal_surname
-                        ),
+                    'student_enrollment' => 
+                        $student->student_enrollment,
+
+                    'full_name' => trim(
+                        implode(' ', array_filter([
+                            $student->name,
+                            $student->second_name,
+                            $student->paternal_surname,
+                            $student->maternal_surname,
+                        ]))
+                    ),
+
+                    'is_active' => $student->is_active,
 
                     'classroom' => $student->classroom
                         ? [

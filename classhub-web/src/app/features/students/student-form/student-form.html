@@ -35,6 +35,18 @@
     <mat-form-field appearance="outline">
 
       <mat-label>
+        Segundo nombre
+      </mat-label>
+
+      <input
+        matInput
+        formControlName="second_name">
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
         Apellido paterno
       </mat-label>
 
@@ -53,6 +65,18 @@
       <input
         matInput
         formControlName="maternal_surname">
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>
+        Matrícula
+      </mat-label>
+
+      <input
+        matInput
+        formControlName="student_enrollment">
 
     </mat-form-field>
 
@@ -82,6 +106,13 @@
       </mat-select>
 
     </mat-form-field>
+
+    <mat-slide-toggle
+      formControlName="is_active">
+
+      Estudiante activo
+
+    </mat-slide-toggle>
 
     <div class="actions">
 

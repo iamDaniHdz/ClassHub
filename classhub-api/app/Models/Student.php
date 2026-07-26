@@ -17,6 +17,14 @@ class Student extends Model
         'school_id',
     ];
 
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
+    protected $appends = [
+        'full_name',
+    ];
+
     public function classroom()
     {
         return $this->belongsTo(Classroom::class);
@@ -30,5 +38,20 @@ class Student extends Model
     public function assignments()
     {
         return $this->hasMany(StudentAssignment::class);
+    }
+
+    public function getFullNameAttribute(): string
+    {
+        return trim(
+            implode(
+                ' ',
+                array_filter([
+                    $this->name,
+                    $this->second_name,
+                    $this->paternal_surname,
+                    $this->maternal_surname,
+                ]),
+            ),
+        );
     }
 }

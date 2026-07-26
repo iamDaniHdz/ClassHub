@@ -20,3 +20,17 @@
 
   color: #666;
 }
+
+.active-chip {
+  background-color: #e8f5e9 !important;
+  color: #2e7d32 !important;
+  border: 1px solid #81c784;
+  font-weight: 600;
+}
+
+.inactive-chip {
+  background-color: #ffebee !important;
+  color: #c62828 !important;
+  border: 1px solid #ef9a9a;
+  font-weight: 600;
+}
