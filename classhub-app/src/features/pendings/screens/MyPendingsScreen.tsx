@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import {
   RefreshControl,
@@ -15,7 +15,10 @@ import {
   Divider,
   FAB,
   Text,
+  Dialog,
   useTheme,
+  Portal,
+  Button,
 } from 'react-native-paper';
 
 import { PendingsApi } from '../services/pendings.api';
@@ -70,7 +73,52 @@ export const MyPendingsScreen = () => {
 
   const [detailVisible, setDetailVisible] = useState(false);
 
+  const [
+    deleteVisible,
+    setDeleteVisible,
+  ] = useState(false);
+
+  const [
+    pendingToDelete,
+    setPendingToDelete,
+  ] = useState<Pending | null>(
+    null,
+  );
+
   const navigation = useNavigation<any>();
+  
+  const deletePending =
+    async () => {
+
+      if (!pendingToDelete) {
+        return;
+      }
+
+      try {
+
+        await PendingsApi.delete(
+          pendingToDelete.id,
+        );
+
+        setPendings(current =>
+          current.filter(
+            item =>
+              item.id !==
+              pendingToDelete.id,
+          ),
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+      } finally {
+
+        setDeleteVisible(false);
+
+        setPendingToDelete(null);
+      }
+    };
 
   const load = useCallback(async () => {
     try {
@@ -211,6 +259,11 @@ export const MyPendingsScreen = () => {
         setSelectedPending(item);
 
         setDetailVisible(true);
+      }}
+
+      onLongPress={() => {
+        setPendingToDelete(item);
+        setDeleteVisible(true);
       }}
     >
       <Card
@@ -540,10 +593,12 @@ export const MyPendingsScreen = () => {
 
       <FAB
         icon="plus"
+        color='white'
         style={{
           position: 'absolute',
           right: 16,
           bottom: 16,
+          backgroundColor: colors.primary,
         }}
         onPress={() =>
           navigation.navigate(
@@ -568,6 +623,65 @@ export const MyPendingsScreen = () => {
           togglePending(selectedPending.id, value);
         }}
       />
+
+      <Portal>
+
+        <Dialog
+          style={{
+            backgroundColor: colors.cardBackground
+          }}
+          visible={deleteVisible}
+          onDismiss={() =>
+            setDeleteVisible(false)
+          }
+        >
+
+          <Dialog.Title>
+            Eliminar pendiente
+          </Dialog.Title>
+
+          <Dialog.Content>
+
+            <Text>
+
+              ¿Deseas eliminar el
+              pendiente
+
+              {' "'}
+              {
+                pendingToDelete?.title
+              }
+              {'"'}
+
+              ?
+
+            </Text>
+
+          </Dialog.Content>
+
+          <Dialog.Actions>
+
+            <Button
+              textColor={colors.titleColor}
+              onPress={() =>
+                setDeleteVisible(false)
+              }
+            >
+              Cancelar
+            </Button>
+
+            <Button
+              textColor={colors.error}
+              onPress={deletePending}
+            >
+              Eliminar
+            </Button>
+
+          </Dialog.Actions>
+
+        </Dialog>
+
+      </Portal>
     </>
   );
 };
