@@ -6,6 +6,7 @@ import React, {
 import {
   View,
   ScrollView,
+  StyleSheet,
 } from 'react-native';
 
 import {
@@ -18,6 +19,8 @@ import {
 
 import { AcademiesApi } from '../../academies/services/academies.api';
 import { PendingsApi } from '../services/pendings.api';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export const PendingFormScreen = ({
   navigation,
@@ -34,6 +37,12 @@ export const PendingFormScreen = ({
 
   const [menuVisible, setMenuVisible] =
     useState(false);
+
+  const [error, setError]
+    = useState('');
+
+  const [success, setSuccess]
+    = useState('');
 
   const [
     academyAssignmentId,
@@ -57,6 +66,9 @@ export const PendingFormScreen = ({
 
   const [dueDate, setDueDate] =
     useState('');
+
+  const [showDatePicker, setShowDatePicker] =
+    useState(false);
 
   useEffect(() => {
 
@@ -83,11 +95,19 @@ export const PendingFormScreen = ({
     };
 
   const save =
-    async () => {        
+    async () => {   
+      
+      console.log(academyAssignmentId);
+      setError('');
+      setSuccess('');
 
       if (
         !academyAssignmentId
       ) {
+        setError('Seleccione una academia');
+        setTimeout(() => {
+          setError('');
+        }, 4000);
         return;
       }
 
@@ -95,7 +115,7 @@ export const PendingFormScreen = ({
 
         setLoading(true);
 
-        await PendingsApi.create({
+        let response = await PendingsApi.create({
           academy_assignment_id:
             academyAssignmentId,
 
@@ -107,11 +127,23 @@ export const PendingFormScreen = ({
             dueDate,
         });
 
-        navigation.goBack();
+        console.log(response);
+        setError('');
+        setSuccess('Pendiente agregado exitosamente');
+        
+        setTimeout(() => {
+          setSuccess('');
+          navigation.goBack();
+        }, 2000);
+        
 
       } catch (error) {
 
-        console.error(error);
+        console.log(error.response.data.message);
+        setError(error?.response?.data?.message || 'Ocurrio un error, intente mas tarde');
+        setTimeout(() => {
+          setError('');
+        }, 4000);
 
       } finally {
 
@@ -120,13 +152,13 @@ export const PendingFormScreen = ({
     };
 
   return (
-
     <ScrollView
       contentContainerStyle={{
         padding: 16,
+        backgroundColor: colors.background,
+        flex: 1,
       }}
     >
-
       <Text
         variant="headlineSmall"
         style={{
@@ -137,97 +169,168 @@ export const PendingFormScreen = ({
       </Text>
 
       <Menu
-
         visible={menuVisible}
-
-        onDismiss={() =>
-          setMenuVisible(false)
-        }
-
+        onDismiss={() => setMenuVisible(false)}
         anchor={
-
           <Button
-            mode="outlined"
-            onPress={() =>
-              setMenuVisible(
-                true,
-              )
-            }
+            mode="contained"
+            labelStyle={{ color: colors.primary }}
+            style={{ backgroundColor: colors.terciary }}
+            onPress={() => setMenuVisible(true)}
           >
-            {
-              academyLabel ||
-              'Selecciona una academia'
-            }
+            {academyLabel || 'Selecciona una academia'}
           </Button>
-
         }
       >
-
         {assignments.map(academy => (
+          <Menu.Item
+            key={academy.id}
+            onPress={() => {
+              setAcademyAssignmentId(academy.assignment_id);
 
-            <Menu.Item
+              setAcademyLabel(
+                `${academy.academy?.name} - ${academy.classroom?.name}`,
+              );
 
-              key={academy.id}
-
-              onPress={() => {
-
-                setAcademyAssignmentId(
-                  academy.assignment_id,
-                );
-
-                setAcademyLabel(
-                  `${academy.academy?.name} - ${academy.classroom?.name}`,
-                );
-
-                setMenuVisible(
-                  false,
-                );
-              }}
-
-              title={
-                `${academy.academy?.name} - ${academy.classroom?.name}`
-              }
-            />
-
-          ),
-        )}
-
+              setMenuVisible(false);
+            }}
+            title={`${academy.academy?.name} - ${academy.classroom?.name}`}
+          />
+        ))}
       </Menu>
 
       <TextInput
-        label="Título"
+        mode="outlined"
+        style={[
+          styles.input,
+          { backgroundColor: colors.backgroundShadow, marginTop: 20 },
+        ]}
+        activeOutlineColor={colors.primary}
+        outlineStyle={{ borderRadius: 14, borderWidth: 1 }}
+        outlineColor={colors.backgroundShadow}
+        textColor={colors.textColor}
+        placeholderTextColor={colors.gray}
         value={title}
-        onChangeText={
-          setTitle
-        }
-        style={{
-          marginTop: 20,
-        }}
+        onChangeText={setTitle}
+        label="Título"
       />
 
       <TextInput
-        label="Descripción"
+        mode="outlined"
+        style={[
+          styles.input,
+          { backgroundColor: colors.backgroundShadow, marginTop: 20 },
+        ]}
+        activeOutlineColor={colors.primary}
+        outlineStyle={{ borderRadius: 14, borderWidth: 1 }}
+        outlineColor={colors.backgroundShadow}
+        textColor={colors.textColor}
+        placeholderTextColor={colors.gray}
         value={description}
-        onChangeText={
-          setDescription
-        }
-        multiline
-        style={{
-          marginTop: 20,
-        }}
+        onChangeText={setDescription}
+        label="Descripción"
       />
 
       <TextInput
+        mode="outlined"
+        style={[
+          styles.input,
+          {
+            backgroundColor: colors.backgroundShadow,
+            marginTop: 20,
+          },
+        ]}
+        activeOutlineColor={colors.primary}
+        outlineStyle={{
+          borderRadius: 14,
+          borderWidth: 1,
+        }}
+        outlineColor={colors.backgroundShadow}
+        textColor={colors.textColor}
         label="Fecha límite"
         value={dueDate}
-        onChangeText={
-          setDueDate
+        editable={false}
+        right={
+          <TextInput.Icon
+            icon="calendar"
+            onPress={() => setShowDatePicker(true)}
+          />
         }
-        placeholder="2026-10-20"
-        style={{
-          marginTop: 20,
-        }}
+        onPressIn={() => setShowDatePicker(true)}
       />
+
+      {showDatePicker && (
+        <DateTimePicker
+          value={dueDate ? new Date(dueDate) : new Date()}
+          mode="date"
+          display="default"
+          onChange={(event, selectedDate) => {
+            setShowDatePicker(false);
+
+            if (!selectedDate) {
+              return;
+            }
+
+            const year = selectedDate.getFullYear();
+
+            const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+
+            const day = String(selectedDate.getDate()).padStart(2, '0');
+
+            setDueDate(`${year}-${month}-${day}`);
+          }}
+        />
+      )}
+
+      <View style={{ height: 40, justifyContent: 'center', marginTop: 40}}>
+        {error ? (
+          <View
+            style={{
+              backgroundColor: colors.textErrorBackground,
+              paddingVertical: 8,
+              paddingHorizontal: 16,
+              borderRadius: 8,
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              alignSelf:'center',
+            }}
+          >
+             <Ionicons name={'alert-circle-outline'} size={20} color={colors.textError} />
+            <Text
+              variant="labelLarge"
+              style={{ color: colors.textError, paddingHorizontal: 10 }}
+            >
+              {error || 'Ocurrio un error'}
+            </Text>
+          </View>
+        ) : 
+          success ? (
+            <View
+              style={{
+                backgroundColor: colors.textSuccessBackground,
+                paddingVertical: 8,
+                paddingHorizontal: 16,
+                borderRadius: 8,
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                alignSelf:'center',
+              }}
+            >
+              <Ionicons name={'checkmark-circle-outline'} size={20} color={colors.success} />
+              <Text
+                variant="labelLarge"
+                style={{ color: colors.textSuccess, paddingHorizontal: 10 }}
+              >
+                {success || 'Exito'}
+              </Text>
+            </View>
+          ) : null
+        }
+      </View>
 
       <Button
         mode="contained"
@@ -236,11 +339,22 @@ export const PendingFormScreen = ({
         style={{
           marginTop: 30,
         }}
+        labelStyle={{
+          color: colors.white,
+        }}
         onPress={save}
       >
         Guardar pendiente
       </Button>
-
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  input: {
+    borderRadius: 14,
+    borderTopLeftRadius: 14,
+    borderTopRightRadius: 14,
+    height: 56,
+  },
+});

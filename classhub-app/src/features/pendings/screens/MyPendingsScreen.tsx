@@ -24,6 +24,11 @@ import { PendingDetailModal } from './PendingDetailModal';
 import { useFocusEffect } from '@react-navigation/native';
 import {useNavigation} from '@react-navigation/native';
 
+import moment from 'moment';
+import 'moment/locale/es';
+
+moment.locale('es')
+
 interface Pending {
   id: number;
   title: string;
@@ -208,7 +213,10 @@ export const MyPendingsScreen = () => {
         setDetailVisible(true);
       }}
     >
-      <Card mode='contained' style={[styles.taskCard, {backgroundColor:colors.cardBackground}]}>
+      <Card
+        mode="contained"
+        style={[styles.taskCard, { backgroundColor: colors.cardBackground }]}
+      >
         <Card.Content>
           <View style={styles.taskRow}>
             <Checkbox
@@ -231,7 +239,7 @@ export const MyPendingsScreen = () => {
                 {item.title}
               </Text>
 
-              {!!item.description && (
+              {/* {!!item.description && (
                 <Text
                   style={{
                     marginTop: 4,
@@ -247,7 +255,7 @@ export const MyPendingsScreen = () => {
                 >
                   {item.description}
                 </Text>
-              )}
+              )} */}
 
               <Text
                 style={{
@@ -260,23 +268,46 @@ export const MyPendingsScreen = () => {
                 {item.assignment?.classroom?.name}
               </Text>
 
-              <Text
-                  style={{
-                    marginTop: 6,
-                    color: isOverdue
+              <View style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 5,
+                marginTop: 3,
+              }}>
+                <Ionicons
+                  name={'calendar-outline'}
+                  size={18}
+                  color={
+                    item.is_completed
+                      ? colors.success
+                      : isOverdue
                       ? colors.error
-                      : colors.textColor,
+                      : colors.warning
+                  }
+                />
+
+                <Text
+                  style={{
+                    color: isOverdue ? colors.error : colors.textColor,
                   }}
                 >
-                  Vence: {item.due_date}
+                  {
+                    moment(item.due_date)
+                      .format('ddd DD, MMMM YYYY')
+                  }
                 </Text>
+              </View>
             </View>
 
             <View
               style={[
                 styles.statusDot,
                 {
-                  backgroundColor: item.is_completed ? colors.success : isOverdue ? colors.error : colors.warning,
+                  backgroundColor: item.is_completed
+                    ? colors.success
+                    : isOverdue
+                    ? colors.error
+                    : colors.warning,
                 },
               ]}
             />
@@ -284,7 +315,7 @@ export const MyPendingsScreen = () => {
         </Card.Content>
       </Card>
     </TouchableOpacity>
-      );
+  );
   };
 
   if (loading) {

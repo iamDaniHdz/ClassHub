@@ -67,6 +67,7 @@ export const AppNavigator = () => {
             component={PendingFormScreen}
             options={{
               title: 'Nuevo pendiente',
+              headerShown: false,
             }}
           />
 
