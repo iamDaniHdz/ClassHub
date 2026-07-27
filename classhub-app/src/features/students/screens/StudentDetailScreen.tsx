@@ -148,8 +148,7 @@ export const StudentDetailScreen = ({
               marginTop: 16,
             }}
           >
-            {data.student.name} {data.student.paternal_surname}{' '}
-            {data.student.maternal_surname}
+            {data?.student?.full_name}
           </Text>
 
           {/* STATUS */}
@@ -163,7 +162,7 @@ export const StudentDetailScreen = ({
           >
             <View
               style={{
-                backgroundColor: colors.textSuccessBackground,
+                backgroundColor: data?.student?.is_active ? colors.textSuccessBackground : colors.textErrorBackground,
                 borderRadius: 20,
                 flexDirection: 'row',
                 alignSelf: 'baseline',
@@ -173,12 +172,12 @@ export const StudentDetailScreen = ({
               }}
             >
               <Ionicons
-                name={'checkmark-circle'}
+                name={data?.student?.is_active ? 'checkmark-circle-outline' : 'close-circle-outline'}
                 size={20}
-                color={colors.textSuccess}
+                color={data?.student?.is_active ? colors.textSuccess : colors.textError}
               />
-              <Text variant="bodyMedium" style={{ color: colors.textSuccess }}>
-                Activo
+              <Text variant="bodyMedium" style={{ color: data?.student?.is_active ? colors.textSuccess : colors.textError}}>
+                {data?.student?.is_active ? 'Activo' : 'Inactivo'}
               </Text>
             </View>
           </View>
@@ -196,7 +195,7 @@ export const StudentDetailScreen = ({
               gap: 5,
             }}
           >
-            <Ionicons name={'school'} size={20} color={colors.primary} />
+            <Ionicons name={'school-outline'} size={20} color={colors.primary} />
             <Text
               style={{
                 color: theme.primary,

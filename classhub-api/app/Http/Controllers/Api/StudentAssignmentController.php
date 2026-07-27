@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStudentAssignmentRequest;
+use App\Http\Resources\StudentResource;
 use App\Models\StudentAssignment;
 use Illuminate\Http\Request;
 
@@ -53,12 +54,10 @@ class StudentAssignmentController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                'student' => [
-                    'id' => $studentAssignment->student->id,
-                    'name' => $studentAssignment->student->name,
-                    'paternal_surname' => $studentAssignment->student->paternal_surname,
-                    'maternal_surname' => $studentAssignment->student->maternal_surname,
-                ],
+                
+                'student' => new StudentResource(
+                    $studentAssignment->student
+                ),
 
                 'academy' => $studentAssignment->assignment->academy->name,
                 'classroom' => $studentAssignment->assignment->classroom->name,
