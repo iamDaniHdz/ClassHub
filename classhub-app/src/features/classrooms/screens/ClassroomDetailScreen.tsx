@@ -271,21 +271,42 @@ export const ClassroomDetailScreen = ({
                 }}
               >
                 <Text variant="titleMedium">
-                  {item?.student?.name} {item?.student?.paternal_surname}{' '}
-                  {item?.student?.maternal_surname}
+                  {item?.student?.full_name}
                 </Text>
 
                 <View style={{
-                  backgroundColor:colors.textSuccessBackground,
-                  borderRadius: 20,
                   flexDirection: 'row',
-                  alignSelf: 'baseline',
                   gap: 5,
-                  paddingVertical: 5,
-                  paddingHorizontal: 10,
                 }}>
-                  <Ionicons name={'checkmark-circle'} size={20} color={colors.textSuccess} />
-                  <Text variant='bodyMedium' style={{color:colors.textSuccess}}>Activo</Text>
+                  <View style={{
+                    backgroundColor:colors.terciary,
+                    borderRadius: 20,
+                    flexDirection: 'row',
+                    alignSelf: 'baseline',
+                    gap: 5,
+                    paddingVertical: 5,
+                    paddingHorizontal: 10,
+                  }}>
+                    <Ionicons name={'person-circle-outline'} size={20} color={colors.primary} />
+                    <Text variant='bodyMedium' style={{color: colors.primary}}>
+                      {item?.student?.student_enrollment ?? 'Sin matricula'}
+                    </Text>
+                  </View>
+
+                  <View style={{
+                    backgroundColor:item?.student?.is_active ? colors.textSuccessBackground : colors.textErrorBackground,
+                    borderRadius: 20,
+                    flexDirection: 'row',
+                    alignSelf: 'baseline',
+                    gap: 5,
+                    paddingVertical: 5,
+                    paddingHorizontal: 10,
+                  }}>
+                    <Ionicons name={item?.student?.is_active ? 'checkmark-circle-outline' : 'close-circle-outline'} size={20} color={item?.student?.is_active ? colors.textSuccess : colors.textError} />
+                    <Text variant='bodyMedium' style={{color: item?.student?.is_active ? colors.textSuccess : colors.textError}}>
+                      {item?.student?.is_active ? 'Activo' : 'Inactivo'}
+                    </Text>
+                  </View>
                 </View>
               </View>
 

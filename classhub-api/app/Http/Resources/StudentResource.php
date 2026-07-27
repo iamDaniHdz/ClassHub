@@ -20,6 +20,7 @@ class StudentResource extends JsonResource
             'second_name' => $this->second_name,
             'paternal_surname' => $this->paternal_surname,
             'maternal_surname' => $this->maternal_surname,
+            'full_name' => $this->full_name,
             'student_enrollment' => $this->student_enrollment,
             'is_active' => $this->is_active,
             'classroom_id' => $this->classroom_id,
