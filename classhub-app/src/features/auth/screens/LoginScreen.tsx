@@ -30,6 +30,8 @@ export const LoginScreen = ({ navigation }: any) => {
       setError('');
       await login(email, password);
     } catch (err: any) {
+      console.log(err);
+      
       if (!err.response) {
         setError('No se pudo conectar al servidor');
 
@@ -38,7 +40,6 @@ export const LoginScreen = ({ navigation }: any) => {
         }, 4000);
         return;
       }
-      console.log(err.response);
       if (err.response.status === 422) {
         setError('Credenciales incorrectas');
         setTimeout(() => {
