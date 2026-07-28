@@ -296,19 +296,15 @@ class DashboardOverviewController extends Controller
                     ) {
 
                         return
-
-                            $schedule->day_of_week ===
-                            $today
+                            (int) $schedule->day_of_week === (int) $today
 
                             &&
 
-                            $schedule->start_time <=
-                            $nowTime
+                            $schedule->start_time <= $nowTime
 
                             &&
 
-                            $schedule->end_time >
-                            $nowTime;
+                            $schedule->end_time > $nowTime;
                     }
                 );
 
