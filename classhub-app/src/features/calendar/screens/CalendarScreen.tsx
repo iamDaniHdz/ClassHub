@@ -11,7 +11,9 @@ import {
 
 import {
   ActivityIndicator,
+  Button,
   Card,
+  Divider,
   ProgressBar,
   Text,
   useTheme,
@@ -25,28 +27,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { ScheduleApi } from '../services/schedule.api';
 
-const DAYS = [
-  {
-    key: 1,
-    label: 'Lun',
-  },
-  {
-    key: 2,
-    label: 'Mar',
-  },
-  {
-    key: 3,
-    label: 'Mié',
-  },
-  {
-    key: 4,
-    label: 'Jue',
-  },
-  {
-    key: 5,
-    label: 'Vie',
-  },
-];
+import moment from 'moment';
+import 'moment/locale/es';
+
+moment.locale('es');
 
 export const CalendarScreen = () => {
 
@@ -59,9 +43,119 @@ export const CalendarScreen = () => {
   const [refreshing, setRefreshing] =
     useState(false);
 
-  const [selectedDay, setSelectedDay] =
-    useState(1);
+  const getCurrentWeekDays = () => {
 
+    const today =
+      new Date();
+
+    const currentDay =
+      today.getDay();
+
+    const monday =
+      new Date(today);
+
+    const diff =
+      currentDay === 0
+        ? -6
+        : 1 - currentDay;
+
+    monday.setDate(
+      today.getDate() + diff,
+    );
+
+    return Array.from(
+      { length: 5 },
+      (_, index) => {
+
+        const date =
+          new Date(monday);
+
+        date.setDate(
+          monday.getDate() + index,
+        );
+
+        const labels = [
+          'Dom',
+          'Lun',
+          'Mar',
+          'Mié',
+          'Jue',
+          'Vie',
+          'Sáb',
+        ];
+
+        return {
+          key: index + 1,
+          label:
+            labels[
+              date.getDay()
+            ],
+          day:
+            date.getDate(),
+          fullDate:
+            date,
+        };
+      },
+    );
+  };
+
+  const DAYS = getCurrentWeekDays();
+
+  const getCurrentWeekDay =
+    () => {
+
+      const day =
+        new Date().getDay();
+
+      return day === 0
+        ? 7
+        : day;
+    };
+
+  const [selectedDay, setSelectedDay] =
+    useState(
+      getCurrentWeekDay(),
+    );
+
+  const todayDisplay =
+    useMemo(() => {
+
+      return moment().format(
+        'DD MMMM YYYY, dddd',
+      );
+
+    }, []);
+
+  const selectedDateDisplay =
+    useMemo(() => {
+
+      const selectedDate =
+        DAYS.find(
+          day => day.key === selectedDay,
+        );
+
+      if (!selectedDate) {
+        return todayDisplay;
+      }
+
+      return moment(
+        selectedDate.fullDate,
+      ).format(
+        'DD MMMM YYYY, dddd',
+      );
+
+    }, [
+      todayDisplay,
+      DAYS,
+      selectedDay,
+  ]);
+
+  const todayWeekDay =
+    useMemo(
+      () => getCurrentWeekDay(),
+      [],
+    );
+  
   const [schedule, setSchedule] =
     useState<any[]>([]);
 
@@ -123,18 +217,6 @@ export const CalendarScreen = () => {
       schedule,
       selectedDay,
     ]);
-
-  const todayWeekDay =
-    useMemo(() => {
-
-      const day =
-        new Date().getDay();
-
-      return day === 0
-        ? 7
-        : day;
-
-    }, []);
 
   const isTodaySelected =
     selectedDay ===
@@ -228,171 +310,150 @@ export const CalendarScreen = () => {
   }
 
   return (
-
     <FlatList
-
       data={filtered}
       refreshing={refreshing}
       onRefresh={onRefresh}
-      keyExtractor={item =>
-        item.schedule_id.toString()
-      }
-
+      keyExtractor={item => item.schedule_id.toString()}
       contentContainerStyle={{
         padding: 16,
-        backgroundColor:
-          colors.background,
+        backgroundColor: colors.background,
         flexGrow: 1,
       }}
-
       ListHeaderComponent={
-
         <View>
-
-          <Text
-            variant="headlineSmall"
+          <View
             style={{
-              color:
-                colors.titleColor,
-              marginBottom: 4,
-              fontWeight: 'bold',
-            }}
-          >
-            Mis horarios
-          </Text>
-
-          <Text
-            variant="bodyLarge"
-            style={{
-              color:
-                colors.textColor,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
               marginBottom: 20,
             }}
           >
-            Organiza tus clases
-          </Text>
 
-          <FlatList
+            <View>
 
-            horizontal
-
-            data={DAYS}
-
-            keyExtractor={item =>
-              item.key.toString()
-            }
-
-            showsHorizontalScrollIndicator={
-              false
-            }
-
-            renderItem={({
-              item,
-            }) => (
-
-              <Card
-
-                mode="contained"
-
-                onPress={() =>
-                  setSelectedDay(
-                    item.key,
-                  )
-                }
-
+              <Text
+                variant="headlineSmall"
                 style={{
-                  marginRight: 10,
+                  color: colors.titleColor,
+                  marginBottom: 4,
+                  fontWeight: 'bold',
+                }}
+              >
+                Mis horarios
+              </Text>
+
+              <Text
+                variant="bodyLarge"
+                style={{
+                  color: colors.textColor,
+                }}
+              >
+                Organiza tus clases
+              </Text>
+
+            </View>
+
+            <Button icon="calendar" mode="contained" 
+              onPress={() =>
+                setSelectedDay(
+                  getCurrentWeekDay(),
+                )
+              }>
+              Hoy
+            </Button>
+          </View>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              gap: 8,
+            }}
+          >
+            {DAYS.map(item => (
+              <Card
+                key={item.key}
+                mode="contained"
+                onPress={() => setSelectedDay(item.key)}
+                style={{
+                  flex: 1,
+
+                  height: 65,
+
+                  justifyContent: 'center',
 
                   backgroundColor:
-                    selectedDay ===
-                    item.key
-
+                    selectedDay === item.key
                       ? colors.primary
-
                       : colors.cardBackground,
                 }}
               >
-
-                <Card.Content>
-
+                <Card.Content
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
                   <Text
                     style={{
                       color:
-
-                        selectedDay ===
-                        item.key
-
-                          ? '#FFF'
-
-                          : colors.textColor,
+                        selectedDay === item.key ? '#FFF' : colors.textColor,
+                      fontWeight: '700',
                     }}
                   >
                     {item.label}
                   </Text>
 
+                  <Text
+                    style={{
+                      color:
+                        selectedDay === item.key ? '#FFF' : colors.textColor,
+                      fontSize: 18,
+                      marginTop: 4,
+                    }}
+                  >
+                    {item.day}
+                  </Text>
                 </Card.Content>
-
               </Card>
+            ))}
+          </View>
 
-            )}
-          />
-
+       
           <Card
             mode="contained"
             style={{
               marginTop: 20,
               marginBottom: 20,
-              backgroundColor:
-                colors.cardBackground,
+              backgroundColor: colors.cardBackground,
             }}
           >
-
             <Card.Content>
-
-              {isTodaySelected ? (
-
+              {isTodaySelected && todayProgress.total>0 ? (
                 <>
-
                   <View
                     style={{
-                      flexDirection:
-                        'row',
+                      flexDirection: 'row',
 
-                      justifyContent:
-                        'space-between',
+                      justifyContent: 'space-between',
 
-                      alignItems:
-                        'center',
+                      alignItems: 'center',
                     }}
                   >
-
                     <Text
                       variant="titleMedium"
                       style={{
-                        fontWeight:
-                          '700',
+                        fontWeight: '700',
                       }}
                     >
                       Clases de hoy
                     </Text>
-
-                    <Text>
-
-                      {
-                        todayProgress.completed
-                      }
-
-                      /
-
-                      {
-                        todayProgress.total
-                      }
-
-                    </Text>
-
                   </View>
 
                   <Text
+                    variant="labelMedium"
                     style={{
                       marginTop: 8,
                     }}
@@ -401,15 +462,8 @@ export const CalendarScreen = () => {
                   </Text>
 
                   <ProgressBar
-
-                    progress={
-                      todayProgress.progress
-                    }
-
-                    color={
-                      colors.primary
-                    }
-
+                    progress={todayProgress.progress}
+                    color={colors.primary}
                     style={{
                       marginTop: 10,
                       height: 10,
@@ -417,234 +471,275 @@ export const CalendarScreen = () => {
                     }}
                   />
 
-                  <Text
+                  <View
                     style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
                       marginTop: 8,
-                      textAlign:
-                        'right',
                     }}
                   >
-                    {
-                      todayProgress.percentage
-                    }
-                    %
-                  </Text>
+                    <Text variant="labelMedium">
+                      {todayProgress.completed}/{todayProgress.total} Clases
+                      completadas
+                    </Text>
+
+                    <Text
+                      variant="labelMedium"
+                      style={{
+                        color: colors.primary,
+                      }}
+                    >
+                      {todayProgress.percentage}%
+                    </Text>
+                  </View>
 
                   {todayProgress.nextClass && (
-
                     <View
                       style={{
                         marginTop: 12,
                       }}
                     >
+                      <Divider
+                        style={{
+                          backgroundColor: colors.gray,
+                          marginBottom: 10,
+                        }}
+                      />
 
-                      <Text
-                        variant="labelMedium"
+                      <Text variant="labelMedium">Siguiente clase</Text>
+
+                      <Card
+                        mode="contained"
+                        style={{
+                          marginTop: 10,
+                          backgroundColor: colors.background,
+                          flexDirection: 'row',
+                        }}
                       >
-                        Siguiente clase
-                      </Text>
+                        <Card.Content
+                          style={{
+                            flexDirection: 'row',
+                            margin: -16,
+                          }}
+                        >
+                          <View
+                            style={{
+                              width: '20%',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              borderEndColor: colors.gray,
+                              borderEndWidth: 0.5,
+                              paddingVertical: 10,
+                            }}
+                          >
+                            <Text
+                              variant="labelLarge"
+                              style={{
+                                paddingVertical: 8,
+                                paddingHorizontal: 16,
+                                borderRadius: 20,
+                              }}
+                            >
+                              {todayProgress.nextClass.classroom?.name}
+                            </Text>
+                          </View>
 
-                      <Text
-                        variant="bodyLarge"
-                      >
-                        {
-                          todayProgress
-                            .nextClass
-                            .academy?.name
-                        }
-                      </Text>
+                          <View
+                            style={{
+                              width: '80%',
+                              padding: 10,
+                              paddingStart: 20,
+                            }}
+                          >
+                            <Text
+                              variant="bodyLarge"
+                              style={{
+                                color: colors.titleColor,
+                              }}
+                            >
+                              {todayProgress.nextClass.academy?.name}
+                            </Text>
 
-                      <Text>
-                        {
-                          todayProgress
-                            .nextClass
-                            .classroom?.name
-                        }
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                marginTop: 8,
+                                alignItems: 'center',
+                              }}
+                            >
+                              <Ionicons
+                                name="time-outline"
+                                size={18}
+                                color={colors.gray}
+                              />
 
-                        {' · '}
+                              <Text
+                                style={{
+                                  marginLeft: 6,
+                                  color: colors.gray,
+                                }}
+                              >
+                                {todayProgress.nextClass.start_time?.substring(
+                                  0,
+                                  5,
+                                )}
 
-                        {
-                          todayProgress
-                            .nextClass
-                            .start_time
-                            ?.substring(
-                              0,
-                              5,
-                            )
-                        }
+                                {' - '}
 
-                        {' - '}
-
-                        {
-                          todayProgress
-                            .nextClass
-                            .end_time
-                            ?.substring(
-                              0,
-                              5,
-                            )
-                        }
-                      </Text>
-
+                                {todayProgress.nextClass.end_time?.substring(
+                                  0,
+                                  5,
+                                )}
+                              </Text>
+                            </View>
+                          </View>
+                        </Card.Content>
+                      </Card>
                     </View>
-
                   )}
-
                 </>
-
               ) : (
-
                 <>
-
-                  <Text
-                    variant="titleMedium"
-                    style={{
-                      fontWeight:
-                        '700',
-                    }}
-                  >
-                    Clases programadas
-                  </Text>
-
-                  <Text
-                    variant="displaySmall"
-                    style={{
-                      marginTop: 8,
-                    }}
-                  >
-                    {filtered.length}
-                  </Text>
-
-                  <Text
-                    style={{
-                      marginTop: 4,
-                    }}
-                  >
-                    {
-                      filtered.length === 1
-
-                        ? 'Clase programada'
-
-                        : 'Clases programadas'
-                    }
-                  </Text>
-
+                  <View style={{
+                    flexDirection: 'row',
+                    gap: 15,
+                  }}>
+                    <Text
+                      variant="displaySmall"
+                      style={{
+                        padding: 10,
+                        backgroundColor: colors.terciary,
+                        borderRadius: 10,
+                        color: colors.primary,
+                        width: 65,
+                        height: 65,
+                        textAlign: 'center',
+                      }}
+                    >
+                      {filtered.length}
+                    </Text>
+                    <View>
+                      <Text
+                        variant="titleMedium"
+                        style={{
+                          color: colors.titleColor
+                        }}
+                      >
+                        Clases programadas
+                      </Text>
+                      <Text 
+                        variant='labelLarge'
+                        style={{
+                          color: colors.gray
+                        }}
+                      >
+                        {selectedDateDisplay}
+                      </Text>
+                    </View>
+                  </View>
                 </>
-
               )}
-
             </Card.Content>
-
           </Card>
 
           <Text
-            variant="titleLarge"
+            variant="labelLarge"
             style={{
-              marginBottom: 12,
+              marginBottom: 10,
             }}
           >
             Cronograma
           </Text>
-
         </View>
-
       }
-
       renderItem={({ item }) => (
-
         <Card
           mode="contained"
           style={{
             marginBottom: 12,
-            backgroundColor:
-              colors.cardBackground,
+            backgroundColor: colors.cardBackground,
+            flexDirection: 'row',
           }}
         >
-
-          <Card.Content>
-
-            <Text variant="titleMedium">
-              {item.academy?.name}
-            </Text>
-
-            <Text
+          <Card.Content
+            style={{
+              flexDirection: 'row',
+              margin: -16,
+            }}
+          >
+            <View
               style={{
-                marginTop: 4,
+                width: '20%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderEndColor: colors.gray,
+                borderEndWidth: 0.5,
+                paddingVertical: 10,
               }}
             >
-              {item.classroom?.name}
-            </Text>
+              <Text
+                variant="labelLarge"
+                style={{
+                  paddingVertical: 8,
+                  paddingHorizontal: 16,
+                  borderRadius: 20,
+                }}
+              >
+                {item.classroom?.name}
+              </Text>
+            </View>
 
             <View
               style={{
-                flexDirection:
-                  'row',
-
-                marginTop: 8,
-
-                alignItems:
-                  'center',
+                width: '80%',
+                padding: 10,
+                paddingStart: 20,
               }}
             >
-
-              <Ionicons
-                name="time-outline"
-                size={18}
-                color={
-                  colors.primary
-                }
-              />
-
               <Text
+                variant="bodyLarge"
                 style={{
-                  marginLeft: 6,
+                  color: colors.titleColor,
                 }}
               >
-                {
-                  item.start_time
-                    ?.substring(
-                      0,
-                      5,
-                    )
-                }
-
-                {' - '}
-
-                {
-                  item.end_time
-                    ?.substring(
-                      0,
-                      5,
-                    )
-                }
+                {item.academy?.name}
               </Text>
 
+              <View
+                style={{
+                  flexDirection: 'row',
+                  marginTop: 8,
+                  alignItems: 'center',
+                }}
+              >
+                <Ionicons name="time-outline" size={18} color={colors.gray} />
+
+                <Text
+                  style={{
+                    marginLeft: 6,
+                    color: colors.gray,
+                  }}
+                >
+                  {item.start_time?.substring(0, 5)}
+
+                  {' - '}
+
+                  {item.end_time?.substring(0, 5)}
+                </Text>
+              </View>
             </View>
-
           </Card.Content>
-
         </Card>
-
       )}
-
       ListEmptyComponent={
-
         <View
           style={{
-            alignItems:
-              'center',
+            alignItems: 'center',
 
             marginTop: 50,
           }}
         >
-
-          <Ionicons
-            name="calendar-outline"
-            size={64}
-            color={
-              colors.outline
-            }
-          />
+          <Ionicons name="calendar-outline" size={64} color={colors.outline} />
 
           <Text
             style={{
@@ -653,12 +748,8 @@ export const CalendarScreen = () => {
           >
             No tienes clases este día
           </Text>
-
         </View>
-
       }
-
     />
-
   );
 };
