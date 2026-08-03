@@ -6,6 +6,7 @@ import React, {
 import {
   RefreshControl,
   ScrollView,
+  TouchableOpacity,
   View,
 } from 'react-native';
 
@@ -22,9 +23,10 @@ import {
   SafeAreaView,
 } from 'react-native-safe-area-context';
 
+
 import {
-  useFocusEffect,
-} from '@react-navigation/native';
+  useEffect,
+} from 'react';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -38,6 +40,22 @@ export const DashboardScreen = ({
 
   const { user } =
     useAuthStore();
+
+  const {
+    schools,
+    currentSchoolId,
+  } = useAuthStore();
+
+  const currentSchool =
+    schools.find(
+      school =>
+        school.id ===
+        currentSchoolId,
+    );
+
+  const {
+    setCurrentSchool,
+  } = useAuthStore();
 
   const { colors } =
     useTheme() as any;
@@ -73,13 +91,18 @@ export const DashboardScreen = ({
 
     }, []);
 
-  useFocusEffect(
-    useCallback(() => {
+  useEffect(() => {
 
-      load();
+    if (!currentSchoolId) {
+      return;
+    }
 
-    }, [load]),
-  );
+    load();
+
+  }, [
+    currentSchoolId,
+    load,
+  ]);
 
   const onRefresh =
     () => {
@@ -116,6 +139,25 @@ export const DashboardScreen = ({
   const isCurrentClass =
     !!dashboard?.current_class;
 
+  const todayWeekDay =
+    new Date().getDay() === 0
+      ? 7
+      : new Date().getDay();
+
+  const nextClassBadge =
+    !isCurrentClass &&
+    classInfo
+      ? classInfo.day_of_week ===
+        todayWeekDay
+        ? classInfo.start_time?.substring(
+            0,
+            5,
+          )
+        : getDayName(
+            classInfo.day_of_week,
+          )
+      : null;
+
   const visiblePendings =
     dashboard?.upcoming_pendings
       ?.slice(0, 3) ?? [];
@@ -136,58 +178,129 @@ export const DashboardScreen = ({
     iconColor,
     backgroundColor,
   }: any) => (
-
     <Card
       mode="contained"
       style={{
         flex: 1,
-        backgroundColor:
-          colors.cardBackground,
+        backgroundColor: colors.cardBackground,
       }}
     >
-
       <Card.Content>
+        <View style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}>
+          <Text
+            variant="headlineLarge"
+            style={{
+              textAlign: 'left',
+            }}
+          >
+            {value}
+          </Text>
 
-        <View
+          <View
+            style={{
+              alignSelf: 'center',
+              backgroundColor,
+              borderRadius: 12,
+              padding: 10,
+            }}
+          >
+            <Ionicons name={icon} size={24} color={iconColor} />
+          </View>
+        </View>
+        <View>
+          <Text
+            style={{
+              textAlign: 'left',
+              marginTop: 8,
+              color:
+                colors.textColor,
+            }}
+          >
+            {label}
+          </Text>
+        </View>
+      </Card.Content>
+    </Card>
+  );
+
+  const NavCard = ({
+    label,
+    route,
+    icon,
+    iconColor,
+    backgroundColor,
+  }: any) => (
+
+    <TouchableOpacity
+     
+      onPress={() => {
+
+        if (route === 'SchoolSelection') {
+
+          setCurrentSchool(null);
+
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'SchoolSelection',
+              },
+            ],
+          });
+
+          return;
+        }
+
+        navigation.navigate(route);
+
+      }}
+      style={{
+        flex: 1,
+        
+      }}
+    >
+      <View
           style={{
-            alignSelf: 'center',
-            backgroundColor,
-            borderRadius: 12,
-            padding: 10,
-            marginBottom: 8,
+            alignItems: 'center',
           }}
         >
 
-          <Ionicons
-            name={icon}
-            size={24}
-            color={iconColor}
-          />
+          <View
+            style={{
+              backgroundColor,
+              borderRadius: 16,
+              padding: 12,
+            }}
+          >
+
+            <Ionicons
+              name={icon}
+              size={26}
+              color={iconColor}
+            />
+
+          </View>
+
+          <Text
+            style={{
+              marginTop: 10,
+              textAlign: 'center',
+              color:
+                colors.textColor,
+              fontWeight: '600',
+            }}
+          >
+
+            {label}
+
+          </Text>
 
         </View>
 
-        <Text
-          variant="headlineMedium"
-          style={{
-            textAlign: 'center',
-          }}
-        >
-          {value}
-        </Text>
-
-        <Text
-          style={{
-            textAlign: 'center',
-            color:
-              colors.textColor,
-          }}
-        >
-          {label}
-        </Text>
-
-      </Card.Content>
-
-    </Card>
+    </TouchableOpacity>
   );
 
   if (loading) {
@@ -214,31 +327,20 @@ export const DashboardScreen = ({
   }
 
   return (
-
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor:
-          colors.background,
+        backgroundColor: colors.background,
       }}
     >
-
       <ScrollView
-
         refreshControl={
-
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
-
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-
         contentContainerStyle={{
           padding: 20,
         }}
       >
-
         {/* HEADER */}
 
         <View
@@ -249,19 +351,12 @@ export const DashboardScreen = ({
             marginBottom: 24,
           }}
         >
-
           <Avatar.Text
             size={48}
-            label={
-              user?.name
-                ?.charAt(0)
-                ?.toUpperCase() ??
-              '?'
-            }
+            label={user?.name?.charAt(0)?.toUpperCase() ?? '?'}
           />
 
           <View>
-
             <Text
               variant="bodyMedium"
               style={{
@@ -283,7 +378,95 @@ export const DashboardScreen = ({
               {user?.name}
             </Text>
 
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: 4,
+                gap: 4,
+              }}
+            >
+
+              <Ionicons
+                name="school-outline"
+                size={16}
+                color={
+                  colors.primary
+                }
+              />
+
+              <Text
+                variant="bodySmall"
+                style={{
+                  color:
+                    colors.primary,
+                }}
+              >
+                {currentSchool?.name}
+              </Text>
+
+            </View>
+
           </View>
+        </View>
+
+        {/* NAV */}
+
+        <View
+          style={{
+            flexDirection: 'row',
+            gap: 10,
+            marginBottom: 24,
+          }}
+        >
+
+          <NavCard
+            label="Cambiar escuela"
+            route="SchoolSelection"
+            icon="school-outline"
+            iconColor={
+              colors.primary
+            }
+            backgroundColor={
+              colors.terciary
+            }
+          />
+
+          <NavCard
+            label="Agregar pendiente"
+            route="PendingForm"
+            icon="add-circle-outline"
+            iconColor={
+              colors.primary
+            }
+            backgroundColor={
+              colors.terciary
+            }
+          />
+
+          <NavCard
+            label="Perfil"
+            route="Profile"
+            icon="person-circle-outline"
+            iconColor={
+              colors.primary
+            }
+            backgroundColor={
+              colors.terciary
+            }
+          />
+
+          <NavCard
+            label="Ajustes"
+            route="Settings"
+            icon="settings-outline"
+            iconColor={
+              colors.primary
+            }
+            backgroundColor={
+              colors.terciary
+            }
+          />
 
         </View>
 
@@ -296,37 +479,21 @@ export const DashboardScreen = ({
             marginBottom: 10,
           }}
         >
-
           <MetricCard
             label="Academias"
-            value={
-              dashboard?.metrics
-                ?.academies ?? 0
-            }
+            value={dashboard?.metrics?.academies ?? 0}
             icon="school-outline"
-            iconColor={
-              colors.primary
-            }
-            backgroundColor={
-              colors.terciary
-            }
+            iconColor={colors.primary}
+            backgroundColor={colors.background}
           />
 
           <MetricCard
             label="Clases de hoy"
-            value={
-              dashboard?.metrics
-                ?.today_classes ?? 0
-            }
+            value={dashboard?.metrics?.today_classes ?? 0}
             icon="today-outline"
-            iconColor={
-              colors.textWarning
-            }
-            backgroundColor={
-              colors.textWarningBackground
-            }
+            iconColor={colors.primary}
+            backgroundColor={colors.background}
           />
-
         </View>
 
         <View
@@ -336,141 +503,142 @@ export const DashboardScreen = ({
             marginBottom: 24,
           }}
         >
-
           <MetricCard
             label="Clases de la semana"
-            value={
-              dashboard?.metrics
-                ?.weekly_classes ?? 0
-            }
+            value={dashboard?.metrics?.weekly_classes ?? 0}
             icon="calendar-outline"
-            iconColor={
-              colors.textSuccess
-            }
-            backgroundColor={
-              colors.textSuccessBackground
-            }
+            iconColor={colors.primary}
+            backgroundColor={colors.background}
           />
 
           <MetricCard
             label="Pendientes"
-            value={
-              dashboard?.metrics
-                ?.pendings ?? 0
-            }
+            value={dashboard?.metrics?.pendings ?? 0}
             icon="checkmark-circle-outline"
-            iconColor={
-              colors.error
-            }
-            backgroundColor={
-              colors.textErrorBackground
-            }
+            iconColor={colors.primary}
+            backgroundColor={colors.background}
           />
-
         </View>
 
         {/* CLASE */}
 
         {!!classInfo && (
-
           <View
             style={{
               marginBottom: 24,
             }}
           >
-
             <Text
-              variant="bodyLarge"
+              variant="labelLarge"
               style={{
-                fontWeight: '700',
                 marginBottom: 12,
 
-                color:
-                  isCurrentClass
-                    ? colors.textSuccess
-                    : colors.titleColor,
+                color: isCurrentClass ? colors.textSuccess : colors.titleColor,
               }}
             >
-              {
-                isCurrentClass
-                  ? 'Clase en curso'
-                  : 'Próxima clase'
-              }
+              {isCurrentClass ? 'Clase en curso' : 'Próxima clase'}
             </Text>
 
             <Card
               mode="contained"
               style={{
-                backgroundColor:
-                  colors.primary,
+                backgroundColor: colors.primary,
+              }}
+              onPress={() => {
+
+                navigation.navigate(
+                  'ClassroomDetail',
+                  {
+                    classroomId: classInfo.classroom.id,
+                    academyName: classInfo.academy.name,
+                  },
+                );
+
               }}
             >
-
               <Card.Content>
-
-                {isCurrentClass && (
-
-                  <View
-                    style={{
-                      alignSelf:
-                        'flex-start',
-
-                      backgroundColor:
-                        colors.textSuccessBackground,
-
-                      paddingHorizontal:
-                        10,
-
-                      paddingVertical:
-                        4,
-
-                      borderRadius: 20,
-
-                      marginBottom: 10,
-                    }}
-                  >
+                <View style={{
+                  flexDirection:'row',
+                  justifyContent: 'space-between',
+                }}>
+                  <View>
+                    <Text
+                      variant="titleLarge"
+                      style={{
+                        color: 'white',
+                        fontWeight: '700',
+                      }}
+                    >
+                      {classInfo.academy?.name}
+                    </Text>
 
                     <Text
                       style={{
-                        color:
-                          colors.textSuccess,
-
-                        fontWeight:
-                          '700',
+                        color: '#FFE0EA',
+                        marginTop: 4,
                       }}
                     >
-                      EN CURSO
+                      Grupo {classInfo.classroom?.name}
                     </Text>
-
                   </View>
+                  {isCurrentClass ? 
+                    <View
+                      style={{
+                        alignSelf: 'flex-start',
 
-                )}
+                        backgroundColor: colors.textSuccessBackground,
 
-                <Text
-                  variant="titleLarge"
-                  style={{
-                    color: 'white',
-                    fontWeight:
-                      '700',
-                  }}
-                >
-                  {classInfo.academy}
-                </Text>
+                        paddingHorizontal: 10,
 
-                <Text
-                  style={{
-                    color:
-                      '#FFE0EA',
-                    marginTop: 4,
-                  }}
-                >
-                  Grupo {classInfo.classroom}
-                </Text>
+                        paddingVertical: 4,
+
+                        borderRadius: 20,
+
+                        marginBottom: 10,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: colors.textSuccess,
+                          fontWeight: '700',
+                        }}
+                      >
+                        En curso
+                      </Text>
+                    </View>
+                  :
+                    <View
+                      style={{
+                        alignSelf: 'flex-start',
+
+                        backgroundColor:
+                          colors.cardBackground,
+
+                        paddingHorizontal: 10,
+
+                        paddingVertical: 4,
+
+                        borderRadius: 20,
+
+                        marginBottom: 10,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: colors.primary,
+
+                          fontWeight: '700',
+                        }}
+                      >
+                        {nextClassBadge}
+                      </Text>
+                    </View>
+                  }
+                </View>
 
                 <View
                   style={{
-                    backgroundColor:
-                      'rgba(255,255,255,0.15)',
+                    backgroundColor: 'rgba(255,255,255,0.15)',
 
                     padding: 12,
 
@@ -479,11 +647,8 @@ export const DashboardScreen = ({
                     marginTop: 16,
                   }}
                 >
-
                   {isCurrentClass ? (
-
                     <>
-
                       <Text
                         style={{
                           color: 'white',
@@ -499,94 +664,67 @@ export const DashboardScreen = ({
                           marginTop: 4,
                         }}
                       >
-                        Finaliza a las{' '}
-                        {
-                          classInfo.end_time
-                            ?.substring(0, 5)
-                        }
+                        Finaliza a las {classInfo.end_time?.substring(0, 5)}
                       </Text>
-
                     </>
-
                   ) : (
-
                     <>
-
-                      <View style={{
-                        flexDirection: 'row',
-                        gap: 5,
-                        marginBottom: 5,
-                      }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          gap: 5,
+                          marginBottom: 5,
+                        }}
+                      >
                         <Ionicons
                           name="calendar-outline"
                           size={18}
-                          color={
-                            colors.white
-                          }
+                          color={colors.white}
                         />
                         <Text
                           style={{
                             color: 'white',
                           }}
                         >
-                          {
-                            getDayName(
-                              classInfo.day_of_week,
-                            )
-                          }
+                          {getDayName(classInfo.day_of_week)}
                         </Text>
                       </View>
 
-                      <View style={{
-                        flexDirection: 'row',
-                        gap: 5,
-                      }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          gap: 5,
+                        }}
+                      >
                         <Ionicons
                           name="time-outline"
                           size={18}
-                          color={
-                            colors.white
-                          }
+                          color={colors.white}
                         />
                         <Text
                           style={{
                             color: 'white',
                           }}
                         >
-                          {
-                          classInfo.start_time
-                              ?.substring(0, 5)
-                          }
+                          {classInfo.start_time?.substring(0, 5)}
                           {' - '}
-                          {
-                            classInfo.end_time
-                              ?.substring(0, 5)
-                          }
+                          {classInfo.end_time?.substring(0, 5)}
                         </Text>
                       </View>
-
                     </>
-
                   )}
-
                 </View>
-
               </Card.Content>
-
             </Card>
-
           </View>
-
         )}
 
         {/* PENDIENTES */}
 
         <View>
-
           <Text
-            variant="bodyLarge"
+            variant="labelLarge"
             style={{
-              fontWeight: '700',
               marginBottom: 12,
             }}
           >
@@ -596,156 +734,88 @@ export const DashboardScreen = ({
           <Card
             mode="contained"
             style={{
-              backgroundColor:
-                colors.cardBackground,
+              backgroundColor: colors.cardBackground,
             }}
           >
-
             <Card.Content>
-
               {visiblePendings.length > 0 ? (
-
                 <>
+                  {visiblePendings.map(pending => (
+                    <View
+                      key={pending.id}
+                      style={{
+                        flexDirection: 'row',
 
-                  {visiblePendings.map(
-                    pending => (
+                        alignItems: 'center',
+
+                        paddingVertical: 12,
+
+                        borderBottomWidth: 1,
+
+                        borderColor: colors.outlineVariant,
+                      }}
+                    >
+                      <Ionicons
+                        name="ellipse-outline"
+                        size={18}
+                        color={colors.primary}
+                      />
 
                       <View
-
-                        key={
-                          pending.id
-                        }
-
                         style={{
-                          flexDirection:
-                            'row',
-
-                          alignItems:
-                            'center',
-
-                          paddingVertical:
-                            12,
-
-                          borderBottomWidth:
-                            1,
-
-                          borderColor:
-                            colors
-                              .outlineVariant,
+                          flex: 1,
+                          marginLeft: 10,
                         }}
                       >
+                        <Text variant="titleMedium">{pending.title}</Text>
 
-                        <Ionicons
-                          name="ellipse-outline"
-                          size={18}
-                          color={
-                            colors.primary
-                          }
-                        />
-
-                        <View
+                        <Text
                           style={{
-                            flex: 1,
-                            marginLeft: 10,
+                            color: colors.textColor,
                           }}
                         >
-
-                          <Text
-                            variant="titleMedium"
-                          >
-                            {pending.title}
-                          </Text>
-
-                          <Text
-                            style={{
-                              color:
-                                colors.textColor,
-                            }}
-                          >
-                            {
-                              pending
-                                .assignment
-                                ?.academy
-                                ?.name
-                            }
-
-                            {' • '}
-
-                            {
-                              pending
-                                .assignment
-                                ?.classroom
-                                ?.degree
-                            }
-
-                            °
-
-                            {
-                              pending
-                                .assignment
-                                ?.classroom
-                                ?.group
-                            }
-                          </Text>
-
-                        </View>
-
-                        <Text>
-                          {
-                            pending
-                              .due_date
-                          }
+                          {pending.assignment?.academy?.name}
+                          {' • '}
+                          {pending.assignment?.classroom?.degree}°
+                          {pending.assignment?.classroom?.group}
                         </Text>
-
                       </View>
 
-                    ),
-                  )}
+                      <Text>{pending.due_date}</Text>
+                    </View>
+                  ))}
 
                   {remainingPendings > 0 && (
-
                     <View
                       style={{
                         paddingTop: 12,
                       }}
                     >
-
                       <Text
                         style={{
-                          textAlign:
-                            'center',
+                          textAlign: 'center',
 
-                          color:
-                            colors.primary,
+                          color: colors.primary,
 
-                          fontWeight:
-                            '700',
+                          fontWeight: '700',
                         }}
                       >
                         +{remainingPendings} más
                       </Text>
-
                     </View>
-
                   )}
-
                 </>
-
               ) : (
-
                 <View
                   style={{
                     alignItems: 'center',
                     paddingVertical: 20,
                   }}
                 >
-
                   <Ionicons
                     name="checkmark-circle-outline"
                     size={56}
-                    color={
-                      colors.primary
-                    }
+                    color={colors.primary}
                   />
 
                   <Text
@@ -762,8 +832,7 @@ export const DashboardScreen = ({
                     style={{
                       marginTop: 6,
                       textAlign: 'center',
-                      color:
-                        colors.textColor,
+                      color: colors.textColor,
                     }}
                   >
                     Crea tu primer pendiente para comenzar.
@@ -776,30 +845,18 @@ export const DashboardScreen = ({
                       marginTop: 16,
                     }}
                     labelStyle={{
-                      color:colors.white
+                      color: colors.white,
                     }}
-                    onPress={() =>
-                      navigation.navigate(
-                        'PendingForm',
-                      )
-                    }
+                    onPress={() => navigation.navigate('PendingForm')}
                   >
                     Crear pendiente
                   </Button>
-
                 </View>
-
               )}
-
             </Card.Content>
-
           </Card>
-
         </View>
-
       </ScrollView>
-
     </SafeAreaView>
-
   );
 };

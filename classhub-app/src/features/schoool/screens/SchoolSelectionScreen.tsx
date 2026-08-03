@@ -20,7 +20,22 @@ export const SchoolSelectionScreen = ({ navigation }: any) => {
         <Card
           key={school.id}
           style={{ marginBottom: 10 }}
-          onPress={() => setCurrentSchool(school.id)}
+          onPress={async () => {
+
+            await setCurrentSchool(
+              school.id,
+            );
+
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: 'MainTabs',
+                },
+              ],
+            });
+
+          }}
         >
           <Card.Content>
             <Text>{school.name}</Text>

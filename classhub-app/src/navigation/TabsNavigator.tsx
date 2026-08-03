@@ -119,15 +119,6 @@ export const TabsNavigator = () => {
       />
 
       <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-            headerShown: false,
-            title: 'Perfil'
-        }}
-      />
-
-      <Tab.Screen
         name="Settings"
         component={SettingsScreen}
         options={{
