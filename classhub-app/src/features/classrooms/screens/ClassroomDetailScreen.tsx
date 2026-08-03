@@ -157,7 +157,7 @@ export const ClassroomDetailScreen = ({
           fontWeight: 'bold',
         }}
       >
-        GRUPO {classroomName}
+        GRUPO {data?.name}
       </Text>
 
       {/* Academia */}
@@ -190,7 +190,9 @@ export const ClassroomDetailScreen = ({
                 color: colors.primary,
               }}
             >
-              {studentsCount < 10 ? `0${studentsCount}` : studentsCount}
+              {(data?.students_count ?? 0)
+                .toString()
+                .padStart(2, '0')}
             </Text>
           </View>
 
@@ -213,7 +215,7 @@ export const ClassroomDetailScreen = ({
                 fontWeight: 'bold'
               }}
             >
-              {academyName}
+              {data?.academy?.name || academyName}
             </Text>
           </View>
         </Card.Content>

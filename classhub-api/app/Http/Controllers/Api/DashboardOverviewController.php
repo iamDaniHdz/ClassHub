@@ -389,22 +389,40 @@ class DashboardOverviewController extends Controller
 
                 return [
 
-                    'academy' =>
-                        $schedule
-                            ->assignment
-                            ->academy
-                            ->name,
+                    'academy' => [
 
-                    'classroom' =>
-                        $schedule
-                            ->assignment
-                            ->classroom
-                            ->degree .
-                        '° ' .
-                        $schedule
-                            ->assignment
-                            ->classroom
-                            ->group,
+                        'id' =>
+                            $schedule
+                                ->assignment
+                                ->academy
+                                ->id,
+
+                        'name' =>
+                            $schedule
+                                ->assignment
+                                ->academy
+                                ->name,
+                    ],
+
+                    'classroom' => [
+
+                        'id' =>
+                            $schedule
+                                ->assignment
+                                ->classroom
+                                ->id,
+
+                        'name' =>
+                            $schedule
+                                ->assignment
+                                ->classroom
+                                ->degree .
+                            '° ' .
+                            $schedule
+                                ->assignment
+                                ->classroom
+                                ->group,
+                    ],
 
                     'day_of_week' =>
                         $schedule
