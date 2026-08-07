@@ -11,6 +11,7 @@ import {
 
 import {
   ActivityIndicator,
+  Avatar,
   Card,
   Searchbar,
   Text,
@@ -21,7 +22,7 @@ import { AcademiesApi } from '../services/academies.api';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useFocusEffect } from '@react-navigation/native';2
+import { useFocusEffect } from '@react-navigation/native';
 
 type AcademyCard = {
   assignment_id: number;
@@ -116,130 +117,145 @@ export const AcademiesScreen = ({
   }: {
     item: AcademyCard;
   }) => (
+
     <Card
       mode="contained"
       style={{
-        flex: 1,
-        margin: 6,
-        borderRadius: 16,
-        overflow: 'hidden',
-        maxWidth: '47%'
+        marginBottom: 12,
+        borderRadius: 20,
+        backgroundColor:
+          colors.cardBackground,
+        width: '100%',
       }}
       onPress={() =>
         navigation.navigate(
           'ClassroomDetail',
           {
-            classroomId: item.classroom.id,
-            classroomName: item.classroom.name,
-            academyName: item.academy.name,
-            studentsCount: item.students_count,
-          }
+            classroomId:
+              item.classroom.id,
+          },
         )
       }
     >
-      {/* PARTE SUPERIOR */}
 
-      <View
+      <Card.Content
         style={{
-          backgroundColor:theme.secondary,
-          padding: 12,
-          minHeight: 120,
+          flexDirection: 'row',
+          alignItems: 'center',
         }}
       >
-        <Text
-          style={{
-            color: colors.white,
-            fontWeight: '700',
-            fontSize: 16,
-            height: 50,
-          }}
-        >
-          {item.academy.name}
-        </Text>
+
+        {/* ICONO */}
 
         <View
           style={{
-            flexDirection: 'row',
-            marginTop: 12,
-            gap: 8,
+            width: 70,
+            height: 70,
+
+            borderRadius: 35,
+
+            backgroundColor:
+              colors.primary,
+
+            justifyContent: 'center',
+
+            alignItems: 'center',
+
+            marginRight: 16,
           }}
         >
-          <View
-            style={{
-              backgroundColor:colors.backgroundShadow,
-              paddingVertical: 4,
-              paddingHorizontal: 10,
-              borderRadius: 20,
-              width: '48%',
-              alignItems: 'center',
-            }}
-          >
-            <Text
-            variant='bodyLarge'
-            style={{
-              color:colors.primary
-            }}>
-              {item.classroom.name}
-            </Text>
-          </View>
 
-          <View
+          <Ionicons
+            name="school-outline"
+            size={32}
+            color={colors.white}
+          />
+
+          <Text
             style={{
-              backgroundColor:colors.backgroundShadow,
-              paddingVertical: 4,
-              paddingHorizontal: 10,
-              borderRadius: 20,
-              flexDirection: 'row',
-              gap: 5,
-              width: '48%',
-              alignItems: 'center',
-              justifyContent: 'center',
+              color:
+                colors.white,
+
+              fontWeight:
+                '700',
+
+              fontSize: 12,
             }}
           >
-            <Ionicons
-              name={'school-outline'}
-              size={20}
-              color={colors.primary}
-            />
-            <Text
-            variant='bodyLarge'
-            style={{
-              color:colors.primary
-            }}>
-              {item.students_count < 10 ? `0${item.students_count}` : item.students_count}
-            </Text>
-          </View>
+            {item.classroom.name}
+          </Text>
+
         </View>
-      </View>
 
-      {/* PARTE INFERIOR */}
+        {/* INFO */}
 
-      <View
-        style={{
-          backgroundColor:
-            theme.primary,
-          padding: 12,
-        }}
-      >
-        <Text
+        <View
           style={{
-            color: colors.white,
-            fontSize: 12,
+            flex: 1,
           }}
         >
-          Docente
-        </Text>
 
-        <Text
-          style={{
-            color: colors.white,
-            fontWeight: '700',
-          }}
-          numberOfLines={2}
-        >
-          {item.teacher.name.replace(/\s+/g, ' ').trim()}
-        </Text>
-      </View>
+          <Text
+            variant="titleLarge"
+            style={{
+              fontWeight: '700',
+              color:
+                colors.titleColor,
+            }}
+          >
+            {item.academy.name}
+          </Text>
+
+          <View
+            style={{
+              flexDirection: 'row',
+
+              alignItems: 'center',
+
+              marginTop: 4,
+            }}
+          >
+
+            <Text
+              style={{
+                color:
+                  colors.primary,
+
+                fontWeight:
+                  '600',
+              }}
+            >
+              Grupo {item.classroom.name} {'  '}|
+            </Text>
+
+            <Ionicons
+              name="person-circle-outline"
+              size={16}
+              color={
+                colors.primary
+              }
+              style={{
+                marginLeft: 8,
+                marginRight: 4,
+              }}
+            />
+
+            <Text
+              style={{
+                color:
+                  colors.primary,
+              }}
+            >
+              {item.students_count < 10
+                ? `0${item.students_count}`
+                : item.students_count} Alumnos
+            </Text>
+
+          </View>
+
+        </View>
+      </Card.Content>
+
     </Card>
   );
 
@@ -263,7 +279,6 @@ export const AcademiesScreen = ({
       <FlatList
         data={filteredData}
         keyExtractor={item => String(item.assignment_id)}
-        numColumns={2}
         refreshing={refreshing}
         onRefresh={onRefresh}
         renderItem={renderCard}

@@ -522,6 +522,64 @@ export const DashboardScreen = ({
 
         {/* CLASE */}
 
+        {!classInfo && (
+          <View
+            style={{
+              marginBottom: 24,
+            }}
+          >
+            <Text
+              variant="labelLarge"
+              style={{
+                marginBottom: 12,
+
+                color: colors.titleColor,
+              }}
+            >
+              Próxima clase
+            </Text>
+
+            <Card mode='contained'
+            style={{backgroundColor:colors.terciary}}>
+              <Card.Content>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    paddingVertical: 20,
+                  }}
+                >
+                  <Ionicons
+                    name="school-outline"
+                    size={56}
+                    color={colors.primary}
+                  />
+
+                  <Text
+                    variant="titleMedium"
+                    style={{
+                      marginTop: 12,
+                      textAlign: 'center',
+                      color: colors.titleColor
+                    }}
+                  >
+                    No tienes clases registradas
+                  </Text>
+
+                  <Text
+                    style={{
+                      marginTop: 6,
+                      textAlign: 'center',
+                      color: colors.textColor,
+                    }}
+                  >
+                    Espera a que un administrador te asigne una clase
+                  </Text>
+                </View>
+              </Card.Content>
+            </Card>
+          </View>
+        )}
+
         {!!classInfo && (
           <View
             style={{
@@ -557,19 +615,29 @@ export const DashboardScreen = ({
               }}
             >
               <Card.Content>
-                <View style={{
-                  flexDirection:'row',
-                  justifyContent: 'space-between',
-                }}>
-                  <View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}
+                >
+
+                  <View
+                    style={{
+                      width: '70%',
+                    }}
+                  >
+
                     <Text
+                      numberOfLines={2}
                       variant="titleLarge"
                       style={{
                         color: 'white',
                         fontWeight: '700',
+                        fontSize: 20
                       }}
                     >
-                      {classInfo.academy?.name}
+                      {classInfo?.academy?.name}
                     </Text>
 
                     <Text
@@ -578,62 +646,62 @@ export const DashboardScreen = ({
                         marginTop: 4,
                       }}
                     >
-                      Grupo {classInfo.classroom?.name}
+                      Grupo {classInfo?.classroom?.name}
                     </Text>
+
                   </View>
-                  {isCurrentClass ? 
-                    <View
-                      style={{
-                        alignSelf: 'flex-start',
 
-                        backgroundColor: colors.textSuccessBackground,
+                  <View
+                    style={{
+                      width: '30%',
+                      alignItems: 'flex-end',
+                    }}
+                  >
 
-                        paddingHorizontal: 10,
-
-                        paddingVertical: 4,
-
-                        borderRadius: 20,
-
-                        marginBottom: 10,
-                      }}
-                    >
-                      <Text
+                    {isCurrentClass ? (
+                      <View
                         style={{
-                          color: colors.textSuccess,
-                          fontWeight: '700',
+                          backgroundColor:
+                            colors.textSuccessBackground,
+                          paddingHorizontal: 10,
+                          paddingVertical: 4,
+                          borderRadius: 20,
                         }}
                       >
-                        En curso
-                      </Text>
-                    </View>
-                  :
-                    <View
-                      style={{
-                        alignSelf: 'flex-start',
-
-                        backgroundColor:
-                          colors.cardBackground,
-
-                        paddingHorizontal: 10,
-
-                        paddingVertical: 4,
-
-                        borderRadius: 20,
-
-                        marginBottom: 10,
-                      }}
-                    >
-                      <Text
+                        <Text
+                          style={{
+                            color:
+                              colors.textSuccess,
+                            fontWeight: '700',
+                          }}
+                        >
+                          En curso
+                        </Text>
+                      </View>
+                    ) : (
+                      <View
                         style={{
-                          color: colors.primary,
-
-                          fontWeight: '700',
+                          backgroundColor:
+                            colors.cardBackground,
+                          paddingHorizontal: 10,
+                          paddingVertical: 4,
+                          borderRadius: 20,
                         }}
                       >
-                        {nextClassBadge}
-                      </Text>
-                    </View>
-                  }
+                        <Text
+                          style={{
+                            color:
+                              colors.primary,
+                            fontWeight: '700',
+                          }}
+                        >
+                          {nextClassBadge}
+                        </Text>
+                      </View>
+                    )}
+
+                  </View>
+
                 </View>
 
                 <View
@@ -664,7 +732,7 @@ export const DashboardScreen = ({
                           marginTop: 4,
                         }}
                       >
-                        Finaliza a las {classInfo.end_time?.substring(0, 5)}
+                        Finaliza a las {classInfo?.end_time?.substring(0, 5)}
                       </Text>
                     </>
                   ) : (
@@ -686,7 +754,7 @@ export const DashboardScreen = ({
                             color: 'white',
                           }}
                         >
-                          {getDayName(classInfo.day_of_week)}
+                          {getDayName(classInfo?.day_of_week)}
                         </Text>
                       </View>
 
@@ -706,9 +774,9 @@ export const DashboardScreen = ({
                             color: 'white',
                           }}
                         >
-                          {classInfo.start_time?.substring(0, 5)}
+                          {classInfo?.start_time?.substring(0, 5)}
                           {' - '}
-                          {classInfo.end_time?.substring(0, 5)}
+                          {classInfo?.end_time?.substring(0, 5)}
                         </Text>
                       </View>
                     </>
@@ -823,6 +891,7 @@ export const DashboardScreen = ({
                     style={{
                       marginTop: 12,
                       textAlign: 'center',
+                      color: colors.titleColor
                     }}
                   >
                     No tienes pendientes registrados

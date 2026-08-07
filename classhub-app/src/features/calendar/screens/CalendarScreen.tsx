@@ -150,6 +150,30 @@ export const CalendarScreen = () => {
       selectedDay,
   ]);
 
+  const selectedDateDisplayShort =
+    useMemo(() => {
+
+      const selectedDate =
+        DAYS.find(
+          day => day.key === selectedDay,
+        );
+
+      if (!selectedDate) {
+        return todayDisplay;
+      }
+
+      return moment(
+        selectedDate.fullDate,
+      ).format(
+        'DD MMM YYYY',
+      );
+
+    }, [
+      todayDisplay,
+      DAYS,
+      selectedDay,
+  ]);
+
   const todayWeekDay =
     useMemo(
       () => getCurrentWeekDay(),
@@ -450,6 +474,14 @@ export const CalendarScreen = () => {
                     >
                       Clases de hoy
                     </Text>
+                    <Text 
+                        variant='labelLarge'
+                        style={{
+                          color: colors.gray
+                        }}
+                      >
+                        {selectedDateDisplayShort}
+                      </Text>
                   </View>
 
                   <Text
