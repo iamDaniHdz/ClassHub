@@ -365,9 +365,9 @@ export const DashboardScreen = ({
             <View
               style={{
                 flexDirection: 'row',
-                alignItems: 'center',
+                alignItems: 'flex-start',
                 marginTop: 4,
-                gap: 4,
+                gap: 10,
               }}
             >
 
@@ -381,9 +381,11 @@ export const DashboardScreen = ({
 
               <Text
                 variant="bodySmall"
+                numberOfLines={2}
                 style={{
                   color:
                     colors.primary,
+                  width: '80%'
                 }}
               >
                 {currentSchool?.name}

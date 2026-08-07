@@ -1,30 +1,67 @@
-import React from 'react';
-import { View, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import { Button, Card, Text, useTheme } from 'react-native-paper';
+import React, { useEffect } from 'react';
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
+import {
+  Button,
+  Card,
+  Text,
+  useTheme,
+} from 'react-native-paper';
 import { useAuthStore } from '../../auth/store/auth.store';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { SchoolSelectionApi } from '../services/schoolSelection.api';
+
 export const SchoolSelectionScreen = ({ navigation }: any) => {
   const { colors } = useTheme() as any;
-  const { logout, schools, setCurrentSchool } = useAuthStore();
+
+  const {
+    logout,
+    schools,
+    setSchools,
+    setCurrentSchool,
+  } = useAuthStore();
+
+  useEffect(() => {
+    loadSchools();
+  }, []);
+
+  const loadSchools = async () => {
+    try {
+      const response = await SchoolSelectionApi.getMySchool();
+
+      console.log(response);
+      
+
+      if (response?.data?.success) {
+        setSchools(response.data.data);
+      }
+    } catch (error) {
+      console.error('Error obteniendo escuelas:', error);
+    }
+  };
+
   const handleSelectSchool = async (school: any) => {
     await setCurrentSchool(school.id);
-    navigation.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
+
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'MainTabs' }],
+    });
   };
+
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'flex-start',
-          marginBottom: 10,
-          marginTop: 16,
-        }}
-      >
+      <View style={styles.header}>
         <Button
           mode="text"
           icon="arrow-left"
           onPress={() => navigation.goBack()}
-        ></Button>
+        />
+
         <View>
           <Text
             variant="headlineSmall"
@@ -36,6 +73,7 @@ export const SchoolSelectionScreen = ({ navigation }: any) => {
           >
             Selecciona tu escuela
           </Text>
+
           <Text
             variant="bodyLarge"
             style={{
@@ -46,10 +84,11 @@ export const SchoolSelectionScreen = ({ navigation }: any) => {
           </Text>
         </View>
       </View>
+
       <FlatList
-        style={{padding: 16}}
+        style={styles.flatList}
         data={schools}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={(item) => item.id.toString()}
         numColumns={2}
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.list}
@@ -61,13 +100,20 @@ export const SchoolSelectionScreen = ({ navigation }: any) => {
           >
             <Card
               mode="contained"
-              style={[styles.cardInner, { backgroundColor: colors.tertiary }]}
+              style={[
+                styles.cardInner,
+                {
+                  backgroundColor: colors.tertiary,
+                },
+              ]}
             >
               <Card.Content style={styles.cardContent}>
                 <View
                   style={[
                     styles.iconContainer,
-                    { backgroundColor: colors.cardBackground },
+                    {
+                      backgroundColor: colors.cardBackground,
+                    },
                   ]}
                 >
                   <Ionicons
@@ -76,7 +122,13 @@ export const SchoolSelectionScreen = ({ navigation }: any) => {
                     color={colors.primary}
                   />
                 </View>
-                <Text style={{ color: colors.primary }} numberOfLines={2}>
+
+                <Text
+                  style={{
+                    color: colors.primary,
+                  }}
+                  numberOfLines={3}
+                >
                   {item.name}
                 </Text>
               </Card.Content>
@@ -87,17 +139,45 @@ export const SchoolSelectionScreen = ({ navigation }: any) => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  list: { paddingBottom: 16 },
-  row: { justifyContent: 'space-between', marginBottom: 12 },
-  card: { flex: 1, marginHorizontal: 4 },
+  container: {
+    flex: 1,
+  },
+
+  header: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+    marginTop: 16,
+    paddingHorizontal: 16,
+  },
+
+  flatList: {
+    paddingHorizontal: 12,
+  },
+
+  list: {
+    paddingBottom: 16,
+  },
+
+  row: {
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+
+  card: {
+    marginHorizontal: 4,
+    width: '48%'
+  },
+
   cardInner: {
     flex: 1,
     width: '100%',
     minHeight: 100,
     justifyContent: 'center',
   },
+
   cardContent: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -105,5 +185,10 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '75%',
   },
-  iconContainer: { borderRadius: 100, padding: 10, alignSelf: 'flex-start' },
+
+  iconContainer: {
+    borderRadius: 100,
+    padding: 10,
+    alignSelf: 'flex-start',
+  },
 });
