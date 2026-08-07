@@ -12,6 +12,7 @@ import {
 import {
   ActivityIndicator,
   Avatar,
+  Button,
   Card,
   Searchbar,
   Text,
@@ -133,6 +134,28 @@ export const ClassroomDetailScreen = ({
   }
 
   return (
+    <>
+    <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          marginTop: 16,
+        }}
+      >
+        <Button
+          mode="text"
+          icon="arrow-left"
+          onPress={() => navigation.goBack()}
+        ></Button>
+        <Text
+            variant="bodyLarge"
+            style={{
+              color: colors.textColor,
+            }}
+          >
+            Detalles del grupo
+          </Text>
+      </View>
     <SafeAreaView
       style={{
         flex: 1,
@@ -140,16 +163,6 @@ export const ClassroomDetailScreen = ({
         padding: 16,
       }}
     >
-      <Text
-        variant="bodyLarge"
-        style={{
-          color: colors.textColor,
-          marginBottom: 8,
-        }}
-      >
-        Detalles del grupo
-      </Text>
-
       <Text
         variant="headlineMedium"
         style={{
@@ -281,7 +294,7 @@ export const ClassroomDetailScreen = ({
                   gap: 5,
                 }}>
                   <View style={{
-                    backgroundColor:colors.terciary,
+                    backgroundColor:colors.tertiary,
                     borderRadius: 20,
                     flexDirection: 'row',
                     alignSelf: 'baseline',
@@ -361,5 +374,6 @@ export const ClassroomDetailScreen = ({
         }
       />
     </SafeAreaView>
+    </>
   );
 };

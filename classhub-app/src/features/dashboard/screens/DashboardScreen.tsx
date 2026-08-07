@@ -238,22 +238,6 @@ export const DashboardScreen = ({
      
       onPress={() => {
 
-        if (route === 'SchoolSelection') {
-
-          setCurrentSchool(null);
-
-          navigation.reset({
-            index: 0,
-            routes: [
-              {
-                name: 'SchoolSelection',
-              },
-            ],
-          });
-
-          return;
-        }
-
         navigation.navigate(route);
 
       }}
@@ -428,7 +412,7 @@ export const DashboardScreen = ({
               colors.primary
             }
             backgroundColor={
-              colors.terciary
+              colors.tertiary
             }
           />
 
@@ -440,7 +424,7 @@ export const DashboardScreen = ({
               colors.primary
             }
             backgroundColor={
-              colors.terciary
+              colors.tertiary
             }
           />
 
@@ -452,7 +436,7 @@ export const DashboardScreen = ({
               colors.primary
             }
             backgroundColor={
-              colors.terciary
+              colors.tertiary
             }
           />
 
@@ -464,7 +448,7 @@ export const DashboardScreen = ({
               colors.primary
             }
             backgroundColor={
-              colors.terciary
+              colors.tertiary
             }
           />
 
@@ -540,7 +524,7 @@ export const DashboardScreen = ({
             </Text>
 
             <Card mode='contained'
-            style={{backgroundColor:colors.terciary}}>
+            style={{backgroundColor:colors.tertiary}}>
               <Card.Content>
                 <View
                   style={{

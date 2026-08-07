@@ -9,6 +9,7 @@ import {
   Avatar,
   Card,
   Chip,
+  IconButton,
   Text,
   useTheme,
 } from 'react-native-paper';
@@ -28,7 +29,9 @@ import { AcademiesApi } from '../../academies/services/academies.api';
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-export const ProfileScreen = () => {
+export const ProfileScreen = ({
+  navigation
+}: any) => {
 
   const theme = useAppTheme();
   const { colors } = useTheme() as any;
@@ -93,18 +96,20 @@ export const ProfileScreen = () => {
     >
       <ScrollView>
         {/* COVER */}
-
-        <Image
-          source={{
-            uri: 'https://images.unsplash.com/photo-1526045478516-99145907023c',
-          }}
-          style={{
-            height: 180,
-            marginHorizontal: 15,
-            marginTop: 10,
-            borderRadius: 20,
-          }}
-        />
+        <View style={{ position: 'relative' }}>
+          <Image
+            source={{
+              uri: 'https://images.unsplash.com/photo-1526045478516-99145907023c',
+            }}
+            style={{height: 180, borderRadius: 20, margin: 16, }}
+          />
+          <IconButton
+            icon="arrow-left"
+            mode="contained"
+            onPress={() => navigation.goBack()}
+            style={{ position: 'absolute', top: 20, left: 20, backgroundColor:colors.white }}
+          />
+        </View>
 
         {/* AVATAR */}
 
@@ -204,7 +209,7 @@ export const ProfileScreen = () => {
 
           <View
             style={{
-              backgroundColor: colors.terciary,
+              backgroundColor: colors.tertiary,
               borderRadius: 20,
               flexDirection: 'row',
               alignSelf: 'baseline',
@@ -227,7 +232,7 @@ export const ProfileScreen = () => {
         >
           <View
             style={{
-              backgroundColor: colors.terciary,
+              backgroundColor: colors.tertiary,
               borderRadius: 20,
               flexDirection: 'row',
               alignSelf: 'baseline',
@@ -265,7 +270,7 @@ export const ProfileScreen = () => {
               key={academy.assignment_id}
               style={{
                 marginBottom: 12,
-                backgroundColor: colors.terciary,
+                backgroundColor: colors.tertiary,
               }}
             >
               <Card.Content>

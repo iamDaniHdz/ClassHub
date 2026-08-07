@@ -640,7 +640,7 @@ export const CalendarScreen = () => {
                       variant="displaySmall"
                       style={{
                         padding: 10,
-                        backgroundColor: colors.terciary,
+                        backgroundColor: colors.tertiary,
                         borderRadius: 10,
                         color: colors.primary,
                         width: 65,

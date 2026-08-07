@@ -152,161 +152,183 @@ export const PendingFormScreen = ({
     };
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        padding: 16,
-        backgroundColor: colors.background,
-        flex: 1,
-      }}
-    >
-      <Text
-        variant="headlineSmall"
+    <>
+      <View
         style={{
-          marginBottom: 20,
+          flexDirection: 'row',
+          alignItems: 'flex-start',
+          marginTop: 16,
         }}
       >
-        Nuevo pendiente
-      </Text>
-
-      <Menu
-        visible={menuVisible}
-        onDismiss={() => setMenuVisible(false)}
-        anchor={
-          <Button
-            mode="contained"
-            labelStyle={{ color: colors.primary }}
-            style={{ backgroundColor: colors.terciary }}
-            onPress={() => setMenuVisible(true)}
+        <Button
+          mode="text"
+          icon="arrow-left"
+          onPress={() => navigation.goBack()}
+        ></Button>
+        <View>
+          <Text
+            variant="headlineSmall"
+            style={{
+              color: colors.titleColor,
+              fontWeight: 'bold',
+            }}
           >
-            {academyLabel || 'Selecciona una academia'}
-          </Button>
-        }
+            Nuevo pendiente
+          </Text>
+        </View>
+      </View>
+      <ScrollView
+        contentContainerStyle={{
+          padding: 16,
+          backgroundColor: colors.background,
+          flex: 1,
+        }}
       >
-        {assignments.map(academy => (
-          <Menu.Item
-            key={academy.id}
-            onPress={() => {
-              setAcademyAssignmentId(academy.assignment_id);
+        <Menu
+          visible={menuVisible}
+          onDismiss={() => setMenuVisible(false)}
+          anchor={
+            <Button
+              mode="contained"
+              labelStyle={{ color: colors.primary }}
+              style={{ backgroundColor: colors.tertiary }}
+              onPress={() => setMenuVisible(true)}
+            >
+              {academyLabel || 'Selecciona una academia'}
+            </Button>
+          }
+        >
+          {assignments.map(academy => (
+            <Menu.Item
+              key={academy.id}
+              onPress={() => {
+                setAcademyAssignmentId(academy.assignment_id);
 
-              setAcademyLabel(
-                `${academy.academy?.name} - ${academy.classroom?.name}`,
+                setAcademyLabel(
+                  `${academy.academy?.name} - ${academy.classroom?.name}`,
+                );
+
+                setMenuVisible(false);
+              }}
+              title={`${academy.academy?.name} - ${academy.classroom?.name}`}
+            />
+          ))}
+        </Menu>
+
+        <TextInput
+          mode="outlined"
+          style={[
+            styles.input,
+            { backgroundColor: colors.backgroundShadow, marginTop: 20 },
+          ]}
+          activeOutlineColor={colors.primary}
+          outlineStyle={{ borderRadius: 14, borderWidth: 1 }}
+          outlineColor={colors.backgroundShadow}
+          textColor={colors.textColor}
+          placeholderTextColor={colors.gray}
+          value={title}
+          onChangeText={setTitle}
+          label="Título"
+        />
+
+        <TextInput
+          mode="outlined"
+          style={[
+            styles.input,
+            { backgroundColor: colors.backgroundShadow, marginTop: 20 },
+          ]}
+          activeOutlineColor={colors.primary}
+          outlineStyle={{ borderRadius: 14, borderWidth: 1 }}
+          outlineColor={colors.backgroundShadow}
+          textColor={colors.textColor}
+          placeholderTextColor={colors.gray}
+          value={description}
+          onChangeText={setDescription}
+          label="Descripción"
+        />
+
+        <TextInput
+          mode="outlined"
+          style={[
+            styles.input,
+            {
+              backgroundColor: colors.backgroundShadow,
+              marginTop: 20,
+            },
+          ]}
+          activeOutlineColor={colors.primary}
+          outlineStyle={{
+            borderRadius: 14,
+            borderWidth: 1,
+          }}
+          outlineColor={colors.backgroundShadow}
+          textColor={colors.textColor}
+          label="Fecha límite"
+          value={dueDate}
+          editable={false}
+          right={
+            <TextInput.Icon
+              icon="calendar"
+              onPress={() => setShowDatePicker(true)}
+            />
+          }
+          onPressIn={() => setShowDatePicker(true)}
+        />
+
+        {showDatePicker && (
+          <DateTimePicker
+            value={dueDate ? new Date(dueDate) : new Date()}
+            mode="date"
+            display="default"
+            onChange={(event, selectedDate) => {
+              setShowDatePicker(false);
+
+              if (!selectedDate) {
+                return;
+              }
+
+              const year = selectedDate.getFullYear();
+
+              const month = String(selectedDate.getMonth() + 1).padStart(
+                2,
+                '0',
               );
 
-              setMenuVisible(false);
+              const day = String(selectedDate.getDate()).padStart(2, '0');
+
+              setDueDate(`${year}-${month}-${day}`);
             }}
-            title={`${academy.academy?.name} - ${academy.classroom?.name}`}
           />
-        ))}
-      </Menu>
+        )}
 
-      <TextInput
-        mode="outlined"
-        style={[
-          styles.input,
-          { backgroundColor: colors.backgroundShadow, marginTop: 20 },
-        ]}
-        activeOutlineColor={colors.primary}
-        outlineStyle={{ borderRadius: 14, borderWidth: 1 }}
-        outlineColor={colors.backgroundShadow}
-        textColor={colors.textColor}
-        placeholderTextColor={colors.gray}
-        value={title}
-        onChangeText={setTitle}
-        label="Título"
-      />
-
-      <TextInput
-        mode="outlined"
-        style={[
-          styles.input,
-          { backgroundColor: colors.backgroundShadow, marginTop: 20 },
-        ]}
-        activeOutlineColor={colors.primary}
-        outlineStyle={{ borderRadius: 14, borderWidth: 1 }}
-        outlineColor={colors.backgroundShadow}
-        textColor={colors.textColor}
-        placeholderTextColor={colors.gray}
-        value={description}
-        onChangeText={setDescription}
-        label="Descripción"
-      />
-
-      <TextInput
-        mode="outlined"
-        style={[
-          styles.input,
-          {
-            backgroundColor: colors.backgroundShadow,
-            marginTop: 20,
-          },
-        ]}
-        activeOutlineColor={colors.primary}
-        outlineStyle={{
-          borderRadius: 14,
-          borderWidth: 1,
-        }}
-        outlineColor={colors.backgroundShadow}
-        textColor={colors.textColor}
-        label="Fecha límite"
-        value={dueDate}
-        editable={false}
-        right={
-          <TextInput.Icon
-            icon="calendar"
-            onPress={() => setShowDatePicker(true)}
-          />
-        }
-        onPressIn={() => setShowDatePicker(true)}
-      />
-
-      {showDatePicker && (
-        <DateTimePicker
-          value={dueDate ? new Date(dueDate) : new Date()}
-          mode="date"
-          display="default"
-          onChange={(event, selectedDate) => {
-            setShowDatePicker(false);
-
-            if (!selectedDate) {
-              return;
-            }
-
-            const year = selectedDate.getFullYear();
-
-            const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-
-            const day = String(selectedDate.getDate()).padStart(2, '0');
-
-            setDueDate(`${year}-${month}-${day}`);
-          }}
-        />
-      )}
-
-      <View style={{ height: 40, justifyContent: 'center', marginTop: 40}}>
-        {error ? (
-          <View
-            style={{
-              backgroundColor: colors.textErrorBackground,
-              paddingVertical: 8,
-              paddingHorizontal: 16,
-              borderRadius: 8,
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              alignSelf:'center',
-            }}
-          >
-             <Ionicons name={'alert-circle-outline'} size={20} color={colors.textError} />
-            <Text
-              variant="labelLarge"
-              style={{ color: colors.textError, paddingHorizontal: 10 }}
+        <View style={{ height: 40, justifyContent: 'center', marginTop: 40 }}>
+          {error ? (
+            <View
+              style={{
+                backgroundColor: colors.textErrorBackground,
+                paddingVertical: 8,
+                paddingHorizontal: 16,
+                borderRadius: 8,
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                alignSelf: 'center',
+              }}
             >
-              {error || 'Ocurrio un error'}
-            </Text>
-          </View>
-        ) : 
-          success ? (
+              <Ionicons
+                name={'alert-circle-outline'}
+                size={20}
+                color={colors.textError}
+              />
+              <Text
+                variant="labelLarge"
+                style={{ color: colors.textError, paddingHorizontal: 10 }}
+              >
+                {error || 'Ocurrio un error'}
+              </Text>
+            </View>
+          ) : success ? (
             <View
               style={{
                 backgroundColor: colors.textSuccessBackground,
@@ -317,10 +339,14 @@ export const PendingFormScreen = ({
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'center',
-                alignSelf:'center',
+                alignSelf: 'center',
               }}
             >
-              <Ionicons name={'checkmark-circle-outline'} size={20} color={colors.success} />
+              <Ionicons
+                name={'checkmark-circle-outline'}
+                size={20}
+                color={colors.success}
+              />
               <Text
                 variant="labelLarge"
                 style={{ color: colors.textSuccess, paddingHorizontal: 10 }}
@@ -328,25 +354,25 @@ export const PendingFormScreen = ({
                 {success || 'Exito'}
               </Text>
             </View>
-          ) : null
-        }
-      </View>
+          ) : null}
+        </View>
 
-      <Button
-        mode="contained"
-        loading={loading}
-        disabled={loading}
-        style={{
-          marginTop: 30,
-        }}
-        labelStyle={{
-          color: colors.white,
-        }}
-        onPress={save}
-      >
-        Guardar pendiente
-      </Button>
-    </ScrollView>
+        <Button
+          mode="contained"
+          loading={loading}
+          disabled={loading}
+          style={{
+            marginTop: 30,
+          }}
+          labelStyle={{
+            color: colors.white,
+          }}
+          onPress={save}
+        >
+          Guardar pendiente
+        </Button>
+      </ScrollView>
+    </>
   );
 };
 

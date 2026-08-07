@@ -10,6 +10,7 @@ import {
 import {
   ActivityIndicator,
   Avatar,
+  Button,
   Card,
   IconButton,
   Text,
@@ -26,6 +27,7 @@ import CircularProgress from '../../../components/CircularProgress';
 
 export const StudentDetailScreen = ({
   route,
+  navigation
 }: any) => {
 
   const theme = useAppTheme();
@@ -105,18 +107,20 @@ export const StudentDetailScreen = ({
       <ScrollView>
         {/* COVER */}
 
-        <Image
-          source={{
-            uri: 'https://images.unsplash.com/photo-1520763185298-1b434c919102',
-          }}
-          style={{
-            //width: '100%',
-            height: 180,
-            marginHorizontal: 15,
-            marginTop: 10,
-            borderRadius: 20,
-          }}
-        />
+        <View style={{ position: 'relative' }}>
+          <Image
+            source={{
+              uri: 'https://images.unsplash.com/photo-1520763185298-1b434c919102',
+            }}
+            style={{height: 180, borderRadius: 20, margin: 16, }}
+          />
+          <IconButton
+            icon="arrow-left"
+            mode="contained"
+            onPress={() => navigation.goBack()}
+            style={{ position: 'absolute', top: 20, left: 20, backgroundColor:colors.white }}
+          />
+        </View>
 
         {/* AVATAR */}
 
@@ -162,7 +166,9 @@ export const StudentDetailScreen = ({
           >
             <View
               style={{
-                backgroundColor: data?.student?.is_active ? colors.textSuccessBackground : colors.textErrorBackground,
+                backgroundColor: data?.student?.is_active
+                  ? colors.textSuccessBackground
+                  : colors.textErrorBackground,
                 borderRadius: 20,
                 flexDirection: 'row',
                 alignSelf: 'baseline',
@@ -172,11 +178,26 @@ export const StudentDetailScreen = ({
               }}
             >
               <Ionicons
-                name={data?.student?.is_active ? 'checkmark-circle-outline' : 'close-circle-outline'}
+                name={
+                  data?.student?.is_active
+                    ? 'checkmark-circle-outline'
+                    : 'close-circle-outline'
+                }
                 size={20}
-                color={data?.student?.is_active ? colors.textSuccess : colors.textError}
+                color={
+                  data?.student?.is_active
+                    ? colors.textSuccess
+                    : colors.textError
+                }
               />
-              <Text variant="bodyMedium" style={{ color: data?.student?.is_active ? colors.textSuccess : colors.textError}}>
+              <Text
+                variant="bodyMedium"
+                style={{
+                  color: data?.student?.is_active
+                    ? colors.textSuccess
+                    : colors.textError,
+                }}
+              >
                 {data?.student?.is_active ? 'Activo' : 'Inactivo'}
               </Text>
             </View>
@@ -187,7 +208,7 @@ export const StudentDetailScreen = ({
           <View
             style={{
               marginTop: 10,
-              backgroundColor: colors.terciary,
+              backgroundColor: colors.tertiary,
               paddingHorizontal: 14,
               paddingVertical: 8,
               borderRadius: 20,
@@ -195,7 +216,11 @@ export const StudentDetailScreen = ({
               gap: 5,
             }}
           >
-            <Ionicons name={'school-outline'} size={20} color={colors.primary} />
+            <Ionicons
+              name={'school-outline'}
+              size={20}
+              color={colors.primary}
+            />
             <Text
               style={{
                 color: theme.primary,
