@@ -54,7 +54,7 @@ export const SchoolSelectionScreen = ({ navigation }: any) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor:colors.background}]}>
       <View style={styles.header}>
         <Button
           mode="text"

@@ -157,7 +157,8 @@ export const PendingFormScreen = ({
         style={{
           flexDirection: 'row',
           alignItems: 'flex-start',
-          marginTop: 16,
+          paddingTop: 16,
+          backgroundColor:colors.background
         }}
       >
         <Button

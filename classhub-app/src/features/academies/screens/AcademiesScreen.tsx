@@ -133,6 +133,7 @@ export const AcademiesScreen = ({
           {
             classroomId:
               item.classroom.id,
+            academyName: item.academy.name
           },
         )
       }
