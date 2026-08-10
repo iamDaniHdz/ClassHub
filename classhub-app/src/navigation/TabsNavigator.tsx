@@ -5,7 +5,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { DashboardScreen } from '../features/dashboard/screens/DashboardScreen';
 import { CalendarScreen } from '../features/calendar/screens/CalendarScreen';
 import { AcademiesScreen } from '../features/academies/screens/AcademiesScreen';
-import { ProfileScreen } from '../features/profile/screens/ProfileScreen';
 import { SettingsScreen } from '../features/settings/screens/SettingsScreen';
 import { MyPendingsScreen } from '../features/pendings/screens/MyPendingsScreen';
 import { useTheme } from 'react-native-paper';

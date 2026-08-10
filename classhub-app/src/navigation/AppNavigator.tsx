@@ -26,6 +26,9 @@ export const AppNavigator = () => {
         <Stack.Screen
           name="SchoolSelection"
           component={SchoolSelectionScreen}
+          options={{
+            headerShown: false,
+          }}
         />
         <Stack.Screen
           name="MainTabs"

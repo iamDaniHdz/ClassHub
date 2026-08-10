@@ -9,6 +9,7 @@ import {
   Avatar,
   Card,
   Chip,
+  IconButton,
   Text,
   useTheme,
 } from 'react-native-paper';
@@ -23,10 +24,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppTheme } from '../../../theme/useAppTheme';
 
 import { ProfileApi } from '../services/profile.api';
+import { AcademiesApi } from '../../academies/services/academies.api';
+
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-export const ProfileScreen = () => {
+export const ProfileScreen = ({
+  navigation
+}: any) => {
 
   const theme = useAppTheme();
   const { colors } = useTheme() as any;
@@ -37,18 +42,29 @@ export const ProfileScreen = () => {
   const [data, setData] =
     useState<any>(null);
 
+  const [academies, setAcademies] =
+    useState<any>(null);
+
   useEffect(() => {
     load();
   }, []);
 
   const load = async () => {
-
     try {
 
-      const result =
-        await ProfileApi.getProfile();
+      const [
+        profile,
+        academiesData,
+      ] = await Promise.all([
+        ProfileApi.getProfile(),
+        AcademiesApi.getAll(),
+      ]);
 
-      setData(result);
+      setData(profile);
+
+      setAcademies(
+        academiesData,
+      );
 
     } catch (error) {
 
@@ -80,18 +96,20 @@ export const ProfileScreen = () => {
     >
       <ScrollView>
         {/* COVER */}
-
-        <Image
-          source={{
-            uri: 'https://images.unsplash.com/photo-1526045478516-99145907023c',
-          }}
-          style={{
-            height: 180,
-            marginHorizontal: 15,
-            marginTop: 10,
-            borderRadius: 20,
-          }}
-        />
+        <View style={{ position: 'relative' }}>
+          <Image
+            source={{
+              uri: 'https://images.unsplash.com/photo-1526045478516-99145907023c',
+            }}
+            style={{height: 180, borderRadius: 20, margin: 16, }}
+          />
+          <IconButton
+            icon="arrow-left"
+            mode="contained"
+            onPress={() => navigation.goBack()}
+            style={{ position: 'absolute', top: 20, left: 20, backgroundColor:colors.white }}
+          />
+        </View>
 
         {/* AVATAR */}
 
@@ -191,7 +209,7 @@ export const ProfileScreen = () => {
 
           <View
             style={{
-              backgroundColor: colors.terciary,
+              backgroundColor: colors.tertiary,
               borderRadius: 20,
               flexDirection: 'row',
               alignSelf: 'baseline',
@@ -200,11 +218,7 @@ export const ProfileScreen = () => {
               paddingHorizontal: 10,
             }}
           >
-            <Ionicons
-              name={'person'}
-              size={20}
-              color={colors.primary}
-            />
+            <Ionicons name={'person'} size={20} color={colors.primary} />
             <Text variant="bodyMedium" style={{ color: colors.primary }}>
               {data.role?.name}
             </Text>
@@ -218,7 +232,7 @@ export const ProfileScreen = () => {
         >
           <View
             style={{
-              backgroundColor: colors.terciary,
+              backgroundColor: colors.tertiary,
               borderRadius: 20,
               flexDirection: 'row',
               alignSelf: 'baseline',
@@ -227,11 +241,7 @@ export const ProfileScreen = () => {
               paddingHorizontal: 10,
             }}
           >
-            <Ionicons
-              name={'school'}
-              size={20}
-              color={colors.primary}
-            />
+            <Ionicons name={'school'} size={20} color={colors.primary} />
             <Text variant="bodyMedium" style={{ color: colors.primary }}>
               {data.teacher_profile?.career}
             </Text>
@@ -246,29 +256,27 @@ export const ProfileScreen = () => {
           }}
         >
           <Text
-            variant="titleLarge"
+            variant="labelLarge"
             style={{
               marginBottom: 10,
-              fontWeight: 'bold'
             }}
           >
             Academias asignadas
           </Text>
 
-          {data.academies.map((academy: any) => (
+          {academies.map((academy: any) => (
             <Card
-              mode='contained'
-              key={academy.academy_id}
+              mode="contained"
+              key={academy.assignment_id}
               style={{
                 marginBottom: 12,
-                backgroundColor: colors.terciary,
+                backgroundColor: colors.tertiary,
               }}
             >
               <Card.Content>
                 <View
                   style={{
                     flexDirection: 'row',
-
                     alignItems: 'center',
                   }}
                 >
@@ -284,22 +292,56 @@ export const ProfileScreen = () => {
                     }}
                   >
                     <Ionicons
-                      name={'people'}
+                      name="school-outline"
                       size={20}
                       color={colors.primary}
                     />
-                    <Text style={{color:colors.primary}}>{academy.groups_count} Grupos</Text>
+
+                    <Text
+                      style={{
+                        color: colors.primary,
+                      }}
+                    >
+                      {academy.classroom?.name}
+                    </Text>
                   </View>
 
-                  <Text
-                    variant="titleMedium"
+                  <View
                     style={{
                       flex: 1,
-                      fontWeight: '600',
                     }}
                   >
-                    {academy.academy_name}
-                  </Text>
+                    <Text
+                      variant="titleMedium"
+                      style={{
+                        fontWeight: '600',
+                      }}
+                    >
+                      {academy.academy?.name}
+                    </Text>
+
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 5,
+                      }}
+                    >
+                      <Ionicons
+                        name="person-circle-outline"
+                        size={16}
+                        color={colors.primary}
+                      />
+
+                      <Text
+                        style={{
+                          color: colors.primary,
+                        }}
+                      >
+                        {academy.students_count} Alumnos
+                      </Text>
+                    </View>
+                  </View>
                 </View>
               </Card.Content>
             </Card>

@@ -382,6 +382,10 @@ export const MyPendingsScreen = () => {
   return (
     <>
       <SectionList
+        style={{
+          flex: 1,
+          backgroundColor: colors.background,
+        }}
         sections={sections}
         keyExtractor={item => item.id.toString()}
         renderItem={renderPending}
@@ -394,10 +398,14 @@ export const MyPendingsScreen = () => {
               gap: 5,
             }}
           >
-            <Text variant="labelLarge" style={styles.sectionTitle}>
+            <Text
+              style={{
+                color: colors.titleColor,
+                fontWeight: 'bold',
+              }}
+            >
               {section.title}
             </Text>
-            {/* <Ionicons name={'arrow-forward-outline'} size={10} color={colors.primary} /> */}
           </View>
         )}
         refreshControl={
@@ -405,14 +413,13 @@ export const MyPendingsScreen = () => {
             refreshing={refreshing}
             onRefresh={() => {
               setRefreshing(true);
-
               load();
             }}
           />
         }
         contentContainerStyle={{
           padding: 16,
-          backgroundColor: colors.background,
+          flexGrow: 1,
         }}
         ListHeaderComponent={
           <View>
@@ -589,7 +596,7 @@ export const MyPendingsScreen = () => {
             />
           </View>
         }
-      />
+/> 
 
       <FAB
         icon="plus"

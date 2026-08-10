@@ -72,7 +72,7 @@ export const LoginScreen = ({ navigation }: any) => {
               colors={[
                 colors.gradientPrimary,
                 colors.gradientSecondary,
-                colors.gradientTerciary,
+                colors.gradientTertiary,
               ]}
               style={styles.gradientBackground}
             >
