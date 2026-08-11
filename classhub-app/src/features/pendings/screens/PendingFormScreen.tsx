@@ -11,6 +11,7 @@ import {
 
 import {
   Button,
+  Chip,
   Menu,
   Text,
   TextInput,
@@ -21,6 +22,10 @@ import { AcademiesApi } from '../../academies/services/academies.api';
 import { PendingsApi } from '../services/pendings.api';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import moment from 'moment';
+import 'moment/locale/es';
+moment.locale('es');
 
 export const PendingFormScreen = ({
   navigation,
@@ -185,7 +190,10 @@ export const PendingFormScreen = ({
           flex: 1,
         }}
       >
-        <Menu
+        <Text style={{color:colors.gray}}>
+          Academia
+        </Text>
+        {/* <Menu
           visible={menuVisible}
           onDismiss={() => setMenuVisible(false)}
           anchor={
@@ -214,13 +222,49 @@ export const PendingFormScreen = ({
               title={`${academy.academy?.name} - ${academy.classroom?.name}`}
             />
           ))}
-        </Menu>
+        </Menu> */}
+
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16, marginTop: 5,}}>
+          {assignments.map(academy => (
+            <Chip
+              key={`${academy.id}-${academy.assignment_id}`}
+              mode="outlined"
+              showSelectedCheck={false}
+              selected={academy.assignment_id === academyAssignmentId}
+              selectedColor={colors.primary}
+              style={{
+                borderWidth: academy.assignment_id === academyAssignmentId ? 1 : 0,
+                backgroundColor:
+                  academy.assignment_id === academyAssignmentId
+                    ? colors.primary + '20' // 20 ≈ transparencia
+                    : colors.backgroundShadow,
+              }}
+              onPress={() => {
+                setAcademyAssignmentId(academy.assignment_id);
+
+                setAcademyLabel(
+                  `${academy.academy?.name} · ${academy.classroom?.name}`,
+                );
+              }}
+            >
+              <Text style={{
+                color:colors.textColor
+              }}>
+                {academy.academy?.name} · {academy.classroom?.name}
+              </Text>
+            </Chip>
+          ))}
+        </View>
+
+        <Text style={{color:colors.gray}}>
+          Título
+        </Text>
 
         <TextInput
           mode="outlined"
           style={[
             styles.input,
-            { backgroundColor: colors.backgroundShadow, marginTop: 20 },
+            { backgroundColor: colors.backgroundShadow },
           ]}
           activeOutlineColor={colors.primary}
           outlineStyle={{ borderRadius: 14, borderWidth: 1 }}
@@ -229,14 +273,24 @@ export const PendingFormScreen = ({
           placeholderTextColor={colors.gray}
           value={title}
           onChangeText={setTitle}
-          label="Título"
         />
+
+        <Text style={{ color: colors.gray }}>
+          Descripción
+        </Text>
 
         <TextInput
           mode="outlined"
+          multiline
+          scrollEnabled
+          numberOfLines={6}
           style={[
             styles.input,
-            { backgroundColor: colors.backgroundShadow, marginTop: 20 },
+            {
+              backgroundColor: colors.backgroundShadow,
+              height: 150,
+              textAlignVertical: 'top',
+            },
           ]}
           activeOutlineColor={colors.primary}
           outlineStyle={{ borderRadius: 14, borderWidth: 1 }}
@@ -245,8 +299,11 @@ export const PendingFormScreen = ({
           placeholderTextColor={colors.gray}
           value={description}
           onChangeText={setDescription}
-          label="Descripción"
         />
+
+        <Text style={{color:colors.gray}}>
+          Fecha límite
+        </Text>
 
         <TextInput
           mode="outlined"
@@ -254,7 +311,6 @@ export const PendingFormScreen = ({
             styles.input,
             {
               backgroundColor: colors.backgroundShadow,
-              marginTop: 20,
             },
           ]}
           activeOutlineColor={colors.primary}
@@ -264,8 +320,11 @@ export const PendingFormScreen = ({
           }}
           outlineColor={colors.backgroundShadow}
           textColor={colors.textColor}
-          label="Fecha límite"
-          value={dueDate}
+          value={
+            dueDate
+              ? moment(dueDate).format('DD [de] MMMM [de] YYYY')
+              : ''
+          }
           editable={false}
           right={
             <TextInput.Icon
@@ -278,24 +337,39 @@ export const PendingFormScreen = ({
 
         {showDatePicker && (
           <DateTimePicker
-            value={dueDate ? new Date(dueDate) : new Date()}
+            value={
+              dueDate
+                ? (() => {
+                    const [year, month, day] = dueDate.split('-');
+
+                    return new Date(
+                      Number(year),
+                      Number(month) - 1,
+                      Number(day),
+                    );
+                  })()
+                : new Date()
+            }
             mode="date"
             display="default"
             onChange={(event, selectedDate) => {
               setShowDatePicker(false);
+
+              if (event.type === 'dismissed') {
+                return;
+              }
 
               if (!selectedDate) {
                 return;
               }
 
               const year = selectedDate.getFullYear();
-
-              const month = String(selectedDate.getMonth() + 1).padStart(
-                2,
-                '0',
-              );
-
-              const day = String(selectedDate.getDate()).padStart(2, '0');
+              const month = String(
+                selectedDate.getMonth() + 1,
+              ).padStart(2, '0');
+              const day = String(
+                selectedDate.getDate(),
+              ).padStart(2, '0');
 
               setDueDate(`${year}-${month}-${day}`);
             }}
@@ -379,6 +453,8 @@ export const PendingFormScreen = ({
 
 const styles = StyleSheet.create({
   input: {
+    marginBottom: 16,
+    marginTop: 5,
     borderRadius: 14,
     borderTopLeftRadius: 14,
     borderTopRightRadius: 14,
