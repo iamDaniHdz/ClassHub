@@ -312,7 +312,7 @@ export const MyPendingsScreen = () => {
 
               <Text
                 style={{
-                  marginTop: 6,
+                  marginTop: 2,
                   color: colors.outline,
                 }}
               >
@@ -399,9 +399,10 @@ export const MyPendingsScreen = () => {
             }}
           >
             <Text
+              variant='labelLarge'
               style={{
                 color: colors.titleColor,
-                fontWeight: 'bold',
+                marginBottom: 10,
               }}
             >
               {section.title}
@@ -419,7 +420,6 @@ export const MyPendingsScreen = () => {
         }
         contentContainerStyle={{
           padding: 16,
-          flexGrow: 1,
         }}
         ListHeaderComponent={
           <View>
@@ -445,24 +445,19 @@ export const MyPendingsScreen = () => {
             </Text>
 
             <View style={styles.statsRow}>
-
               <Card
                 mode="contained"
                 style={[
                   styles.statCard,
                   {
-                    backgroundColor:
-                      colors.cardBackground,
+                    backgroundColor: colors.cardBackground,
                   },
                 ]}
               >
-
                 <Card.Content>
-
                   <View
                     style={{
-                      backgroundColor:
-                        colors.textErrorBackground,
+                      backgroundColor: colors.textErrorBackground,
 
                       alignSelf: 'center',
 
@@ -473,23 +468,18 @@ export const MyPendingsScreen = () => {
                       marginBottom: 5,
                     }}
                   >
-
                     <Ionicons
                       name="alert-circle-outline"
                       size={25}
                       color={colors.error}
                     />
-
                   </View>
 
                   <Text
                     variant="labelSmall"
                     style={{
-                      color:
-                        colors.textColor,
-
-                      textAlign:
-                        'center',
+                      color: colors.textColor,
+                      textAlign: 'center',
                     }}
                   >
                     Atrasadas
@@ -498,15 +488,12 @@ export const MyPendingsScreen = () => {
                   <Text
                     variant="headlineMedium"
                     style={{
-                      textAlign:
-                        'center',
+                      textAlign: 'center',
                     }}
                   >
                     {overduePendings.length}
                   </Text>
-
                 </Card.Content>
-
               </Card>
 
               <Card
@@ -596,22 +583,57 @@ export const MyPendingsScreen = () => {
             />
           </View>
         }
-/> 
+        ListEmptyComponent={
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: 60,
+            }}
+          >
+            <Ionicons
+              name={'school-outline'}
+              size={64}
+              color={colors.outline}
+            />
+
+            <Text
+              variant="titleMedium"
+              style={{
+                marginTop: 16,
+                fontWeight: 'bold',
+                textAlign: 'center',
+              }}
+            >
+              No tienes pendientes
+            </Text>
+
+            <Text
+              variant="bodyMedium"
+              style={{
+                marginTop: 8,
+                textAlign: 'center',
+                color: colors.onSurfaceVariant,
+                paddingHorizontal: 24,
+              }}
+            >
+              Cuando tengas pendientes aparecerán aquí
+            </Text>
+          </View>
+        }
+      />
 
       <FAB
         icon="plus"
-        color='white'
+        color="white"
         style={{
           position: 'absolute',
           right: 16,
           bottom: 16,
           backgroundColor: colors.primary,
         }}
-        onPress={() =>
-          navigation.navigate(
-            'PendingForm',
-          )
-        }
+        onPress={() => navigation.navigate('PendingForm')}
       />
 
       <PendingDetailModal
@@ -632,62 +654,37 @@ export const MyPendingsScreen = () => {
       />
 
       <Portal>
-
         <Dialog
           style={{
-            backgroundColor: colors.cardBackground
+            backgroundColor: colors.cardBackground,
           }}
           visible={deleteVisible}
-          onDismiss={() =>
-            setDeleteVisible(false)
-          }
+          onDismiss={() => setDeleteVisible(false)}
         >
-
-          <Dialog.Title>
-            Eliminar pendiente
-          </Dialog.Title>
+          <Dialog.Title>Eliminar pendiente</Dialog.Title>
 
           <Dialog.Content>
-
             <Text>
-
-              ¿Deseas eliminar el
-              pendiente
-
+              ¿Deseas eliminar el pendiente
               {' "'}
-              {
-                pendingToDelete?.title
-              }
-              {'"'}
-
-              ?
-
+              {pendingToDelete?.title}
+              {'"'}?
             </Text>
-
           </Dialog.Content>
 
           <Dialog.Actions>
-
             <Button
               textColor={colors.titleColor}
-              onPress={() =>
-                setDeleteVisible(false)
-              }
+              onPress={() => setDeleteVisible(false)}
             >
               Cancelar
             </Button>
 
-            <Button
-              textColor={colors.error}
-              onPress={deletePending}
-            >
+            <Button textColor={colors.error} onPress={deletePending}>
               Eliminar
             </Button>
-
           </Dialog.Actions>
-
         </Dialog>
-
       </Portal>
     </>
   );

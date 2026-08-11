@@ -33,6 +33,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { DashboardApi } from '../services/dashboard.api';
 
 import { useAuthStore } from '../../auth/store/auth.store';
+import moment from 'moment';
+import 'moment/locale/es';
+moment.locale('es');
 
 export const DashboardScreen = ({
   navigation,
@@ -112,6 +115,18 @@ export const DashboardScreen = ({
       load();
     };
 
+  const getNextClassDate = (dayOfWeek) => {
+    const today = moment();
+
+    let nextDate = moment().day(dayOfWeek);
+
+    if (nextDate.isBefore(today, 'day')) {
+      nextDate.add(7, 'days');
+    }
+
+    return nextDate;
+  };
+
   const getDayName =
     (day: number) => {
 
@@ -139,24 +154,42 @@ export const DashboardScreen = ({
   const isCurrentClass =
     !!dashboard?.current_class;
 
-  const todayWeekDay =
-    new Date().getDay() === 0
-      ? 7
-      : new Date().getDay();
+  const getNextClassBadge = () => {
+    if (isCurrentClass || !classInfo) {
+      return null;
+    }
 
-  const nextClassBadge =
-    !isCurrentClass &&
-    classInfo
-      ? classInfo.day_of_week ===
-        todayWeekDay
-        ? classInfo.start_time?.substring(
-            0,
-            5,
-          )
-        : getDayName(
-            classInfo.day_of_week,
-          )
-      : null;
+    const now = moment();
+
+    const nextClass = moment(
+      `${moment().format('YYYY-MM-DD')} ${classInfo.start_time}`,
+      'YYYY-MM-DD HH:mm:ss',
+    );
+
+    const diffMinutes = nextClass.diff(now, 'minutes');
+
+    if (diffMinutes < 60) {
+      return diffMinutes <= 1
+        ? 'En 1 min'
+        : `En ${diffMinutes} min`;
+    }
+
+    const diffHours = nextClass.diff(now, 'hours');
+
+    if (diffHours < 24) {
+      return diffHours === 1
+        ? 'En 1 hora'
+        : `En ${diffHours} horas`;
+    }
+
+    const diffDays = nextClass.diff(now, 'days');
+
+    return diffDays === 1
+      ? 'En 1 día'
+      : `En ${diffDays} días`;
+  };
+
+  const nextClassBadge = getNextClassBadge();
 
   const visiblePendings =
     dashboard?.upcoming_pendings
@@ -718,54 +751,62 @@ export const DashboardScreen = ({
                           marginTop: 4,
                         }}
                       >
-                        Finaliza a las {classInfo?.end_time?.substring(0, 5)}
+                        Finaliza a las {moment(classInfo?.end_time, 'HH:mm:ss').format('hh:mm A')}
                       </Text>
                     </>
                   ) : (
-                    <>
+                    <View style={{
+                      flexDirection:'row',
+                      gap: 15,
+                    }}>
                       <View
                         style={{
                           flexDirection: 'row',
-                          gap: 5,
+                          gap: 8,
                           marginBottom: 5,
                         }}
                       >
                         <Ionicons
                           name="calendar-outline"
-                          size={18}
+                          size={15}
                           color={colors.white}
                         />
                         <Text
+                          variant='labelMedium'
                           style={{
                             color: 'white',
                           }}
                         >
-                          {getDayName(classInfo?.day_of_week)}
+                          {getNextClassDate(classInfo?.day_of_week).format(
+                            'ddd DD MMM YYYY'
+                          )}
+
                         </Text>
                       </View>
 
                       <View
                         style={{
                           flexDirection: 'row',
-                          gap: 5,
+                          gap: 8,
                         }}
                       >
                         <Ionicons
                           name="time-outline"
-                          size={18}
+                          size={15}
                           color={colors.white}
                         />
                         <Text
+                          variant='labelMedium'
                           style={{
                             color: 'white',
                           }}
                         >
-                          {classInfo?.start_time?.substring(0, 5)}
+                          {moment(classInfo?.start_time, 'HH:mm:ss').format('hh:mm A')}
                           {' - '}
-                          {classInfo?.end_time?.substring(0, 5)}
+                          {moment(classInfo?.end_time, 'HH:mm:ss').format('hh:mm A')}
                         </Text>
                       </View>
-                    </>
+                    </View>
                   )}
                 </View>
               </Card.Content>
@@ -800,7 +841,7 @@ export const DashboardScreen = ({
                       style={{
                         flexDirection: 'row',
 
-                        alignItems: 'center',
+                        alignItems: 'flex-start',
 
                         paddingVertical: 12,
 
@@ -835,7 +876,9 @@ export const DashboardScreen = ({
                         </Text>
                       </View>
 
-                      <Text>{pending.due_date}</Text>
+                      <Text style={{color:colors.gray}}>
+                        {moment(pending.due_date).format('DD MMM YYYY')}
+                      </Text>
                     </View>
                   ))}
 
