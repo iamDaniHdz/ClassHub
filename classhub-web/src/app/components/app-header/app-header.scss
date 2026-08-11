@@ -89,8 +89,8 @@ nav a:hover {
 .brand-text {
 
   display: flex;
-
   flex-direction: row;
+  align-items: center;
 }
 
 .app-name {
@@ -100,13 +100,6 @@ nav a:hover {
   font-weight: 700;
 
   color: #1f2937;
-}
-
-.school-name {
-
-  font-size: 13px;
-
-  color: #6b7280;
 }
 
 .nav-links {
@@ -150,4 +143,33 @@ nav a:hover {
   font-size: 13px;
 
   color: #6b7280;
+}
+
+.user-menu-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+
+.user-info small {
+  color: #888;
+}
+
+.menu-header{
+  padding: 10px;
+}
+
+.logout-item {
+  color: #f44336;
+}
+
+.logout-item mat-icon {
+  color: #f44336;
 }
