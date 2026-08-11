@@ -2,139 +2,132 @@
 
   <div class="brand-text">
 
-    <img
-      src="/images/logo.png"
-      class="logo">
+    <img src="/images/logo.png" class="logo">
 
-   <div>
-     <div class="app-name">
+    <div>
+      <div class="app-name">
 
-      ClassHub
+        ClassHub
 
+      </div>
     </div>
-
-    <div class="school-name">
-
-      {{ schoolName }}
-
-    </div>
-   </div>
 
   </div>
 
   <nav class="nav-links">
 
-    <button
-      mat-button
-      routerLink="/dashboard"
-      routerLinkActive="active-link">
+    <button mat-button routerLink="/dashboard" routerLinkActive="active-link">
 
-      Dashboard
+      Dashboards
 
     </button>
 
     @if (isTeacher) {
 
-      <button
-        mat-button
-        routerLink="/academies"
-        routerLinkActive="active-link">
+    <button mat-button routerLink="/academies" routerLinkActive="active-link">
 
-        Mis Academias
+      Mis Academias
 
-      </button>
+    </button>
 
-      <button
-        mat-button
-        routerLink="/my-schedule"
-        routerLinkActive="active-link">
+    <button mat-button routerLink="/my-schedule" routerLinkActive="active-link">
 
-        Mis Horarios
+      Mis Horarios
 
-      </button>
+    </button>
 
-      <button
-        mat-button
-        routerLink="/my-pendings"
-        routerLinkActive="active-link">
+    <button mat-button routerLink="/my-pendings" routerLinkActive="active-link">
 
-        Mis Pendientes
+      Mis Pendientes
 
-      </button>
+    </button>
 
     }
 
     @if (isAdmin) {
 
-      <button
-        mat-button
-        routerLink="/academies-management"
-        routerLinkActive="active-link">
+    <button mat-button routerLink="/academies-management" routerLinkActive="active-link">
 
-        Academias
+      Academias
 
-      </button>
+    </button>
 
-      <button
-        mat-button
-        routerLink="/classrooms"
-        routerLinkActive="active-link">
+    <button mat-button routerLink="/classrooms" routerLinkActive="active-link">
 
-        Grupos
+      Grupos
 
-      </button>
+    </button>
 
-      <button
-        mat-button
-        routerLink="/students"
-        routerLinkActive="active-link">
+    <button mat-button routerLink="/students" routerLinkActive="active-link">
 
-        Estudiantes
+      Estudiantes
 
-      </button>
+    </button>
 
-      <button
-        mat-button
-        routerLink="/schools"
-        routerLinkActive="active-link">
+    <button mat-button routerLink="/schools" routerLinkActive="active-link">
 
-        Escuelas
+      Escuelas
 
-      </button>
+    </button>
 
-      <button
-        mat-button
-        routerLink="/users"
-        routerLinkActive="active-link">
+    <button mat-button routerLink="/users" routerLinkActive="active-link">
 
-        Usuarios
+      Usuarios
 
-      </button>
+    </button>
 
     }
 
   </nav>
 
-  <div class="actions">
+  <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-trigger">
 
-    <button
-      mat-stroked-button
-      color="primary"
-      (click)="changeSchool()">
+    <mat-icon>account_circle</mat-icon>
 
-      Cambiar Escuela
+    <div class="user-info">
+      <div>{{ user?.name }}</div>
+      <small>{{ schoolName }}</small>
+    </div>
+
+    <mat-icon>expand_more</mat-icon>
+
+  </button>
+
+  <mat-menu #userMenu="matMenu">
+
+    <div class="menu-header">
+      <strong>{{ user?.name }}</strong>
+      <div>{{ user?.email }}</div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <button mat-menu-item (click)="changeSchool()">
+
+      <mat-icon>school</mat-icon>
+      <span>Cambiar Escuela</span>
 
     </button>
 
-    <button
-      mat-flat-button
-      color="warn"
-      (click)="logout()">
+    <button mat-menu-item>
 
-      Cerrar Sesión
+      <mat-icon>person</mat-icon>
+      <span>Mi Perfil</span>
 
     </button>
 
-  </div>
+    <mat-divider></mat-divider>
+
+    <button
+      mat-menu-item
+      (click)="logout()"
+      class="logout-item">
+
+      <mat-icon>logout</mat-icon>
+      <span>Cerrar Sesión</span>
+
+    </button>
+
+  </mat-menu>
 
 </header>

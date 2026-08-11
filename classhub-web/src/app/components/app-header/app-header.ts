@@ -17,6 +17,9 @@ import {
   SchoolContextService,
 } from '../../features/school-context/services/school-context.service';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIcon } from "@angular/material/icon";
+import { MatMenu, MatMenuModule } from '@angular/material/menu';
+import { MatDivider } from '@angular/material/divider';
 
 @Component({
   selector: 'app-header',
@@ -27,7 +30,11 @@ import { MatButtonModule } from '@angular/material/button';
     RouterLink,
     RouterLinkActive,
     MatButtonModule,
-  ],
+    MatIcon,
+    MatMenu,
+    MatDivider,
+    MatMenuModule,
+],
 
   templateUrl: './app-header.html',
 
@@ -65,6 +72,10 @@ export class AppHeaderComponent {
 
     return this.authService
       .isTeacher();
+  }
+
+  get user() {
+    return this.authService.getUser();
   }
 
   changeSchool(): void {
