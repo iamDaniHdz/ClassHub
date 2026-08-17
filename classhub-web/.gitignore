@@ -63,3 +63,9 @@ coverage/
 
 # Optional Docker ignore copy (si llegas a usarlo en web)
 docker-compose.override.yml
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
